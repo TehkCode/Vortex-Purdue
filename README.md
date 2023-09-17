@@ -53,6 +53,7 @@ Vortex is a full-system RISCV-based GPGPU processor.
 
 ### Integration Team Additions:
 For a tutorial on how to simulate the Vortex GPU, see https://github.com/vortexgpgpu/vortex_tutorials
+
 File Directory notes: 
 - see /hw/rtl/... for verilog code
-    - /hw/rtl/diagrams/... upload diagrams here. Please create jpg/png exports of your drawio xml document
+    - /hw/rtl/diagrams/... upload diagrams here. Please create SVG exports of your drawio xml document
