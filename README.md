@@ -50,3 +50,9 @@ Vortex is a full-system RISCV-based GPGPU processor.
     $ make -s
 ### Quick demo running vecadd OpenCL kernel on 2 cores
     $ ./ci/blackbox.sh --driver=rtlsim --cores=2 --app=vecadd
+
+### Integration Team Additions:
+For a tutorial on how to simulate the Vortex GPU, see https://github.com/vortexgpgpu/vortex_tutorials
+File Directory notes: 
+- see /hw/rtl/... for verilog code
+    - /hw/rtl/diagrams/... upload diagrams here. Please create jpg/png exports of your drawio xml document
