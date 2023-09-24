@@ -3,7 +3,7 @@ import extract_mod
 from os import *
 
 #To generate page for one module
-INPUT_FILE  = "VX_alu_unit.sv"
+INPUT_FILE  = "VX_commit.sv"
 #To generate pages in single file by walking in directory
 INPUT_WALK_PATH = "/"
 

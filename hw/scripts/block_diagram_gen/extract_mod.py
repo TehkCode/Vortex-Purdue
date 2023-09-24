@@ -5,7 +5,7 @@ from os import path
 input_signals = []
 output_signals = []
 
-def _extract_interface_signals(interface_name, interface_module, interface_dir_path):
+def _extract_interface_signals(interface_name, interface_module, interface_dir_path,topsignal_name):
   interface_path = path.join(interface_dir_path, interface_name+".sv")
   interface_signals = {}
   extract_if_module_flag = False
@@ -27,14 +27,14 @@ def _extract_interface_signals(interface_name, interface_module, interface_dir_p
           signal_length = signal_list[1]
           signal_type = signal_list[0]
 
-        interface_signals[signal_name] = (signal_type, signal_length, f"{interface_name}.{signal_name}")
+        interface_signals[signal_name] = (signal_type, signal_length, f"{interface_name}.{interface_module} {topsignal_name}.{signal_name}")
       
       elif "::" in line:
         signal_list = line.split()
         signal_name = signal_list[1].replace(';', '')
         signal_length = None
         signal_type = signal_list[0] 
-        interface_signals[signal_name] = (signal_type, signal_length, f"{interface_name}.{signal_name}")
+        interface_signals[signal_name] = (signal_type, signal_length, f"{interface_name} {topsignal_name}.{signal_name}")
       
       elif f"modport {interface_module}" in line:
         extract_if_module_flag = True
@@ -60,7 +60,7 @@ def extract_module_signals(module_file_path, interface_dir_path):
   # Regular expressions to match input and output declarations
   input_pattern = r'\binput\b\s+(wire|reg)?\s*(\[[^\]]+\])?\s*(\w*)'
   output_pattern = r'\boutput\b\s+(wire|reg)?\s*(\[[^\]]+\])?\s*(\w*)'
-  interface_pattern = r'\b(VX_\w+_if)\b.(\w+)'
+  interface_pattern = r'\b(VX_\w+_if)\b.(\w+)?\s*(\[[^\]]+\])?\s*(\w*)' #r'\b(VX_\w+_if)\b.(\w+)'
   module_name_pattern = r'module\s+(\w+)\s+'
 
   # for 2dim mod interface
@@ -112,7 +112,8 @@ def extract_module_signals(module_file_path, interface_dir_path):
   for match in interface_matches:
     interface_name = match.group(1)
     interface_module = match.group(2)
-    _extract_interface_signals(interface_name, interface_module, interface_dir_path)
+    signal_name = match.group(4)
+    _extract_interface_signals(interface_name, interface_module, interface_dir_path, signal_name)
 
   module_name_match = re.search(module_name_pattern, module_signals_content)
   if module_name_match:
