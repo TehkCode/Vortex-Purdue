@@ -94,7 +94,16 @@ top_lvl_list = [ \
 "Vortex_axi.sv " ]
 
 def main():
-  generate_for_many_module()  
+  
+  for file in top_lvl_list:
+    print(file)
+    (module_name, input_signals,output_signals) = extract_mod.extract_module_signals(file, INTERFACE_PATH)
+    print(module_name + "\n")
+    drawio_generate.generate_page(module_name, input_signals,output_signals, OUTPUT_FILE+module_name+".drawio.xml")
+    input_signals.clear()
+    output_signals.clear()
+
+  # generate_for_many_module()  
 
 if __name__ == "__main__":
   main()
