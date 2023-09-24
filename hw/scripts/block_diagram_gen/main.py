@@ -56,8 +56,46 @@ def generate_modules_pages_sheet():
   
   drawio_generate.generate_pages(modules_dict, OUTPUT_FILE)
 
+top_lvl_list = [ \
+"VX_alu_unit.sv ", \
+"VX_cache_arb.sv ", \
+"VX_cluster.sv ", \
+"VX_commit.sv ", \
+"VX_config.vh ", \
+"VX_core.sv ", \
+"VX_csr_data.sv ", \
+"VX_csr_unit.sv ", \
+"VX_decode.sv ", \
+"VX_define.vh ", \
+"VX_dispatch.sv ", \
+"VX_execute.sv ", \
+"VX_fetch.sv ", \
+"VX_fpu_unit.sv ", \
+"VX_gpr_stage.sv ", \
+"VX_gpu_types.vh ", \
+"VX_gpu_unit.sv ", \
+"VX_ibuffer.sv ", \
+"VX_icache_stage.sv ", \
+"VX_ipdom_stack.sv ", \
+"VX_issue.sv ", \
+"VX_lsu_unit.sv ", \
+"VX_mem_arb.sv ", \
+"VX_mem_unit.sv ", \
+"VX_muldiv.sv ", \
+"VX_pipeline.sv ", \
+"VX_platform.vh ", \
+"VX_scope.vh ", \
+"VX_scoreboard.sv ", \
+"VX_smem_arb.sv ", \
+"VX_trace_instr.vh ", \
+"VX_warp_sched.sv ", \
+"VX_writeback.sv ", \
+"Vortex.sv ", \
+"Vortex_axi.sv " ]
+
 def main():
   generate_for_many_module()  
 
 if __name__ == "__main__":
   main()
+
