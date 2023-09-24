@@ -16,14 +16,16 @@ def _genrate_signal(signal_text_data, signal_box_coord, is_input_signal, box_uid
     conn_src_id = signal_uid
     conn_target_id = box_uid
     signal_entry_exit = f"entryX={signal_box_coord[0]};entryY={signal_box_coord[1]};entryDx=0;entryDy=0"
+    align_property = "right"
   else:
     conn_src_id = box_uid
     conn_target_id = signal_uid
     signal_entry_exit = f"exitX={signal_box_coord[0]};exitY={signal_box_coord[1]};exitDx=0;exitDy=0;"
+    align_property = "left"
 
   signal_format = f"""
   <object id="{signal_uid}" label="{signal_name}">
-    <mxCell style="text;html=1;align=center;verticalAlign=middle;resizable=1;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+    <mxCell style="text;html=1;align={align_property};verticalAlign=middle;resizable=1;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
         <mxGeometry x="{signal_text_coord[0]}" y="{signal_text_coord[1]}" width="{text_dim[0]}" height="{text_dim[1]}" as="geometry" />
     </mxCell>
   </object>
