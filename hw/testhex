@@ -1,0 +1,39 @@
+#! /bin/bash
+
+declare -a hex_file_array=(
+    "nothing.hex" 
+    "nothing_long.hex"
+    # "three.hex" // old binary at 0x8
+    # "loadstore.hex" // old binary at 0x8
+    # "simple.hex" // old binary at 0x8
+    "simple2.hex" 
+    "array.hex" 
+    "float.hex"
+    # "double.hex"
+    "vector.hex"
+    "vector2.hex"
+)
+
+output_file_name="testhex_output.log"
+
+echo "testhex output for $(date +"%Y_%m_%d_%I_%M_%p")" > $output_file_name 
+
+for hex_file_name in "${hex_file_array[@]}"
+do
+    # start file
+    echo "Testing $hex_file_name"
+    echo "Testing $hex_file_name" >> $output_file_name
+
+    # load in hex file to Vortex_mem_slave.sv
+    cd tb
+    make ${hex_file_name}.load >> ../$output_file_name
+    cd ..
+
+    # run questa sim
+    # make all >> $output_file_name
+    make all_wrapper >> $output_file_name
+
+    # compare traces (stdout and file)
+    python3 scrape_traces.py trace_files/${hex_file_name}_rtlsim.log VX_top_trace.txt 
+    python3 scrape_traces.py trace_files/${hex_file_name}_rtlsim.log VX_top_trace.txt >> $output_file_name
+done
