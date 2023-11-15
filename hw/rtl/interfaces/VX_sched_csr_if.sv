@@ -13,11 +13,11 @@
 
 `include "VX_define.vh"
 
-interface VX_sched_csr_if ();
+interface VX_sched_csr_if #(parameter THREAD_CNT = `NUM_THREADS)();
 
     wire [`PERF_CTR_BITS-1:0] cycles;
     wire [`NUM_WARPS-1:0] active_warps;
-    wire [`NUM_WARPS-1:0][`NUM_THREADS-1:0] thread_masks;
+    wire [`NUM_WARPS-1:0][THREAD_CNT-1:0] thread_masks;
     wire alm_empty;
     wire [`NW_WIDTH-1:0] alm_empty_wid;
     wire unlock_warp;

@@ -16,7 +16,8 @@
 module VX_afu_ctrl #(
     parameter AXI_ADDR_WIDTH = 8,
     parameter AXI_DATA_WIDTH = 32,
-    parameter AXI_NUM_BANKS  = 1
+    parameter AXI_NUM_BANKS  = 1,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (
     // axi4 lite slave signals
     input  wire                         clk,
@@ -144,7 +145,7 @@ module VX_afu_ctrl #(
                             8'(`SM_ENABLED ? `SMEM_LOG_SIZE : 0),
                             16'(`NUM_CORES * `NUM_CLUSTERS), 
                             8'(`NUM_WARPS), 
-                            8'(`NUM_THREADS), 
+                            8'(THREAD_CNT), 
                             8'(`IMPLEMENTATION_ID)};
 
     wire [63:0] isa_caps = {32'(`MISA_EXT), 

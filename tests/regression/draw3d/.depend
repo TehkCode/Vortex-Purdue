@@ -1,0 +1,26 @@
+main.o: main.cpp /home/sooraj/vortex/runtime/include/vortex.h \
+ /home/sooraj/vortex/kernel/../sim/common/graphics.h \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/fixed.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/common.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/math.hpp \
+ /home/sooraj/vortex/kernel/../hw/VX_types.h \
+ /home/sooraj/vortex/kernel/../sim/common/gfxutil.h \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/cgltrace.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/format.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/uint24.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/color.hpp \
+ /home/sooraj/vortex/kernel/../sim/common/bitmanip.h common.h \
+ /home/sooraj/vortex/kernel/../hw/VX_config.h \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/blitter.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/imageutil.hpp
+gfxutil.o: /home/sooraj/vortex/kernel/../sim/common/gfxutil.cpp \
+ /home/sooraj/vortex/kernel/../sim/common/gfxutil.h \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/cgltrace.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/common.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/format.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/uint24.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/color.hpp \
+ /home/sooraj/vortex/kernel/../sim/common/graphics.h \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/fixed.hpp \
+ /home/sooraj/vortex/kernel/../third_party/cocogfx/include/math.hpp \
+ /home/sooraj/vortex/kernel/../hw/VX_types.h

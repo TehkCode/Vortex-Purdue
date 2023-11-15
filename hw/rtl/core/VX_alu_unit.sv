@@ -14,7 +14,8 @@
 `include "VX_define.vh"
 
 module VX_alu_unit #(
-    parameter CORE_ID = 0
+    parameter CORE_ID = 0,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (
     input wire              clk,
     input wire              reset,
@@ -29,12 +30,12 @@ module VX_alu_unit #(
 
     `UNUSED_PARAM (CORE_ID)
     localparam BLOCK_SIZE   = `NUM_ALU_BLOCKS;
-    localparam NUM_LANES    = `NUM_ALU_LANES;
-    localparam PID_BITS     = `CLOG2(`NUM_THREADS / NUM_LANES);
+    localparam NUM_LANES    = `NUM_ALU_LANES; // need to figure out what this does. 
+    localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
     localparam RSP_ARB_DATAW= `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
     localparam RSP_ARB_SIZE = 1 + `EXT_M_ENABLED;
-    localparam PARTIAL_BW   = (BLOCK_SIZE != `ISSUE_WIDTH) || (NUM_LANES != `NUM_THREADS);
+    localparam PARTIAL_BW   = (BLOCK_SIZE != `ISSUE_WIDTH) || (NUM_LANES != THREAD_CNT);
 
     VX_execute_if #(
         .NUM_LANES (NUM_LANES)
@@ -45,7 +46,8 @@ module VX_alu_unit #(
     VX_dispatch_unit #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
-        .OUT_REG    (PARTIAL_BW ? 1 : 0)
+        .OUT_REG    (PARTIAL_BW ? 1 : 0),
+        .THREAD_CNT(THREAD_CNT)
     ) dispatch_unit (
         .clk        (clk),
         .reset      (dispatch_reset),
@@ -77,7 +79,8 @@ module VX_alu_unit #(
         VX_int_unit #(
             .CORE_ID   (CORE_ID),
             .BLOCK_IDX (block_idx),
-            .NUM_LANES (NUM_LANES)
+            .NUM_LANES (NUM_LANES),
+            .THREAD_CNT(THREAD_CNT)
         ) int_unit (
             .clk        (clk),
             .reset      (int_reset),
@@ -105,7 +108,8 @@ module VX_alu_unit #(
 
         VX_muldiv_unit #(
             .CORE_ID   (CORE_ID),
-            .NUM_LANES (NUM_LANES)
+            .NUM_LANES (NUM_LANES),
+            .THREAD_CNT(THREAD_CNT)
         ) mdv_unit (
             .clk        (clk),
             .reset      (mdv_reset),
@@ -161,7 +165,8 @@ module VX_alu_unit #(
     VX_gather_unit #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
-        .OUT_REG    (PARTIAL_BW ? 3 : 0)
+        .OUT_REG    (PARTIAL_BW ? 3 : 0),
+        .THREAD_CNT(THREAD_CNT)
     ) gather_unit (
         .clk           (clk),
         .reset         (commit_reset),

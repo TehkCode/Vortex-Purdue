@@ -14,7 +14,8 @@
 `include "VX_define.vh"
 
 module VX_sfu_unit import VX_gpu_pkg::*; #(
-    parameter CORE_ID = 0
+    parameter CORE_ID = 0,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (    
     input wire              clk,
     input wire              reset,
@@ -66,7 +67,7 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     `UNUSED_PARAM (CORE_ID)
     localparam BLOCK_SIZE   = 1;
     localparam NUM_LANES    = `NUM_SFU_LANES;
-    localparam PID_BITS     = `CLOG2(`NUM_THREADS / NUM_LANES);
+    localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
 
     localparam RSP_ARB_DATAW = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + (NUM_LANES * `XLEN) + `NR_BITS + 1 + `XLEN + PID_WIDTH + 1 + 1;
@@ -89,7 +90,8 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     VX_dispatch_unit #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
-        .OUT_REG    (1)
+        .OUT_REG    (1),
+        .THREAD_CNT(THREAD_CNT)
     ) dispatch_unit (
         .clk        (clk),
         .reset      (dispatch_reset),
@@ -106,15 +108,15 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
 `endif
 
 `ifdef EXT_TEX_ENABLE
-    VX_sfu_csr_if tex_csr_if();
+    VX_sfu_csr_if  #(.THREAD_CNT(THREAD_CNT)) tex_csr_if();
 `endif
 
 `ifdef EXT_RASTER_ENABLE
-    VX_sfu_csr_if raster_csr_if();
+    VX_sfu_csr_if  #(.THREAD_CNT(THREAD_CNT)) raster_csr_if();
 `endif
 
 `ifdef EXT_ROP_ENABLE
-    VX_sfu_csr_if rop_csr_if();
+    VX_sfu_csr_if #(.THREAD_CNT(THREAD_CNT)) rop_csr_if();
 `endif
 
     // Warp control block    
@@ -160,7 +162,8 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
 
     VX_csr_unit #(
         .CORE_ID   (CORE_ID),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .THREAD_CNT(THREAD_CNT)
     ) csr_unit (
         .clk            (clk),
         .reset          (csr_reset),
@@ -259,7 +262,8 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
 
     VX_raster_agent #(
         .CORE_ID   (CORE_ID),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .THREAD_CNT(THREAD_CNT)
     ) raster_agent (
         .clk        (clk),
         .reset      (raster_reset),
@@ -291,7 +295,8 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
             
     VX_rop_agent #(
         .CORE_ID   (CORE_ID),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .THREAD_CNT(THREAD_CNT)
     ) rop_agent (
         .clk        (clk),
         .reset      (rop_reset),
@@ -357,7 +362,8 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     VX_gather_unit #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
-        .OUT_REG    (3)
+        .OUT_REG    (3),
+        .THREAD_CNT(THREAD_CNT)
     ) gather_unit (
         .clk           (clk),
         .reset         (commit_reset),

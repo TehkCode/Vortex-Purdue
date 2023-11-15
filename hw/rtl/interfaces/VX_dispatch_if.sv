@@ -13,12 +13,13 @@
 
 `include "VX_define.vh"
 
-interface VX_dispatch_if import VX_gpu_pkg::*; ();
+interface VX_dispatch_if import VX_gpu_pkg::*; #(parameter THREAD_CNT = `NUM_THREADS)();
+    // NEED TO TAKE ONE GIANT LOOK AT THE DISPATCH UNIT. 
     // warning: this layout should not be modified without updating VX_dispatch_unit!!!
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]             uuid;
         logic [ISSUE_WIS_W-1:0]             wis;
-        logic [`NUM_THREADS-1:0]            tmask;
+        logic [THREAD_CNT-1:0]            tmask;
         logic [`INST_ALU_BITS-1:0]          op_type;
         logic [`INST_MOD_BITS-1:0]          op_mod;
         logic                               wb;
@@ -28,9 +29,9 @@ interface VX_dispatch_if import VX_gpu_pkg::*; ();
         logic [`XLEN-1:0]                   imm;
         logic [`NR_BITS-1:0]                rd;
         logic [`NT_WIDTH-1:0]               tid;
-        logic [`NUM_THREADS-1:0][`XLEN-1:0] rs1_data;
-        logic [`NUM_THREADS-1:0][`XLEN-1:0] rs2_data;
-        logic [`NUM_THREADS-1:0][`XLEN-1:0] rs3_data;
+        logic [THREAD_CNT-1:0][`XLEN-1:0] rs1_data;
+        logic [THREAD_CNT-1:0][`XLEN-1:0] rs2_data;
+        logic [THREAD_CNT-1:0][`XLEN-1:0] rs3_data;
     } data_t;
 
     logic  valid;

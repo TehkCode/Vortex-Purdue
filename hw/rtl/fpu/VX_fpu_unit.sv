@@ -42,7 +42,8 @@ module VX_fpu_unit import VX_fpu_pkg::*; #(
     VX_dispatch_unit #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
-        .OUT_REG    (PARTIAL_BW ? 1 : 0)
+        .OUT_REG    (PARTIAL_BW ? 1 : 0),
+        .THREAD_CNT(THREAD_CNT)
     ) dispatch_unit (
         .clk        (clk),
         .reset      (dispatch_reset),
@@ -248,12 +249,13 @@ module VX_fpu_unit import VX_fpu_pkg::*; #(
     VX_gather_unit #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
-        .OUT_REG    (PARTIAL_BW ? 3 : 0)
+        .OUT_REG    (PARTIAL_BW ? 3 : 0),
+        .THREAD_CNT(THREAD_CNT)
     ) gather_unit (
         .clk           (clk),
         .reset         (commit_reset),
         .commit_in_if  (commit_block_if),
         .commit_out_if (commit_if)
     );
-
+    
 endmodule

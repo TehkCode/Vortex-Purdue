@@ -15,7 +15,8 @@
 
 module VX_wctl_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter NUM_LANES = 1
+    parameter NUM_LANES = ,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (
     input wire              clk,
     input wire              reset,
@@ -30,7 +31,7 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
     `UNUSED_PARAM (CORE_ID)
     localparam LANE_BITS  = `CLOG2(NUM_LANES);
     localparam LANE_WIDTH = `UP(LANE_BITS);
-    localparam PID_BITS   = `CLOG2(`NUM_THREADS / NUM_LANES);
+    localparam PID_BITS   = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH  = `UP(PID_BITS);
     localparam WCTL_WIDTH = $bits(tmc_t) + $bits(wspawn_t) + $bits(split_t) + $bits(join_t) + $bits(barrier_t);
     localparam DATAW = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + WCTL_WIDTH + PID_WIDTH + 1 + 1;
@@ -66,8 +67,8 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
         assign taken[i] = execute_if.data.rs1_data[i][0];
     end
 
-    reg [`NUM_THREADS-1:0] then_tmask_r, then_tmask_n;
-    reg [`NUM_THREADS-1:0] else_tmask_r, else_tmask_n;
+    reg [THREAD_CNT-1:0] then_tmask_r, then_tmask_n;
+    reg [THREAD_CNT-1:0] else_tmask_r, else_tmask_n;
     always @(*) begin
         then_tmask_n = then_tmask_r;
         else_tmask_n = else_tmask_r;
@@ -89,9 +90,9 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
 
     // tmc / pred
 
-    wire [`NUM_THREADS-1:0] pred_mask = has_then ? then_tmask_n : rs2_data[`NUM_THREADS-1:0];
+    wire [THREAD_CNT-1:0] pred_mask = has_then ? then_tmask_n : rs2_data[THREAD_CNT-1:0];
     assign tmc.valid = (is_tmc || is_pred);
-    assign tmc.tmask = is_pred ? pred_mask : rs1_data[`NUM_THREADS-1:0];
+    assign tmc.tmask = is_pred ? pred_mask : rs1_data[THREAD_CNT-1:0];
 
     // split
     

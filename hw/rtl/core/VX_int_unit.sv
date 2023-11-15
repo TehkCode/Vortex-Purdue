@@ -16,7 +16,8 @@
 module VX_int_unit #(
     parameter CORE_ID   = 0,
     parameter BLOCK_IDX = 0,
-    parameter NUM_LANES = 1
+    parameter NUM_LANES = 1,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (
     input wire              clk,
     input wire              reset,
@@ -32,7 +33,7 @@ module VX_int_unit #(
     `UNUSED_PARAM (CORE_ID)
     localparam LANE_BITS      = `CLOG2(NUM_LANES);
     localparam LANE_WIDTH     = `UP(LANE_BITS);
-    localparam PID_BITS       = `CLOG2(`NUM_THREADS / NUM_LANES);
+    localparam PID_BITS       = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH      = `UP(PID_BITS);
     localparam SHIFT_IMM_BITS = `CLOG2(`XLEN);
 

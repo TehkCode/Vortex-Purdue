@@ -13,15 +13,15 @@
 
 `include "VX_define.vh"
 
-interface VX_writeback_if import VX_gpu_pkg::*; ();
+interface VX_writeback_if import VX_gpu_pkg::*; #(parameter THREAD_CNT = `NUM_THREADS);
 
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]         uuid;
         logic [ISSUE_WIS_W-1:0]         wis;
-        logic [`NUM_THREADS-1:0]        tmask;
+        logic [`THREAD_CNT-1:0]        tmask;
         logic [`XLEN-1:0]               PC;
         logic [`NR_BITS-1:0]            rd;
-        logic [`NUM_THREADS-1:0][`XLEN-1:0] data;
+        logic [`THREAD_CNT-1:0][`XLEN-1:0] data;
         logic                           sop;
         logic                           eop;
     } data_t;

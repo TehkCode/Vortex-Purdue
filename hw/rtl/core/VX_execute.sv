@@ -14,7 +14,8 @@
 `include "VX_define.vh"
 
 module VX_execute import VX_gpu_pkg::*; #(
-    parameter CORE_ID = 0
+    parameter CORE_ID = 0,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (
     `SCOPE_IO_DECL
 
@@ -90,7 +91,8 @@ module VX_execute import VX_gpu_pkg::*; #(
     `RESET_RELAY (sfu_reset, reset);
     
     VX_alu_unit #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) alu_unit (
         .clk            (clk),
         .reset          (alu_reset),
@@ -102,7 +104,8 @@ module VX_execute import VX_gpu_pkg::*; #(
     `SCOPE_IO_SWITCH (1)
 
     VX_lsu_unit #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) lsu_unit (
         `SCOPE_IO_BIND  (0)
         .clk            (clk),

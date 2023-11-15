@@ -15,7 +15,8 @@
 `include "VX_trace.vh"
 
 module VX_issue #(
-    parameter CORE_ID = 0
+    parameter CORE_ID = 0,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (
     `SCOPE_IO_DECL
 
@@ -46,7 +47,8 @@ module VX_issue #(
     `RESET_RELAY (dispatch_reset, reset);
 
     VX_ibuffer #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) ibuffer (
         .clk            (clk),
         .reset          (ibuf_reset), 
@@ -65,7 +67,8 @@ module VX_issue #(
     );
 
     VX_operands #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) operands (
         .clk            (clk), 
         .reset          (operands_reset), 
@@ -75,7 +78,8 @@ module VX_issue #(
     );
 
     VX_dispatch #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) dispatch (
         .clk            (clk), 
         .reset          (dispatch_reset),
@@ -100,9 +104,9 @@ module VX_issue #(
         VX_scope_tap #(
             .SCOPE_ID (2),
             .TRIGGERW (4),
-            .PROBEW   (`UUID_WIDTH + `NUM_THREADS + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS +
-                1 + `NR_BITS + `XLEN + 1 + 1 + (`NUM_THREADS * 3 * `XLEN) +
-                `UUID_WIDTH + `NUM_THREADS + `NR_BITS + (`NUM_THREADS*`XLEN) + 1)
+            .PROBEW   (`UUID_WIDTH + THREAD_CNT + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS +
+                1 + `NR_BITS + `XLEN + 1 + 1 + (THREAD_CNT * 3 * `XLEN) +
+                `UUID_WIDTH + THREAD_CNT + `NR_BITS + (THREAD_CNT*`XLEN) + 1)
         ) scope_tap (
             .clk(clk),
             .reset(scope_reset),

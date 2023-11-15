@@ -14,8 +14,9 @@
 `include "VX_define.vh"
 
 interface VX_commit_if #(
-    parameter NUM_LANES = `NUM_THREADS,
-    parameter PID_WIDTH = `LOG2UP(`NUM_THREADS / NUM_LANES)
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter NUM_LANES = THREAD_CNT,
+    parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES)
 ) ();
     
     typedef struct packed {

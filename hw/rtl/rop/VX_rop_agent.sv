@@ -17,7 +17,9 @@
 
 module VX_rop_agent import VX_rop_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter NUM_LANES = 1
+    parameter NUM_LANES = 1,
+    parameter THREAD_CNT = `NUM_THREADS
+
 ) (
     input wire clk, 
     input wire reset,
@@ -31,7 +33,7 @@ module VX_rop_agent import VX_rop_pkg::*; #(
     VX_commit_if.master     commit_if
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam PID_BITS   = `CLOG2(`NUM_THREADS / NUM_LANES);
+    localparam PID_BITS   = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH  = `UP(PID_BITS);
 
     wire [NUM_LANES-1:0][`VX_ROP_DIM_BITS-1:0] sfu_exe_pos_x;

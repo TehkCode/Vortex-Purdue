@@ -30,7 +30,8 @@
 `endif
 
 module VX_core import VX_gpu_pkg::*; #( 
-    parameter CORE_ID = 0
+    parameter CORE_ID = 0,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (        
     `SCOPE_IO_DECL
     
@@ -83,10 +84,10 @@ module VX_core import VX_gpu_pkg::*; #(
     // Status
     output wire             busy
 );
-    VX_schedule_if      schedule_if();
+    VX_schedule_if #(.THREAD_CNT(THREAD_CNT))      schedule_if();
     VX_fetch_if         fetch_if();
     VX_decode_if        decode_if();
-    VX_sched_csr_if     sched_csr_if();
+    VX_sched_csr_if #(.THREAD_CNT(THREAD_CNT))    sched_csr_if();
     VX_decode_sched_if  decode_sched_if();
     VX_commit_sched_if  commit_sched_if();
     VX_commit_csr_if    commit_csr_if();
@@ -105,7 +106,7 @@ module VX_core import VX_gpu_pkg::*; #(
     VX_dispatch_if      sfu_dispatch_if[`ISSUE_WIDTH]();
     VX_commit_if        sfu_commit_if[`ISSUE_WIDTH]();    
     
-    VX_writeback_if     writeback_if[`ISSUE_WIDTH]();
+    VX_writeback_if #(.THREAD_CNT(THREAD_CNT))     writeback_if[`ISSUE_WIDTH]();
 
     VX_mem_bus_if #(
         .DATA_SIZE (DCACHE_WORD_SIZE), 
@@ -137,7 +138,8 @@ module VX_core import VX_gpu_pkg::*; #(
     `SCOPE_IO_SWITCH (3)
 
     VX_schedule #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) schedule (
         .clk            (clk),
         .reset          (schedule_reset),   
@@ -159,7 +161,8 @@ module VX_core import VX_gpu_pkg::*; #(
     );
 
     VX_fetch #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) fetch (
         `SCOPE_IO_BIND  (0)
         .clk            (clk),
@@ -170,7 +173,8 @@ module VX_core import VX_gpu_pkg::*; #(
     );
 
     VX_decode #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) decode (
         .clk            (clk),
         .reset          (decode_reset),
@@ -180,7 +184,8 @@ module VX_core import VX_gpu_pkg::*; #(
     );
 
     VX_issue #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) issue (
         `SCOPE_IO_BIND  (1)
 
@@ -203,7 +208,8 @@ module VX_core import VX_gpu_pkg::*; #(
     );
 
     VX_execute #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) execute (
         `SCOPE_IO_BIND  (2)
         
@@ -266,7 +272,8 @@ module VX_core import VX_gpu_pkg::*; #(
     );    
 
     VX_commit #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) commit (
         .clk            (clk),
         .reset          (commit_reset),
@@ -287,7 +294,8 @@ module VX_core import VX_gpu_pkg::*; #(
     );
 
     VX_smem_unit #(
-        .CORE_ID (CORE_ID)
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
     ) smem_unit (
         .clk                (clk),
         .reset              (reset),
@@ -388,7 +396,8 @@ import VX_raster_pkg::*;
 import VX_rop_pkg::*;
 `endif
 #( 
-    parameter CORE_ID = 0
+    parameter CORE_ID = 0,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (  
     // Clock
     input wire                              clk,
@@ -606,7 +615,8 @@ import VX_rop_pkg::*;
 `endif
 
     VX_core #(
-        .CORE_ID (0)
+        .CORE_ID (0),
+        .THREAD_CNT(THREAD_CNT)
     ) core (
         `SCOPE_IO_BIND (0)
         .clk            (clk),

@@ -1,0 +1,2 @@
+main.o: main.cpp /home/sooraj/vortex/runtime/include/vortex.h \
+ /home/sooraj/vortex/kernel/../hw/VX_config.h common.h

@@ -14,7 +14,8 @@
 `include "VX_define.vh"
 
 module VX_fetch import VX_gpu_pkg::*; #(
-    parameter CORE_ID = 0
+    parameter CORE_ID = 0,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (
     `SCOPE_IO_DECL
 
@@ -51,10 +52,10 @@ module VX_fetch import VX_gpu_pkg::*; #(
     assign {rsp_uuid, rsp_tag} = icache_bus_if.rsp_data.tag;
 
     wire [`XLEN-1:0] rsp_PC;
-    wire [`NUM_THREADS-1:0] rsp_tmask;
+    wire [THREAD_CNT-1:0] rsp_tmask;
 
     VX_dp_ram #(
-        .DATAW  (`XLEN + `NUM_THREADS),
+        .DATAW  (`XLEN + THREAD_CNT),
         .SIZE   (`NUM_WARPS),
         .LUTRAM (1)
     ) tag_store (

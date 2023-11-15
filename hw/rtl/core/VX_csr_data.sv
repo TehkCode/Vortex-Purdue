@@ -24,6 +24,7 @@ import VX_fpu_pkg::*;
 `endif
 #(
     parameter CORE_ID = 0
+    parameter THREAD_CNT = `NUM_THREADS
 ) (
     input wire                          clk,
     input wire                          reset,
@@ -56,7 +57,7 @@ import VX_fpu_pkg::*;
 
     input wire [`PERF_CTR_BITS-1:0]     cycles,
     input wire [`NUM_WARPS-1:0]         active_warps,
-    input wire [`NUM_WARPS-1:0][`NUM_THREADS-1:0] thread_masks,
+    input wire [`NUM_WARPS-1:0][THREAD_CNT-1:0] thread_masks,
 
     input wire                          read_enable,
     input wire [`UUID_WIDTH-1:0]        read_uuid,
@@ -168,7 +169,7 @@ import VX_fpu_pkg::*;
             `VX_CSR_CORE_ID    : read_data_ro_r = 32'(CORE_ID);
             `VX_CSR_THREAD_MASK: read_data_ro_r = 32'(thread_masks[read_wid]);
             `VX_CSR_WARP_MASK  : read_data_ro_r = 32'(active_warps);
-            `VX_CSR_NUM_THREADS: read_data_ro_r = 32'(`NUM_THREADS);
+            `VX_CSR_NUM_THREADS: read_data_ro_r = 32'(THREAD_CNT);
             `VX_CSR_NUM_WARPS  : read_data_ro_r = 32'(`NUM_WARPS);
             `VX_CSR_NUM_CORES  : read_data_ro_r = 32'(`NUM_CORES * `NUM_CLUSTERS);           
             `VX_CSR_MCYCLE     : read_data_ro_r = 32'(cycles[31:0]);

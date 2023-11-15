@@ -15,7 +15,8 @@
 
 module VX_operands import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter CACHE_ENABLE = 0
+    parameter CACHE_ENABLE = ,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (
     input wire              clk,
     input wire              reset,
@@ -25,7 +26,7 @@ module VX_operands import VX_gpu_pkg::*; #(
     VX_operands_if.master   operands_if [`ISSUE_WIDTH]
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + `NUM_THREADS + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + `NR_BITS;
+    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + `NR_BITS;
 
     localparam STATE_IDLE   = 2'd0;
     localparam STATE_FETCH1 = 2'd1;
@@ -34,18 +35,18 @@ module VX_operands import VX_gpu_pkg::*; #(
     localparam STATE_BITS   = 2;
 
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
-        wire [`NUM_THREADS-1:0][`XLEN-1:0] gpr_rd_data;
+        wire [THREAD_CNT-1:0][`XLEN-1:0] gpr_rd_data;
         reg [`NR_BITS-1:0] gpr_rd_rid, gpr_rd_rid_n;
         reg [ISSUE_WIS_W-1:0] gpr_rd_wis, gpr_rd_wis_n;
 
-        reg [ISSUE_RATIO-1:0][`NUM_THREADS-1:0][`XLEN-1:0] cache_data, cache_data_n;
+        reg [ISSUE_RATIO-1:0][THREAD_CNT-1:0][`XLEN-1:0] cache_data, cache_data_n;
         reg [ISSUE_RATIO-1:0][`NR_BITS-1:0] cache_reg, cache_reg_n;
-        reg [ISSUE_RATIO-1:0][`NUM_THREADS-1:0] cache_tmask, cache_tmask_n;
+        reg [ISSUE_RATIO-1:0][THREAD_CNT-1:0] cache_tmask, cache_tmask_n;
         reg [ISSUE_RATIO-1:0] cache_eop, cache_eop_n;
 
-        reg [`NUM_THREADS-1:0][`XLEN-1:0] rs1_data, rs1_data_n;
-        reg [`NUM_THREADS-1:0][`XLEN-1:0] rs2_data, rs2_data_n;
-        reg [`NUM_THREADS-1:0][`XLEN-1:0] rs3_data, rs3_data_n;   
+        reg [THREAD_CNT-1:0][`XLEN-1:0] rs1_data, rs1_data_n;
+        reg [THREAD_CNT-1:0][`XLEN-1:0] rs2_data, rs2_data_n;
+        reg [THREAD_CNT-1:0][`XLEN-1:0] rs3_data, rs3_data_n;   
 
         reg [STATE_BITS-1:0] state, state_n;
         reg [`NR_BITS-1:0] rs2, rs2_n;
@@ -153,7 +154,7 @@ module VX_operands import VX_gpu_pkg::*; #(
             if (CACHE_ENABLE != 0 && writeback_if[i].valid) begin
                 if ((cache_reg[writeback_if[i].data.wis] == writeback_if[i].data.rd) 
                  || (cache_eop[writeback_if[i].data.wis] && writeback_if[i].data.sop)) begin
-                    for (integer j = 0; j < `NUM_THREADS; ++j) begin
+                    for (integer j = 0; j < THREAD_CNT; ++j) begin
                         if (writeback_if[i].data.tmask[j]) begin
                             cache_data_n[writeback_if[i].data.wis][j] = writeback_if[i].data.data[j];
                         end
@@ -209,7 +210,7 @@ module VX_operands import VX_gpu_pkg::*; #(
         wire wr_enabled = 1;
     `endif
         
-        for (genvar j = 0; j < `NUM_THREADS; ++j) begin
+        for (genvar j = 0; j < THREAD_CNT; ++j) begin
             VX_dp_ram #(
                 .DATAW (`XLEN),
                 .SIZE (`NUM_REGS * ISSUE_RATIO),
@@ -284,7 +285,7 @@ module VX_operands import VX_gpu_pkg::*; #(
         `RESET_RELAY (out_buf_reset, reset);
 
         VX_elastic_buffer #(
-            .DATAW   (DATAW + (3 * `NUM_THREADS * `XLEN)),
+            .DATAW   (DATAW + (3 * THREAD_CNT * `XLEN)),
             .SIZE    (2),
             .OUT_REG (2)
         ) out_buf (

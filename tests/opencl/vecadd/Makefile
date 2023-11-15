@@ -2,6 +2,6 @@ PROJECT = vecadd
 
 SRCS = main.cc
 
-OPTS ?= -n64
+OPTS ?= -n1024
 
 include ../common.mk

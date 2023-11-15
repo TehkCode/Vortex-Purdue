@@ -261,7 +261,8 @@ module VX_socket import VX_gpu_pkg::*; #(
         `RESET_RELAY (core_reset, reset);
 
         VX_core #(
-            .CORE_ID ((SOCKET_ID * `SOCKET_SIZE) + i)
+            .CORE_ID ((SOCKET_ID * `SOCKET_SIZE) + i),
+            .THREAD_CNT(4)
         ) core (
             `SCOPE_IO_BIND  (i)
 

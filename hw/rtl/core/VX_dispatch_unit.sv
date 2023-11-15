@@ -17,7 +17,8 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
     parameter BLOCK_SIZE = 1,
     parameter NUM_LANES  = 1,
     parameter OUT_REG    = 0,
-    parameter MAX_FANOUT = `MAX_FANOUT
+    parameter MAX_FANOUT = `MAX_FANOUT,
+    parameter THREAD_CNT = `NUM_THREADS
 ) ( 
     input  wire             clk,
     input  wire             reset,
@@ -29,19 +30,19 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
     VX_execute_if.master    execute_if [BLOCK_SIZE]
 
 );
-    `STATIC_ASSERT ((`NUM_THREADS == NUM_LANES  * (`NUM_THREADS / NUM_LANES)), ("invalid parameter"))
+    `STATIC_ASSERT ((THREAD_CNT == NUM_LANES  * (THREAD_CNT / NUM_LANES)), ("invalid parameter"))
     localparam BLOCK_SIZE_W = `LOG2UP(BLOCK_SIZE);
-    localparam NUM_PACKETS  = `NUM_THREADS / NUM_LANES;
+    localparam NUM_PACKETS  = THREAD_CNT / NUM_LANES;
     localparam PID_BITS     = `CLOG2(NUM_PACKETS);
     localparam PID_WIDTH    = `UP(PID_BITS);
     localparam BATCH_COUNT  = `ISSUE_WIDTH / BLOCK_SIZE;
     localparam BATCH_COUNT_W= `LOG2UP(BATCH_COUNT);
     localparam ISSUE_W      = `LOG2UP(`ISSUE_WIDTH);
-    localparam IN_DATAW     = `UUID_WIDTH + ISSUE_WIS_W + `NUM_THREADS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + 1 + `XLEN + `XLEN + `NR_BITS + `NT_WIDTH + (3 * `NUM_THREADS * `XLEN);
+    localparam IN_DATAW     = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + 1 + `XLEN + `XLEN + `NR_BITS + `NT_WIDTH + (3 * THREAD_CNT * `XLEN);
     localparam OUT_DATAW    = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + 1 + `XLEN + `XLEN + `NR_BITS + `NT_WIDTH + (3 * NUM_LANES * `XLEN) + PID_WIDTH + 1 + 1;
-    localparam FANOUT_ENABLE= (`NUM_THREADS > (MAX_FANOUT + MAX_FANOUT/2));
+    localparam FANOUT_ENABLE= (THREAD_CNT > (MAX_FANOUT + MAX_FANOUT/2));
 
-    localparam DATA_TMASK_OFF = IN_DATAW - (`UUID_WIDTH + ISSUE_WIS_W + `NUM_THREADS);
+    localparam DATA_TMASK_OFF = IN_DATAW - (`UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT);
     localparam DATA_REGS_OFF = 0;
 
     wire [`ISSUE_WIDTH-1:0] dispatch_valid;
@@ -86,7 +87,7 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
 
         wire valid_p, ready_p;
 
-        if (`NUM_THREADS != NUM_LANES) begin
+        if (THREAD_CNT != NUM_LANES) begin
             reg [NUM_PACKETS-1:0] sent_mask_p;
             wire [PID_WIDTH-1:0] start_p_n, start_p, end_p;
             wire dispatch_valid_r;
@@ -116,10 +117,10 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
             wire [NUM_PACKETS-1:0][NUM_LANES-1:0] per_packet_tmask;
             wire [NUM_PACKETS-1:0][2:0][NUM_LANES-1:0][`XLEN-1:0] per_packet_regs; 
 
-            wire [`NUM_THREADS-1:0] dispatch_tmask = dispatch_data[issue_idx][DATA_TMASK_OFF +: `NUM_THREADS];
-            wire [`NUM_THREADS-1:0][`XLEN-1:0] dispatch_rs1_data = dispatch_data[issue_idx][DATA_REGS_OFF + 2 * `NUM_THREADS * `XLEN +: `NUM_THREADS * `XLEN];
-            wire [`NUM_THREADS-1:0][`XLEN-1:0] dispatch_rs2_data = dispatch_data[issue_idx][DATA_REGS_OFF + 1 * `NUM_THREADS * `XLEN +: `NUM_THREADS * `XLEN];
-            wire [`NUM_THREADS-1:0][`XLEN-1:0] dispatch_rs3_data = dispatch_data[issue_idx][DATA_REGS_OFF + 0 * `NUM_THREADS * `XLEN +: `NUM_THREADS * `XLEN];
+            wire [THREAD_CNT-1:0] dispatch_tmask = dispatch_data[issue_idx][DATA_TMASK_OFF +: THREAD_CNT];
+            wire [THREAD_CNT-1:0][`XLEN-1:0] dispatch_rs1_data = dispatch_data[issue_idx][DATA_REGS_OFF + 2 * THREAD_CNT * `XLEN +: THREAD_CNT * `XLEN];
+            wire [THREAD_CNT-1:0][`XLEN-1:0] dispatch_rs2_data = dispatch_data[issue_idx][DATA_REGS_OFF + 1 * THREAD_CNT * `XLEN +: THREAD_CNT * `XLEN];
+            wire [THREAD_CNT-1:0][`XLEN-1:0] dispatch_rs3_data = dispatch_data[issue_idx][DATA_REGS_OFF + 0 * THREAD_CNT * `XLEN +: THREAD_CNT * `XLEN];
 
             for (genvar i = 0; i < NUM_PACKETS; ++i) begin
                 for (genvar j = 0; j < NUM_LANES; ++j) begin
@@ -192,10 +193,10 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
             assign block_done[block_idx] = ~dispatch_valid[issue_idx] || fire_eop;
         end else begin
             assign valid_p = dispatch_valid[issue_idx];
-            assign block_tmask[block_idx] = dispatch_data[issue_idx][DATA_TMASK_OFF +: `NUM_THREADS];
-            assign block_regs[block_idx][0] = dispatch_data[issue_idx][DATA_REGS_OFF + 2 * `NUM_THREADS * `XLEN +: `NUM_THREADS * `XLEN];
-            assign block_regs[block_idx][1] = dispatch_data[issue_idx][DATA_REGS_OFF + 1 * `NUM_THREADS * `XLEN +: `NUM_THREADS * `XLEN];
-            assign block_regs[block_idx][2] = dispatch_data[issue_idx][DATA_REGS_OFF + 0 * `NUM_THREADS * `XLEN +: `NUM_THREADS * `XLEN];
+            assign block_tmask[block_idx] = dispatch_data[issue_idx][DATA_TMASK_OFF +: THREAD_CNT];
+            assign block_regs[block_idx][0] = dispatch_data[issue_idx][DATA_REGS_OFF + 2 * THREAD_CNT * `XLEN +: THREAD_CNT * `XLEN];
+            assign block_regs[block_idx][1] = dispatch_data[issue_idx][DATA_REGS_OFF + 1 * THREAD_CNT * `XLEN +: THREAD_CNT * `XLEN];
+            assign block_regs[block_idx][2] = dispatch_data[issue_idx][DATA_REGS_OFF + 0 * THREAD_CNT * `XLEN +: THREAD_CNT * `XLEN];
             assign block_pid[block_idx]   = '0;
             assign block_sop[block_idx]   = 1'b1;
             assign block_eop[block_idx]   = 1'b1;
@@ -216,7 +217,7 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
 
         `RESET_RELAY(buf_out_reset, reset);
 
-        wire [`NW_WIDTH-1:0] block_wid = wis_to_wid(dispatch_data[issue_idx][DATA_TMASK_OFF+`NUM_THREADS +: ISSUE_WIS_W], wsi);
+        wire [`NW_WIDTH-1:0] block_wid = wis_to_wid(dispatch_data[issue_idx][DATA_TMASK_OFF+THREAD_CNT +: ISSUE_WIS_W], wsi);
 
         VX_elastic_buffer #(
             .DATAW   (OUT_DATAW),
@@ -228,10 +229,10 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
             .valid_in  (valid_p),
             .ready_in  (ready_p),
             .data_in   ({                
-                dispatch_data[issue_idx][IN_DATAW-1 : DATA_TMASK_OFF+`NUM_THREADS+ISSUE_WIS_W],
+                dispatch_data[issue_idx][IN_DATAW-1 : DATA_TMASK_OFF+THREAD_CNT+ISSUE_WIS_W],
                 block_wid,
                 block_tmask[block_idx],
-                dispatch_data[issue_idx][DATA_TMASK_OFF-1 : DATA_REGS_OFF + 3 * `NUM_THREADS * `XLEN],
+                dispatch_data[issue_idx][DATA_TMASK_OFF-1 : DATA_REGS_OFF + 3 * THREAD_CNT * `XLEN],
                 block_regs[block_idx][0],
                 block_regs[block_idx][1],
                 block_regs[block_idx][2],     

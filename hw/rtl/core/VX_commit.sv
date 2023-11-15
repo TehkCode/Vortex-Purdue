@@ -14,7 +14,8 @@
 `include "VX_define.vh"
 
 module VX_commit import VX_gpu_pkg::*; #(
-    parameter CORE_ID = 0
+    parameter CORE_ID = 0,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (
     input wire              clk,
     input wire              reset,
@@ -36,8 +37,8 @@ module VX_commit import VX_gpu_pkg::*; #(
     output wire [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam DATAW = `UUID_WIDTH + `NW_WIDTH + `NUM_THREADS + `XLEN + 1 + `NR_BITS + `NUM_THREADS * `XLEN + 1 + 1 + 1;
-    localparam COMMIT_SIZEW = `CLOG2(`NUM_THREADS + 1);
+    localparam DATAW = `UUID_WIDTH + `NW_WIDTH + THREAD_CNT + `XLEN + 1 + `NR_BITS + THREAD_CNT * `XLEN + 1 + 1 + 1;
+    localparam COMMIT_SIZEW = `CLOG2(THREAD_CNT + 1);
     localparam COMMIT_ALL_SIZEW = COMMIT_SIZEW + `ISSUE_WIDTH - 1;
 
     // commit arbitration
@@ -46,7 +47,7 @@ module VX_commit import VX_gpu_pkg::*; #(
 
     wire [`ISSUE_WIDTH-1:0] commit_fire;    
     wire [`ISSUE_WIDTH-1:0][`NW_WIDTH-1:0] commit_wid;
-    wire [`ISSUE_WIDTH-1:0][`NUM_THREADS-1:0] commit_tmask;
+    wire [`ISSUE_WIDTH-1:0][THREAD_CNT-1:0] commit_tmask;
     wire [`ISSUE_WIDTH-1:0] commit_eop;
 
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
@@ -92,7 +93,7 @@ module VX_commit import VX_gpu_pkg::*; #(
         );
 
         assign commit_fire[i]  = commit_if[i].valid && commit_if[i].ready;        
-        assign commit_tmask[i] = {`NUM_THREADS{commit_fire[i]}} & commit_if[i].data.tmask;
+        assign commit_tmask[i] = {THREAD_CNT{commit_fire[i]}} & commit_if[i].data.tmask;
         assign commit_wid[i]   = commit_if[i].data.wid;
         assign commit_eop[i]   = commit_if[i].data.eop;
     end
@@ -199,24 +200,24 @@ module VX_commit import VX_gpu_pkg::*; #(
         always @(posedge clk) begin
             if (alu_commit_if[i].valid && alu_commit_if[i].ready) begin
                 `TRACE(1, ("%d: core%0d-commit: wid=%0d, PC=0x%0h, ex=ALU, tmask=%b, wb=%0d, rd=%0d, sop=%b, eop=%b, data=", $time, CORE_ID, alu_commit_if[i].data.wid, alu_commit_if[i].data.PC, alu_commit_if[i].data.tmask, alu_commit_if[i].data.wb, alu_commit_if[i].data.rd, alu_commit_if[i].data.sop, alu_commit_if[i].data.eop));
-                `TRACE_ARRAY1D(1, alu_commit_if[i].data.data, `NUM_THREADS);
+                `TRACE_ARRAY1D(1, alu_commit_if[i].data.data, THREAD_CNT);
                 `TRACE(1, (" (#%0d)\n", alu_commit_if[i].data.uuid));
             end
             if (lsu_commit_if[i].valid && lsu_commit_if[i].ready) begin
                 `TRACE(1, ("%d: core%0d-commit: wid=%0d, PC=0x%0h, ex=LSU, tmask=%b, wb=%0d, rd=%0d, sop=%b, eop=%b, data=", $time, CORE_ID, lsu_commit_if[i].data.wid, lsu_commit_if[i].data.PC, lsu_commit_if[i].data.tmask, lsu_commit_if[i].data.wb, lsu_commit_if[i].data.rd, lsu_commit_if[i].data.sop, lsu_commit_if[i].data.eop));
-                `TRACE_ARRAY1D(1, lsu_commit_if[i].data.data, `NUM_THREADS);
+                `TRACE_ARRAY1D(1, lsu_commit_if[i].data.data, THREAD_CNT);
                 `TRACE(1, (" (#%0d)\n", lsu_commit_if[i].data.uuid));
             end
         `ifdef EXT_F_ENABLE
             if (fpu_commit_if[i].valid && fpu_commit_if[i].ready) begin
                 `TRACE(1, ("%d: core%0d-commit: wid=%0d, PC=0x%0h, ex=FPU, tmask=%b, wb=%0d, rd=%0d, sop=%b, eop=%b, data=", $time, CORE_ID, fpu_commit_if[i].data.wid, fpu_commit_if[i].data.PC, fpu_commit_if[i].data.tmask, fpu_commit_if[i].data.wb, fpu_commit_if[i].data.rd, fpu_commit_if[i].data.sop, fpu_commit_if[i].data.eop));
-                `TRACE_ARRAY1D(1, fpu_commit_if[i].data.data, `NUM_THREADS);
+                `TRACE_ARRAY1D(1, fpu_commit_if[i].data.data, THREAD_CNT);
                 `TRACE(1, (" (#%0d)\n", fpu_commit_if[i].data.uuid));
             end
         `endif
             if (sfu_commit_if[i].valid && sfu_commit_if[i].ready) begin
                 `TRACE(1, ("%d: core%0d-commit: wid=%0d, PC=0x%0h, ex=SFU, tmask=%b, wb=%0d, rd=%0d, sop=%b, eop=%b, data=", $time, CORE_ID, sfu_commit_if[i].data.wid, sfu_commit_if[i].data.PC, sfu_commit_if[i].data.tmask, sfu_commit_if[i].data.wb, sfu_commit_if[i].data.rd, sfu_commit_if[i].data.sop, sfu_commit_if[i].data.eop));
-                `TRACE_ARRAY1D(1, sfu_commit_if[i].data.data, `NUM_THREADS);
+                `TRACE_ARRAY1D(1, sfu_commit_if[i].data.data, THREAD_CNT);
                 `TRACE(1, (" (#%0d)\n", sfu_commit_if[i].data.uuid));
             end
         end

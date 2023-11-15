@@ -14,7 +14,8 @@
 `include "VX_define.vh"
 
 module VX_lsu_unit import VX_gpu_pkg::*; #(
-    parameter CORE_ID = 0
+    parameter CORE_ID = 0,
+    parameter THREAD_CNT = `NUM_THREADS
 ) (    
     `SCOPE_IO_DECL
 
@@ -32,7 +33,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
 );
     localparam BLOCK_SIZE   = 1;
     localparam NUM_LANES    = `NUM_LSU_LANES;
-    localparam PID_BITS     = `CLOG2(`NUM_THREADS / NUM_LANES);
+    localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
     localparam RSP_ARB_DATAW= `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
     localparam LSUQ_SIZEW   = `LOG2UP(`LSUQ_SIZE);
@@ -50,7 +51,8 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     VX_dispatch_unit #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
-        .OUT_REG    (1)
+        .OUT_REG    (1),
+        .THREAD_CNT(THREAD_CNT)
     ) dispatch_unit (
         .clk        (clk),
         .reset      (dispatch_reset),
@@ -570,7 +572,8 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     VX_gather_unit #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
-        .OUT_REG    (3)
+        .OUT_REG    (3),
+        .THREAD_CNT(THREAD_CNT)
     ) gather_unit (
         .clk           (clk),
         .reset         (commit_reset),

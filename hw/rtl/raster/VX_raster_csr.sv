@@ -18,7 +18,8 @@
 module VX_raster_csr import VX_raster_pkg::*; #( 
     parameter CORE_ID   = 0,
     parameter NUM_LANES = 1,
-    parameter PID_WIDTH = `LOG2UP(`NUM_THREADS / NUM_LANES)
+    parameter THREAD_CNT = THREAD_CNT,
+    parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES)
 ) (
     input wire clk,
     input wire reset,
@@ -38,14 +39,14 @@ module VX_raster_csr import VX_raster_pkg::*; #(
     `UNUSED_VAR (reset)
     localparam NUM_CSRS_BITS = `CLOG2(`VX_CSR_RASTER_COUNT);
 
-    raster_csrs_t [`NUM_THREADS-1:0] wdata;
-    raster_csrs_t [`NUM_THREADS-1:0] rdata;
-    reg [`NUM_THREADS-1:0]           write;
+    raster_csrs_t [THREAD_CNT-1:0] wdata;
+    raster_csrs_t [THREAD_CNT-1:0] rdata;
+    reg [THREAD_CNT-1:0]           write;
     reg [`NW_WIDTH-1:0]              waddr;
     wire [`NW_WIDTH-1:0]             raddr;
 
     // CSR registers
-    for (genvar i = 0; i < `NUM_THREADS; ++i) begin
+    for (genvar i = 0; i < THREAD_CNT; ++i) begin
         VX_dp_ram #(
             .DATAW  ($bits(raster_csrs_t)),
             .SIZE   (`NUM_WARPS),

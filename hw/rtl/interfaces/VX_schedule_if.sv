@@ -13,12 +13,12 @@
 
 `include "VX_define.vh"
 
-interface VX_schedule_if ();
+interface VX_schedule_if #(parameter THREAD_CNT = `NUM_THREADS) ();
 
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]     uuid;
         logic [`NW_WIDTH-1:0]       wid;
-        logic [`NUM_THREADS-1:0]    tmask;        
+        logic [`THREAD_CNT-1:0]    tmask;        
         logic [`XLEN-1:0]           PC;
     } data_t;
 

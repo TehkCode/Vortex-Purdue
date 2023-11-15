@@ -13,12 +13,12 @@
 
 `include "VX_define.vh"
 
-interface VX_operands_if import VX_gpu_pkg::*; ();
+interface VX_operands_if import VX_gpu_pkg::*; #(parameter THREAD_CNT = `NUM_THREADS)();
 
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]         uuid;
         logic [ISSUE_WIS_W-1:0]         wis;
-        logic [`NUM_THREADS-1:0]        tmask;
+        logic [THREAD_CNT-1:0]        tmask;
         logic [`XLEN-1:0]               PC;
         logic [`EX_BITS-1:0]            ex_type;
         logic [`INST_OP_BITS-1:0]       op_type;
@@ -28,9 +28,9 @@ interface VX_operands_if import VX_gpu_pkg::*; ();
         logic                           use_imm;
         logic [`XLEN-1:0]               imm;
         logic [`NR_BITS-1:0]            rd;
-        logic [`NUM_THREADS-1:0][`XLEN-1:0] rs1_data;
-        logic [`NUM_THREADS-1:0][`XLEN-1:0] rs2_data;
-        logic [`NUM_THREADS-1:0][`XLEN-1:0] rs3_data;
+        logic [THREAD_CNT-1:0][`XLEN-1:0] rs1_data;
+        logic [THREAD_CNT-1:0][`XLEN-1:0] rs2_data;
+        logic [THREAD_CNT-1:0][`XLEN-1:0] rs3_data;
     } data_t;
 
     logic  valid;
