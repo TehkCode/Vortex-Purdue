@@ -8,6 +8,8 @@ module VX_warp_sched #(
     input wire              clk,
     input wire              reset,
 
+    input wire [31:0]       PC_reset_val, // EDITED
+
     VX_warp_ctl_if.slave    warp_ctl_if,
     VX_wstall_if.slave      wstall_if,
     VX_join_if.slave        join_if,
@@ -73,7 +75,10 @@ module VX_warp_sched #(
             issued_instrs   <= '0;
 
             // activate first warp
-            warp_pcs[0]     <= `STARTUP_ADDR;
+
+            // warp_pcs[0]     <= `STARTUP_ADDR;
+            warp_pcs[0] <= PC_reset_val; // EDITED
+
             active_warps[0] <= 1;
             thread_masks[0] <= 1;
         end else begin            

@@ -55,7 +55,7 @@ module VX_tex_addr #(
     wire [`TEX_LGSTRIDE_BITS-1:0] log_stride, log_stride_s0;
     wire [NUM_REQS-1:0][31:0] mip_addr, mip_addr_s0;
     wire [NUM_REQS-1:0][PITCH_BITS-1:0] log_pitch, log_pitch_s0;
-    wire [NUM_REQS-1:0][PITCH_BITS-1:0] log_pitch, log_pitch_s0;
+    //wire [NUM_REQS-1:0][PITCH_BITS-1:0] log_pitch, log_pitch_s0;
     
     wire stall_out;
 

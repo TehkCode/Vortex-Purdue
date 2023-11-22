@@ -82,4 +82,29 @@ module VX_scoreboard  #(
         end
     end
 
+    `ifdef SV_TRACE_CORE_PIPELINE                 
+    int fp;                                                                               
+    initial begin 
+        fp = $fopen("VX_logfile.txt", "a");
+        if (fp) begin 
+            string format; 
+            forever begin 
+                @(posedge clk); 
+                if (~reset) begin 
+                    if (ibuffer_if.valid && ~ibuffer_if.ready) begin
+                        format = $sformatf("%d: *** core%0d-stall: wid=%0d, PC=%0h, rd=%0d, wb=%0d, inuse=%b%b%b%b (#%0d)\n", 
+                            $time, CORE_ID, ibuffer_if.wid, ibuffer_if.PC, ibuffer_if.rd, ibuffer_if.wb, 
+                            deq_inuse_rd, deq_inuse_rs1, deq_inuse_rs2, deq_inuse_rs3, ibuffer_if.uuid);
+                        `SV_TRACE(format, fp)
+                    end
+                end
+            end
+        end
+    end
+
+    final begin
+        $fclose(fp); 
+    end 
+    `endif
+
 endmodule

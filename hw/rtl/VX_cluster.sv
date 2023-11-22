@@ -9,6 +9,8 @@ module VX_cluster #(
     input  wire                             clk,
     input  wire                             reset,
 
+    input wire [31:0]                       PC_reset_val, // EDITED
+
     // Memory request
     output wire                             mem_req_valid,
     output wire                             mem_req_rw,    
@@ -55,6 +57,8 @@ module VX_cluster #(
 
             .clk            (clk),
             .reset          (core_reset),
+
+            .PC_reset_val   (PC_reset_val), // EDITED
 
             .mem_req_valid  (per_core_mem_req_valid[i]),
             .mem_req_rw     (per_core_mem_req_rw   [i]),                

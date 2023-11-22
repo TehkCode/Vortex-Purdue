@@ -1,4 +1,5 @@
 import binascii
+import argparse
 
 def bin_to_hex(binary_file_path, output_hex_path):
     with open(binary_file_path, 'rb') as infile, open(output_hex_path, 'w') as outfile:
@@ -74,5 +75,16 @@ def write_hex_record(outfile, address, data):
     outfile.write(':{:02X}{:04X}00{}{:02X}\n'.format(record_length, address, data, (0x100 - record_checksum) & 0xFF))
 
 if __name__ == '__main__':
-    # bin_to_hex('memtest.hex', 'meminit.hex')
-    large_hex_small_hex('memtest.hex', 'meminit.hex')
+    parser = argparse.ArgumentParser(description='Process into hex files')
+
+    parser.add_argument('InputFile', metavar='input', type=str, help='the input file')
+    parser.add_argument('OutputFile', metavar='output', type=str, nargs='?', default='meminit.hex', help='the output file (default: meminit.hex)')
+
+    args = parser.parse_args()
+
+    input_file = str(args.InputFile)
+    output_file = str(args.OutputFile)
+    
+    hex_to_hex(input_file, output_file)
+    # bin_to_hex(input_file, output_file)
+    # large_hex_small_hex(input_file, output_file)

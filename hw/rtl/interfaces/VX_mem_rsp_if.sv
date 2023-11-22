@@ -4,14 +4,14 @@
 `include "../cache/VX_cache_define.vh"
 
 interface VX_mem_rsp_if #(
-    parameter DATA_WIDTH = 1,
-    parameter TAG_WIDTH  = 1
+    parameter DATA_WIDTH = 512,
+    parameter TAG_WIDTH  = 8
 ) ();
 
-    wire                    valid;    
-    wire [DATA_WIDTH-1:0]   data;
-    wire [TAG_WIDTH-1:0]    tag;  
-    wire                    ready;  
+    logic                    valid;    
+    logic [DATA_WIDTH-1:0]   data;
+    logic [TAG_WIDTH-1:0]    tag;  
+    logic                    ready;  
 
     modport master (
         output valid,

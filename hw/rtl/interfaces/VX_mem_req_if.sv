@@ -4,19 +4,19 @@
 `include "../cache/VX_cache_define.vh"
 
 interface VX_mem_req_if #(
-    parameter DATA_WIDTH = 1,
-    parameter ADDR_WIDTH = 1,
-    parameter TAG_WIDTH  = 1,
+    parameter DATA_WIDTH = 512,
+    parameter ADDR_WIDTH = 26,
+    parameter TAG_WIDTH  = 8,
     parameter DATA_SIZE  = DATA_WIDTH / 8
 ) ();
 
-    wire                    valid;    
-    wire                    rw;    
-    wire [DATA_SIZE-1:0]    byteen;
-    wire [ADDR_WIDTH-1:0]   addr;
-    wire [DATA_WIDTH-1:0]   data;  
-    wire [TAG_WIDTH-1:0]    tag;  
-    wire                    ready;
+    logic                    valid;    
+    logic                    rw;    
+    logic [DATA_SIZE-1:0]    byteen;
+    logic [ADDR_WIDTH-1:0]   addr;
+    logic [DATA_WIDTH-1:0]   data;  
+    logic [TAG_WIDTH-1:0]    tag;  
+    logic                    ready;
 
     modport master (
         output valid,    

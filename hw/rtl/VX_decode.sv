@@ -3,6 +3,10 @@
 `include "VX_trace_instr.vh"
 `endif
 
+`ifdef SV_TRACE_CORE_PIPELINE
+`include "VX_sv_trace_instr.vh"
+`endif
+
 `ifdef EXT_F_ENABLE
     `define USED_IREG(r) \
         r``_r = {1'b0, ``r}
@@ -490,6 +494,34 @@ module VX_decode  #(
                 decode_if.op_mod, decode_if.tmask, decode_if.wb, decode_if.rd, decode_if.rs1, decode_if.rs2, decode_if.rs3, decode_if.imm, decode_if.use_PC, decode_if.use_imm, decode_if.uuid);
         end
     end
+`endif
+
+`ifdef SV_TRACE_CORE_PIPELINE                 
+int fp;                                                                               
+initial begin 
+    fp = $fopen("VX_logfile.txt", "a");
+    if (fp) begin 
+        string format; 
+        forever begin 
+            @(posedge clk); 
+            if (decode_if.valid && decode_if.ready) begin
+                format = $sformatf("%d: core%0d-decode: wid=%0d, PC=%0h, ex=", $time, CORE_ID, decode_if.wid, decode_if.PC);
+                `SV_TRACE(format, fp)
+                sv_trace_ex_type(decode_if.ex_type, .fp(fp));
+                format = $sformatf(", op=");
+                `SV_TRACE(format, fp)
+                sv_trace_ex_op(decode_if.ex_type, decode_if.op_type, decode_if.op_mod, .fp(fp));
+                format = $sformatf(", mod=%0d, tmask=%b, wb=%b, rd=%0d, rs1=%0d, rs2=%0d, rs3=%0d, imm=%0h, use_pc=%b, use_imm=%b (#%0d)\n",
+                    decode_if.op_mod, decode_if.tmask, decode_if.wb, decode_if.rd, decode_if.rs1, decode_if.rs2, decode_if.rs3, decode_if.imm, decode_if.use_PC, decode_if.use_imm, decode_if.uuid);
+                `SV_TRACE(format, fp)
+            end
+        end
+    end
+end
+
+final begin
+    $fclose(fp); 
+end 
 `endif
 
 endmodule

@@ -232,4 +232,25 @@ module VX_alu_unit #(
     end
 `endif
 
+`ifdef SV_TRACE_CORE_PIPELINE                 
+int fp;                                                                               
+initial begin 
+    fp = $fopen("VX_logfile.txt", "a");
+    if (fp) begin 
+        string format; 
+        forever begin 
+            @(posedge clk); 
+            if (branch_ctl_if.valid) begin
+                format = $sformatf("%d: core%0d-branch: wid=%0d, PC=%0h, taken=%b, dest=%0h (#%0d)\n", $time, CORE_ID, branch_ctl_if.wid, alu_commit_if.PC, branch_ctl_if.taken, branch_ctl_if.dest, alu_uuid);
+                `SV_TRACE(format, fp)
+            end
+        end
+    end
+end
+
+final begin
+    $fclose(fp); 
+end 
+`endif
+
 endmodule

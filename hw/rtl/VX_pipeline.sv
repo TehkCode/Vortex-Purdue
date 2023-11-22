@@ -9,6 +9,8 @@ module VX_pipeline #(
     input wire                              clk,
     input wire                              reset,
 
+    input wire [31:0]                       PC_reset_val, // EDITED
+
     // Dcache core request
     output wire [`NUM_THREADS-1:0]          dcache_req_valid,
     output wire [`NUM_THREADS-1:0]          dcache_req_rw,
@@ -149,6 +151,9 @@ module VX_pipeline #(
         `SCOPE_BIND_VX_pipeline_fetch
         .clk            (clk),
         .reset          (fetch_reset),
+
+        .PC_reset_val   (PC_reset_val), // EDITED
+
         .icache_req_if  (icache_req_if),
         .icache_rsp_if  (icache_rsp_if), 
         .wstall_if      (wstall_if),

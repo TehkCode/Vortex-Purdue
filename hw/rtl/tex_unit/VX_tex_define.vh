@@ -32,6 +32,7 @@
 `define TEX_FORMAT_L8       `TEX_FORMAT_BITS'(5)
 `define TEX_FORMAT_A8       `TEX_FORMAT_BITS'(6)
 
+`ifdef DBG_TRACE_TEX
 task trace_tex_state (
     input [`CSR_ADDR_BITS-1:0] state
 );
@@ -47,5 +48,6 @@ task trace_tex_state (
         default: dpi_trace("MIPOFF");
     endcase  
 endtask
+`endif
 
 `endif

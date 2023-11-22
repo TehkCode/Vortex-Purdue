@@ -308,7 +308,7 @@ module VX_lsu_unit #(
     `SCOPE_ASSIGN (dcache_rsp_data,  dcache_rsp_if.data);
     `SCOPE_ASSIGN (dcache_rsp_tag,   mbuf_raddr);
 
-`ifndef SYNTHESIS
+`ifndef VX_SYNTHESIS
     reg [`LSUQ_SIZE-1:0][(`NW_BITS + 32 + `NR_BITS + `UUID_BITS + 64 + 1)-1:0] pending_reqs;
     wire [63:0] delay_timeout = 10000 * (1 ** (`L2_ENABLE + `L3_ENABLE));
 
@@ -368,5 +368,60 @@ module VX_lsu_unit #(
         end
     end
 `endif
-    
+
+`ifdef SV_TRACE_CORE_DCACHE 
+    wire dcache_req_fire_any = (| dcache_req_fire);
+    int fp; 
+    initial begin 
+        fp = $fopen("VX_logfile.txt", "a");
+        if (fp) begin 
+            string format; 
+            forever begin 
+                @(posedge clk); 
+                if (lsu_req_if.valid && fence_wait) begin
+                    format = $sformatf("%d: *** D$%0d fence wait\n", $time, CORE_ID);
+                    `SV_TRACE(format, fp)
+                end
+                if (dcache_req_fire_any) begin
+                    if (dcache_req_if.rw[0]) begin
+                        format = $sformatf("%d: D$%0d Wr Req: wid=%0d, PC=%0h, tmask=%b, addr=", $time, CORE_ID, req_wid, req_pc, dcache_req_fire);
+                        `SV_TRACE(format, fp)
+                        `SV_TRACE_ARRAY1D(req_addr, `NUM_THREADS, fp)
+                        format = $sformatf(", tag=%0h, byteen=%0h, type=", req_tag, dcache_req_if.byteen);
+                        `SV_TRACE(format, fp)
+                        `SV_TRACE_ARRAY1D(req_addr_type, `NUM_THREADS, fp)
+                        format = $sformatf(", data=");
+                        `SV_TRACE(format, fp)
+                        `SV_TRACE_ARRAY1D(dcache_req_if.data, `NUM_THREADS, fp)
+                        format = $sformatf(", (#%0d)\n", req_uuid);
+                        `SV_TRACE(format, fp)
+                    end else begin
+                        format = $sformatf("%d: D$%0d Rd Req: prefetch=%b, wid=%0d, PC=%0h, tmask=%b, addr=", $time, CORE_ID, req_is_prefetch, req_wid, req_pc, dcache_req_fire);
+                        `SV_TRACE(format, fp)
+                        `SV_TRACE_ARRAY1D(req_addr, `NUM_THREADS, fp)
+                        format = $sformatf(", tag=%0h, byteen=%0h, type=", req_tag, dcache_req_if.byteen);
+                        `SV_TRACE(format, fp)
+                        `SV_TRACE_ARRAY1D(req_addr_type, `NUM_THREADS, fp)
+                        format = $sformatf(", rd=%0d, is_dup=%b (#%0d)\n", req_rd, req_is_dup, req_uuid);
+                        `SV_TRACE(format, fp)
+                    end
+                end
+                if (dcache_rsp_fire) begin
+                    format = $sformatf("%d: D$%0d Rsp: prefetch=%b, wid=%0d, PC=%0h, tmask=%b, tag=%0h, rd=%0d, data=", 
+                        $time, CORE_ID, rsp_is_prefetch, rsp_wid, rsp_pc, dcache_rsp_if.tmask, mbuf_raddr, rsp_rd);
+                    `SV_TRACE(format, fp)
+                    `SV_TRACE_ARRAY1D(dcache_rsp_if.data, `NUM_THREADS, fp)
+                    format = $sformatf(", is_dup=%b (#%0d)\n", rsp_is_dup, rsp_uuid);
+                    `SV_TRACE(format, fp)
+                end
+            end
+        end 
+    end 
+
+    final begin
+        $fclose(fp); 
+    end 
+
+`endif 
+
 endmodule

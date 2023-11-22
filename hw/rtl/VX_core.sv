@@ -9,6 +9,8 @@ module VX_core #(
     input  wire                             clk,
     input  wire                             reset,
 
+    input wire [31:0]                       PC_reset_val, // EDITED
+
     // Memory request
     output wire                             mem_req_valid,
     output wire                             mem_req_rw,    
@@ -89,6 +91,8 @@ module VX_core #(
 
         .clk(clk),
         .reset(reset),
+
+        .PC_reset_val(PC_reset_val), // EDITED
 
         // Dcache core request
         .dcache_req_valid   (dcache_req_if.valid),

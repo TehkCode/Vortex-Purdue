@@ -34,7 +34,7 @@ module VX_dp_ram #(
         end                                       \
     end
 
-`ifdef SYNTHESIS
+`ifdef VX_SYNTHESIS
     if (LUTRAM) begin
         if (OUT_REG) begin        
             reg [DATAW-1:0] rdata_r;

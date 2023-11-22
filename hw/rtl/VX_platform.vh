@@ -1,7 +1,7 @@
 `ifndef VX_PLATFORM
 `define VX_PLATFORM
 
-`ifndef SYNTHESIS
+`ifndef VX_SYNTHESIS
 `include "util_dpi.vh"
 `endif
 
@@ -9,7 +9,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-`ifndef SYNTHESIS
+`ifndef VX_SYNTHESIS
 
 `ifndef NDEBUG
     `define DEBUG_BLOCK(x) /* verilator lint_off UNUSED */ \

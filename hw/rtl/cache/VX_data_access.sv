@@ -1,4 +1,5 @@
 `include "VX_cache_define.vh"
+`include "VX_define.vh"
 
 module VX_data_access #(
     parameter CACHE_ID          = 0,
@@ -129,5 +130,34 @@ module VX_data_access #(
         end      
     end    
 `endif
+
+`ifdef SV_TRACE_CACHE_DATA
+int fp;                                                                               
+initial begin 
+    fp = $fopen("VX_logfile.txt", "a");
+    if (fp) begin 
+        string format; 
+        forever begin 
+            @(posedge clk); 
+            if (fill && ~stall) begin
+                format = $sformatf("%d: cache%0d:%0d data-fill: addr=%0h, blk_addr=%0d, data=%0h\n", $time, CACHE_ID, BANK_ID, `LINE_TO_BYTE_ADDR(addr, BANK_ID), line_addr, fill_data);
+                `SV_TRACE(format, fp)
+            end
+            if (read && ~stall) begin
+                format = $sformatf("%d: cache%0d:%0d data-read: addr=%0h, blk_addr=%0d, data=%0h (#%0d)\n", $time, CACHE_ID, BANK_ID, `LINE_TO_BYTE_ADDR(addr, BANK_ID), line_addr, read_data, req_id);
+                `SV_TRACE(format, fp)
+            end 
+            if (write && ~stall) begin
+                format = $sformatf("%d: cache%0d:%0d data-write: addr=%0h, byteen=%b, blk_addr=%0d, data=%0h (#%0d)\n", $time, CACHE_ID, BANK_ID, `LINE_TO_BYTE_ADDR(addr, BANK_ID), byteen, line_addr, write_data, req_id);
+                `SV_TRACE(format, fp)
+            end 
+        end
+    end
+end
+
+final begin
+    $fclose(fp); 
+end 
+`endif 
 
 endmodule

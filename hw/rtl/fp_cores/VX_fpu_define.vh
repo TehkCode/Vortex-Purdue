@@ -3,7 +3,7 @@
 
 `include "VX_define.vh"
 
-`ifndef SYNTHESIS
+`ifndef VX_SYNTHESIS
 `include "float_dpi.vh"
 `endif
 

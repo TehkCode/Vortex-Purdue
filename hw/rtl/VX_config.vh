@@ -27,14 +27,17 @@
 
 `ifndef L2_ENABLE
 `define L2_ENABLE 0
+// `define L2_ENABLE 1
 `endif
 
 `ifndef L3_ENABLE
 `define L3_ENABLE 0
+// `define L3_ENABLE 1
 `endif
 
 `ifndef SM_ENABLE
 `define SM_ENABLE 1
+// `define SM_ENABLE 0
 `endif
 
 `ifndef MEM_BLOCK_SIZE

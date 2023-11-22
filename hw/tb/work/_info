@@ -1,0 +1,174 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/asicfab/a/socet152/Vortex-Purdue/hw/tb
+T_opt
+!s110 1699988903
+VmYm<B;EP^kaC`VdVhmL`i0
+04 19 4 work Vortex_mem_slave_tb fast 0
+=1-70b5e8f06e3f-6553c5a7-4e796-15c1d
+o-quiet -auto_acc_if_foreign -work work
+Z1 tCvgOpt 0
+n@_opt
+OL;O;10.6b;65
+Ybus_protocol_if
+Z2 !s10a 1699172350
+Z3 DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
+Z4 !s110 1699982064
+!i10b 1
+!s100 TM[ZiFLFkh3mEX_6YVZ4g2
+IP?Bm0IANmE^NAiL8^506`0
+Z5 VDg1SIo80bB@j0V0VzS_@n1
+!s105 Vortex_mem_slave_vh_unit
+S1
+R0
+Z6 w1699172350
+8Vortex_mem_slave.vh
+FVortex_mem_slave.vh
+L0 17
+Z7 OL;L;10.6b;65
+r1
+!s85 0
+31
+Z8 !s108 1699982064.000000
+!s107 Vortex_mem_slave.vh|
+!s90 -sv|-work|work|-incr|-vopt|+define+SYNTHESIS|+incdir+../include|Vortex_mem_slave.vh|
+!i113 0
+Z9 o-sv -work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z10 !s92 -sv -work work +define+SYNTHESIS +incdir+../include -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R1
+Xfpu_types
+Z11 !s10a 1699172338
+R3
+R4
+!i10b 1
+!s100 `CJo4@Oi?;WeU<j51n>U01
+ID4Ym0`8MK7?O9BKTKMcZP0
+VD4Ym0`8MK7?O9BKTKMcZP0
+S1
+R0
+Z12 w1699172338
+8../include/VX_fpu_types.vh
+F../include/VX_fpu_types.vh
+L0 6
+R7
+r1
+!s85 0
+31
+R8
+Z13 !s107 ../include/VX_gpu_types.vh|../include/VX_fpu_types.vh|../include/VX_sv_trace.vh|../include/VX_config.vh|../include/VX_scope.vh|../include/VX_platform.vh|../include/VX_define.vh|Vortex_mem_slave.vh|Vortex_mem_slave.sv|
+Z14 !s90 -sv|-work|work|-incr|-vopt|+define+SYNTHESIS|+incdir+../include|Vortex_mem_slave.sv|
+!i113 0
+R9
+R10
+R1
+Xgpu_types
+R11
+R3
+R4
+!i10b 1
+!s100 SLNNW?7KX5`nj3@:Le6XZ3
+IOG8ZnZdR:Q;a8Bdj5123H0
+VOG8ZnZdR:Q;a8Bdj5123H0
+S1
+R0
+R12
+8../include/VX_gpu_types.vh
+F../include/VX_gpu_types.vh
+L0 6
+R7
+r1
+!s85 0
+31
+R8
+R13
+R14
+!i113 0
+R9
+R10
+R1
+4test
+R2
+R3
+Z15 !s110 1699982065
+!i10b 1
+!s100 0=8OnOViOH71]FPchJnV21
+IfZ6_7bD]Y_41KZEghmfNP1
+R5
+Z16 !s105 Vortex_mem_slave_tb_sv_unit
+S1
+R0
+R6
+Z17 8Vortex_mem_slave_tb.sv
+Z18 FVortex_mem_slave_tb.sv
+L0 114
+R7
+r1
+!s85 0
+31
+Z19 !s108 1699982065.000000
+Z20 !s107 ../include/VX_gpu_types.vh|../include/VX_fpu_types.vh|../include/VX_sv_trace.vh|../include/VX_config.vh|../include/VX_scope.vh|../include/VX_platform.vh|../include/VX_define.vh|Vortex_mem_slave.vh|Vortex_mem_slave_tb.sv|
+Z21 !s90 -sv|-work|work|-incr|-vopt|+define+SYNTHESIS|+incdir+../include|Vortex_mem_slave_tb.sv|
+!i113 0
+R9
+R10
+R1
+vVortex_mem_slave
+R3
+!s110 1699988902
+!i10b 1
+!s100 =Ji6MVk195]81QzP9Ogkc2
+IXKmG_iAmP06z=g9fY5bI40
+R5
+!s105 Vortex_mem_slave_sv_unit
+S1
+R0
+w1699988899
+8Vortex_mem_slave.sv
+FVortex_mem_slave.sv
+L0 22
+R7
+r1
+!s85 0
+31
+!s108 1699988902.000000
+R13
+R14
+!i113 0
+R9
+R10
+R1
+n@vortex_mem_slave
+vVortex_mem_slave_tb
+R2
+R3
+R15
+!i10b 1
+!s100 0I7Y<Sl69kI>LQkBH[ONe0
+I=a;FN1[aR8H;cY8Xg;MLE2
+R5
+R16
+S1
+R0
+R6
+R17
+R18
+L0 16
+R7
+r1
+!s85 0
+31
+R19
+R20
+R21
+!i113 0
+R9
+R10
+R1
+n@vortex_mem_slave_tb

@@ -8,6 +8,8 @@ module VX_fetch #(
     input wire clk,
     input wire reset,
 
+    input wire [31:0] PC_reset_val, // EDITED
+
     // Icache interface
     VX_icache_req_if.master icache_req_if,
     VX_icache_rsp_if.slave  icache_rsp_if,
@@ -37,6 +39,8 @@ module VX_fetch #(
 
         .clk              (clk),
         .reset            (reset),     
+
+        .PC_reset_val     (PC_reset_val), // EDITED
 
         .warp_ctl_if      (warp_ctl_if),
         .wstall_if        (wstall_if),

@@ -35,7 +35,7 @@ WRAPPER_CONDENSED_WAVE:= $(WAVE_DIR)/VX_wrapper_condensed_waves.do
 
 # Additional files 
 ADD_INCL += $(INCL)
-ADD_RTL += tb/local_mem.sv tb/Vortex_mem_slave.sv tb/Vortex_mem_slave_condensed.sv tb/Vortex_wrapper_no_Vortex_condensed.sv rtl/Vortex_wrapper_condensed.sv tb/Vortex_mem_slave.vh tb/VX_ahb_adapter.sv tb/counter.sv tb/Vortex_wrapper_no_Vortex.sv rtl/Vortex_wrapper.sv
+ADD_RTL += tb/Vortex_mem_slave.sv tb/Vortex_mem_slave_condensed.sv tb/Vortex_wrapper_no_Vortex_condensed.sv rtl/Vortex_wrapper_condensed.sv tb/Vortex_mem_slave.vh tb/VX_ahb_adapter.sv tb/counter.sv tb/Vortex_wrapper_no_Vortex.sv rtl/Vortex_wrapper.sv
 
 #Macros
 MACROS := +define+VX_SYNTHESIS +define+FPU_FPNEW +define+VX_TOP_TRACE +define+SV_TRACE_EN +define+SV_TRACE_CORE_PIPELINE +define+SV_TRACE_CORE_DCACHE +define+SV_TRACE_CACHE_DATA +define+EXT_TEX_ENABLE
@@ -100,8 +100,6 @@ RTL_FILES += $(wildcard $(TEX_UNIT_DIR)/*.sv)
 
 
 WORKDIR := work
-#  "/home/asicfab/a/socet152/vortex"
-# work
 
 # Compiler/simulator options
 VSIMOPTS := -lib $(WORKDIR)

@@ -2,3 +2,5 @@
 .DS_Store
 hw/rtl/.DS_Store
 third_party/cocogfx
+hw/log.txt
+.wlf
