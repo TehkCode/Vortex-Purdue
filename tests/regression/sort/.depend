@@ -1,0 +1,6 @@
+<<<<<<< HEAD
+main.o: main.cpp /home/anu/vortextry3/vortex/runtime/include/vortex.h \
+ common.h
+=======
+main.o: main.cpp /home/anu/vortex/runtime/include/vortex.h common.h
+>>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
