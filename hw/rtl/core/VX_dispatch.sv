@@ -60,11 +60,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
  
     // ALU dispatch    
 
-<<<<<<< HEAD
     VX_operands_if #(.THREAD_CNT (THREAD_CNT)) alu_operands_if[`ISSUE_WIDTH]();
-=======
-    VX_operands_if alu_operands_if[`ISSUE_WIDTH]();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
         assign alu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_ALU);
@@ -90,11 +86,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 
     // LSU dispatch
 
-<<<<<<< HEAD
     VX_operands_if#(.THREAD_CNT (THREAD_CNT)) lsu_operands_if[`ISSUE_WIDTH]();
-=======
-    VX_operands_if lsu_operands_if[`ISSUE_WIDTH]();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
         assign lsu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_LSU);
@@ -122,11 +114,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 
 `ifdef EXT_F_ENABLE
 
-<<<<<<< HEAD
     VX_operands_if#(.THREAD_CNT (THREAD_CNT)) fpu_operands_if[`ISSUE_WIDTH]();
-=======
-    VX_operands_if fpu_operands_if[`ISSUE_WIDTH]();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
         assign fpu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_FPU);
@@ -152,16 +140,8 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 `endif
 
     // SFU dispatch
-
-<<<<<<< HEAD
     VX_operands_if#(.THREAD_CNT (THREAD_CNT)) sfu_operands_if[`ISSUE_WIDTH]();
-=======
-    VX_operands_if sfu_operands_if[`ISSUE_WIDTH]();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
-        assign sfu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_SFU);
-        assign sfu_operands_if[i].data = operands_if[i].data;
 
         `RESET_RELAY (sfu_reset, reset);
 

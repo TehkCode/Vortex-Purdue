@@ -189,11 +189,7 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
         .commit_csr_if  (commit_csr_if),
         .cycles         (sched_csr_if.cycles),
         .active_warps   (sched_csr_if.active_warps),
-<<<<<<< HEAD
         .thread_masksM   (sched_csr_if.thread_masks),
-=======
-        .thread_masks   (sched_csr_if.thread_masks),
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     
     `ifdef EXT_F_ENABLE
         .fpu_to_csr_if  (fpu_to_csr_if), 

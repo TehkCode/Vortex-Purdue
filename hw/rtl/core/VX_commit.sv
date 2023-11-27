@@ -43,11 +43,7 @@ module VX_commit import VX_gpu_pkg::*; #(
 
     // commit arbitration
 
-<<<<<<< HEAD
     VX_commit_if#(.THREAD_CNT (THREAD_CNT)) commit_if[`ISSUE_WIDTH]();
-=======
-    VX_commit_if commit_if[`ISSUE_WIDTH]();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
     wire [`ISSUE_WIDTH-1:0] commit_fire;    
     wire [`ISSUE_WIDTH-1:0][`NW_WIDTH-1:0] commit_wid;

@@ -37,15 +37,9 @@ module VX_issue #(
 `endif
     VX_dispatch_if.master   sfu_dispatch_if [`ISSUE_WIDTH]
 );
-<<<<<<< HEAD
     VX_ibuffer_if#(.THREAD_CNT (THREAD_CNT))  ibuffer_if [`ISSUE_WIDTH]();
     VX_ibuffer_if#(.THREAD_CNT (THREAD_CNT))  scoreboard_if [`ISSUE_WIDTH]();
     VX_operands_if#(.THREAD_CNT (THREAD_CNT)) operands_if [`ISSUE_WIDTH]();
-=======
-    VX_ibuffer_if  ibuffer_if [`ISSUE_WIDTH]();
-    VX_ibuffer_if  scoreboard_if [`ISSUE_WIDTH]();
-    VX_operands_if operands_if [`ISSUE_WIDTH]();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
     `RESET_RELAY (ibuf_reset, reset);
     `RESET_RELAY (scoreboard_reset, reset);
@@ -63,12 +57,8 @@ module VX_issue #(
     );
 
     VX_scoreboard #(
-<<<<<<< HEAD
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT)
-=======
-        .CORE_ID (CORE_ID)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) scoreboard (
         .clk            (clk),
         .reset          (scoreboard_reset),

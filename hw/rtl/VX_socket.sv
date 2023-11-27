@@ -167,11 +167,7 @@ module VX_socket import VX_gpu_pkg::*; #(
 `endif
 
     ///////////////////////////////////////////////////////////////////////////
-<<<<<<< HEAD
     // They are wittling down 4 cores' requests to 1 outgoing request
-=======
-
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     VX_mem_bus_if #(
         .DATA_SIZE (DCACHE_WORD_SIZE), 
         .TAG_WIDTH (DCACHE_NOSM_TAG_WIDTH)
@@ -256,21 +252,14 @@ module VX_socket import VX_gpu_pkg::*; #(
     wire [`SOCKET_SIZE-1:0] per_core_busy;
 
     `BUFFER_DCR_BUS_IF (core_dcr_bus_if, dcr_bus_if, (`SOCKET_SIZE > 1));
-<<<<<<< HEAD
     localparam NUM_VEC_CORES = `UP(`NUM_CORES/2);
     
     `SCOPE_IO_SWITCH (`SOCKET_SIZE)
     
-=======
-
-    `SCOPE_IO_SWITCH (`SOCKET_SIZE)
-
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     // Generate all cores
     for (genvar i = 0; i < `SOCKET_SIZE; ++i) begin
 
         `RESET_RELAY (core_reset, reset);
-<<<<<<< HEAD
         if(((SOCKET_ID * `SOCKET_SIZE) + i)>=NUM_VEC_CORES) begin
                 VX_core #(
                 .CORE_ID ((SOCKET_ID * `SOCKET_SIZE) + i),
@@ -327,12 +316,6 @@ module VX_socket import VX_gpu_pkg::*; #(
         VX_core #(
             .CORE_ID ((SOCKET_ID * `SOCKET_SIZE) + i),
             .THREAD_CNT(`NUM_THREADS)
-=======
-
-        VX_core #(
-            .CORE_ID ((SOCKET_ID * `SOCKET_SIZE) + i),
-            .THREAD_CNT(4)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
         ) core (
             `SCOPE_IO_BIND  (i)
 
@@ -381,7 +364,6 @@ module VX_socket import VX_gpu_pkg::*; #(
             .sim_wb_value   (per_core_sim_wb_value[i]),
             .busy           (per_core_busy[i])
         );
-<<<<<<< HEAD
         end
     end
 
@@ -442,10 +424,6 @@ module VX_socket import VX_gpu_pkg::*; #(
     //     );
     //     end
 
-=======
-    end
-
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     `BUFFER_BUSY (busy, (| per_core_busy), (`SOCKET_SIZE > 1));
     
 endmodule

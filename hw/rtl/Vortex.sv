@@ -132,11 +132,7 @@ module Vortex import VX_gpu_pkg::*; (
         .TAG_WIDTH (L2_MEM_TAG_WIDTH)
     ) per_cluster_mem_bus_if[`NUM_CLUSTERS]();        
 
-<<<<<<< HEAD
     VX_dcr_bus_if dcr_bus_if(); // device control register bus ?
-=======
-    VX_dcr_bus_if dcr_bus_if();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     assign dcr_bus_if.write_valid = dcr_wr_valid;
     assign dcr_bus_if.write_addr  = dcr_wr_addr;
     assign dcr_bus_if.write_data  = dcr_wr_data;

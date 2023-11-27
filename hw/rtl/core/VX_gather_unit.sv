@@ -75,10 +75,7 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
     
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
         VX_commit_if #(
-<<<<<<< HEAD
             .THREAD_CNT (THREAD_CNT),
-=======
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
             .NUM_LANES (NUM_LANES)
         ) commit_tmp_if();
 

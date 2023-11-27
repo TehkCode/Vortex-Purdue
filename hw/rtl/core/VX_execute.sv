@@ -119,12 +119,8 @@ module VX_execute import VX_gpu_pkg::*; #(
     `RESET_RELAY (fpu_reset, reset);
 
     VX_fpu_unit #(
-<<<<<<< HEAD
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT)
-=======
-        .CORE_ID (CORE_ID)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) fpu_unit (
         .clk            (clk),
         .reset          (fpu_reset),    
@@ -135,12 +131,8 @@ module VX_execute import VX_gpu_pkg::*; #(
 `endif
 
     VX_sfu_unit #(
-<<<<<<< HEAD
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT)
-=======
-        .CORE_ID (CORE_ID)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) sfu_unit (
         .clk            (clk),
         .reset          (sfu_reset),

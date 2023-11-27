@@ -321,12 +321,8 @@ module VX_cluster import VX_gpu_pkg::*; #(
     VX_mem_bus_if #(
         .DATA_SIZE (ICACHE_WORD_SIZE),
         .TAG_WIDTH (ICACHE_ARB_TAG_WIDTH)
-<<<<<<< HEAD
     ) per_socket_icache_bus_if[`NUM_SOCKETS](); 
     // can we change NUM_SOCKETS() formula to include scalar core count? 
-=======
-    ) per_socket_icache_bus_if[`NUM_SOCKETS]();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
     `RESET_RELAY (mem_unit_reset, reset);
 
@@ -367,11 +363,7 @@ module VX_cluster import VX_gpu_pkg::*; #(
 
         .mem_bus_if         (mem_bus_if)
     );
-<<<<<<< HEAD
     // This mem unit creates the cache, so One set of cache within a cluster? 
-=======
-
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ///////////////////////////////////////////////////////////////////////////
 
     wire [`NUM_SOCKETS-1:0] per_socket_sim_ebreak;

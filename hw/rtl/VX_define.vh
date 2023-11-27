@@ -238,11 +238,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-<<<<<<< HEAD
 `define NUM_SOCKETS            `UP(`NUM_CORES / `SOCKET_SIZE)
-=======
-`define NUM_SOCKETS             `UP(`NUM_CORES / `SOCKET_SIZE)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
 ////////////////////////// Texture Unit Definitions ///////////////////////////
 

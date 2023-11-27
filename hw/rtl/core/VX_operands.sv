@@ -15,11 +15,7 @@
 
 module VX_operands import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-<<<<<<< HEAD
     parameter CACHE_ENABLE = 0,
-=======
-    parameter CACHE_ENABLE = ,
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     parameter THREAD_CNT = `NUM_THREADS
 ) (
     input wire              clk,
@@ -63,11 +59,7 @@ module VX_operands import VX_gpu_pkg::*; #(
         wire is_rs2_zero = (scoreboard_if[i].data.rs2 == 0);
         wire is_rs3_zero = (scoreboard_if[i].data.rs3 == 0);        
 
-<<<<<<< HEAD
         VX_operands_if#(.THREAD_CNT (THREAD_CNT)) staging_if();
-=======
-        VX_operands_if staging_if();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
         always @(*) begin
             state_n      = state;

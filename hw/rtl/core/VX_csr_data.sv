@@ -23,11 +23,7 @@ import VX_gpu_pkg::*;
 import VX_fpu_pkg::*;
 `endif
 #(
-<<<<<<< HEAD
     parameter CORE_ID = 0,
-=======
-    parameter CORE_ID = 0
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     parameter THREAD_CNT = `NUM_THREADS
 ) (
     input wire                          clk,
@@ -61,11 +57,7 @@ import VX_fpu_pkg::*;
 
     input wire [`PERF_CTR_BITS-1:0]     cycles,
     input wire [`NUM_WARPS-1:0]         active_warps,
-<<<<<<< HEAD
     input wire [`NUM_WARPS-1:0][THREAD_CNT-1:0] thread_masksM,
-=======
-    input wire [`NUM_WARPS-1:0][THREAD_CNT-1:0] thread_masks,
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
     input wire                          read_enable,
     input wire [`UUID_WIDTH-1:0]        read_uuid,
@@ -175,11 +167,7 @@ import VX_fpu_pkg::*;
         `endif
             `VX_CSR_WARP_ID    : read_data_ro_r = 32'(read_wid);
             `VX_CSR_CORE_ID    : read_data_ro_r = 32'(CORE_ID);
-<<<<<<< HEAD
             `VX_CSR_THREAD_MASK: read_data_ro_r = 32'(thread_masksM[read_wid]);
-=======
-            `VX_CSR_THREAD_MASK: read_data_ro_r = 32'(thread_masks[read_wid]);
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
             `VX_CSR_WARP_MASK  : read_data_ro_r = 32'(active_warps);
             `VX_CSR_NUM_THREADS: read_data_ro_r = 32'(THREAD_CNT);
             `VX_CSR_NUM_WARPS  : read_data_ro_r = 32'(`NUM_WARPS);

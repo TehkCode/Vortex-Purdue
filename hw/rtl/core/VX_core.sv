@@ -85,13 +85,8 @@ module VX_core import VX_gpu_pkg::*; #(
     output wire             busy
 );
     VX_schedule_if #(.THREAD_CNT(THREAD_CNT))      schedule_if();
-<<<<<<< HEAD
     VX_fetch_if #(.THREAD_CNT(THREAD_CNT))        fetch_if();
     VX_decode_if  #(.THREAD_CNT(THREAD_CNT))      decode_if();
-=======
-    VX_fetch_if         fetch_if();
-    VX_decode_if        decode_if();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     VX_sched_csr_if #(.THREAD_CNT(THREAD_CNT))    sched_csr_if();
     VX_decode_sched_if  decode_sched_if();
     VX_commit_sched_if  commit_sched_if();
@@ -99,7 +94,6 @@ module VX_core import VX_gpu_pkg::*; #(
     VX_branch_ctl_if    branch_ctl_if[`NUM_ALU_BLOCKS]();
     VX_warp_ctl_if      warp_ctl_if();    
     
-<<<<<<< HEAD
     VX_dispatch_if #(.THREAD_CNT(THREAD_CNT))     alu_dispatch_if[`ISSUE_WIDTH]();
     VX_commit_if   #(.THREAD_CNT(THREAD_CNT))     alu_commit_if[`ISSUE_WIDTH]();
 
@@ -111,19 +105,6 @@ module VX_core import VX_gpu_pkg::*; #(
 `endif
     VX_dispatch_if  #(.THREAD_CNT(THREAD_CNT))    sfu_dispatch_if[`ISSUE_WIDTH]();
     VX_commit_if #(.THREAD_CNT(THREAD_CNT))       sfu_commit_if[`ISSUE_WIDTH]();    
-=======
-    VX_dispatch_if      alu_dispatch_if[`ISSUE_WIDTH]();
-    VX_commit_if        alu_commit_if[`ISSUE_WIDTH]();
-
-    VX_dispatch_if      lsu_dispatch_if[`ISSUE_WIDTH]();
-    VX_commit_if        lsu_commit_if[`ISSUE_WIDTH]();
-`ifdef EXT_F_ENABLE 
-    VX_dispatch_if      fpu_dispatch_if[`ISSUE_WIDTH]();
-    VX_commit_if        fpu_commit_if[`ISSUE_WIDTH]();
-`endif
-    VX_dispatch_if      sfu_dispatch_if[`ISSUE_WIDTH]();
-    VX_commit_if        sfu_commit_if[`ISSUE_WIDTH]();    
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     
     VX_writeback_if #(.THREAD_CNT(THREAD_CNT))     writeback_if[`ISSUE_WIDTH]();
 
@@ -313,13 +294,8 @@ module VX_core import VX_gpu_pkg::*; #(
     );
 
     VX_smem_unit #(
-<<<<<<< HEAD
         .CORE_ID (CORE_ID)
     
-=======
-        .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) smem_unit (
         .clk                (clk),
         .reset              (reset),
@@ -329,11 +305,7 @@ module VX_core import VX_gpu_pkg::*; #(
     `endif
         .dcache_bus_in_if   (dcache_bus_tmp_if),
         .dcache_bus_out_if  (dcache_bus_if)
-<<<<<<< HEAD
     ); // SMEM - shared mem, combined L1D cache?
-=======
-    );
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
 `ifdef PERF_ENABLE
 

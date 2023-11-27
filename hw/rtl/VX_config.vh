@@ -68,12 +68,8 @@
 `endif
 
 `ifndef SOCKET_SIZE
-<<<<<<< HEAD
 // `define SOCKET_SIZE `MIN(4, `NUM_CORES)
 `define SOCKET_SIZE 1
-=======
-`define SOCKET_SIZE `MIN(4, `NUM_CORES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 `endif
 
 `ifdef L2_ENABLE

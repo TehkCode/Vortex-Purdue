@@ -32,11 +32,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     VX_commit_if.master     commit_if [`ISSUE_WIDTH]
 );
     localparam BLOCK_SIZE   = 1;
-<<<<<<< HEAD
     localparam NUM_LANES    = `MIN(`NUM_LSU_LANES,THREAD_CNT);//; //
-=======
-    localparam NUM_LANES    = `NUM_LSU_LANES;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
     localparam RSP_ARB_DATAW= `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
@@ -47,12 +43,8 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     localparam CACHE_TAG_WIDTH = `UUID_WIDTH + (NUM_LANES * `CACHE_ADDR_TYPE_BITS) + LSUQ_TAG_BITS;
 
     VX_execute_if #(
-<<<<<<< HEAD
         .NUM_LANES (NUM_LANES),
         .THREAD_CNT (THREAD_CNT)
-=======
-        .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) execute_if[BLOCK_SIZE]();
 
     `RESET_RELAY (dispatch_reset, reset);
@@ -70,7 +62,6 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     );
 
     VX_commit_if #(
-<<<<<<< HEAD
         .NUM_LANES (NUM_LANES),
         .THREAD_CNT (THREAD_CNT)
     ) commit_st_if();
@@ -78,13 +69,6 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     VX_commit_if #(
         .NUM_LANES (NUM_LANES),
         .THREAD_CNT (THREAD_CNT)
-=======
-        .NUM_LANES (NUM_LANES)
-    ) commit_st_if();
-    
-    VX_commit_if #(
-        .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) commit_ld_if();
     
     `UNUSED_VAR (execute_if[0].data.op_mod)     
@@ -159,7 +143,6 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
 
     // schedule memory request    
 
-<<<<<<< HEAD
     // wire                            mem_req_valid;
     // wire [NUM_LANES-1:0]            mem_req_mask;
     // wire                            mem_req_rw;  
@@ -183,25 +166,12 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     wire [`NUM_LSU_LANES-1:0][`MEM_ADDR_WIDTH-REQ_ASHIFT-1:0] mem_req_addr;
     reg  [`NUM_LSU_LANES-1:0][DCACHE_WORD_SIZE-1:0] mem_req_byteen;
     reg  [`NUM_LSU_LANES-1:0][`XLEN-1:0] mem_req_data;
-=======
-    wire                            mem_req_valid;
-    wire [NUM_LANES-1:0]            mem_req_mask;
-    wire                            mem_req_rw;  
-    wire [NUM_LANES-1:0][`MEM_ADDR_WIDTH-REQ_ASHIFT-1:0] mem_req_addr;
-    reg  [NUM_LANES-1:0][DCACHE_WORD_SIZE-1:0] mem_req_byteen;
-    reg  [NUM_LANES-1:0][`XLEN-1:0] mem_req_data;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     wire [TAG_WIDTH-1:0]            mem_req_tag;
     wire                            mem_req_ready;
 
     wire                            mem_rsp_valid;
-<<<<<<< HEAD
     wire [`NUM_LSU_LANES-1:0]            mem_rsp_mask;
     wire [`NUM_LSU_LANES-1:0][`XLEN-1:0] mem_rsp_data;
-=======
-    wire [NUM_LANES-1:0]            mem_rsp_mask;
-    wire [NUM_LANES-1:0][`XLEN-1:0] mem_rsp_data;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     wire [TAG_WIDTH-1:0]            mem_rsp_tag;
     wire                            mem_rsp_sop;
     wire                            mem_rsp_eop;
@@ -394,10 +364,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
         // Input request
         .req_valid      (mem_req_valid),
         .req_rw         (mem_req_rw),
-<<<<<<< HEAD
         // .req_mask       ({{(`NUM_LSU_LANES-NUM_LANES){1'b0}}, {mem_req_mask}}),
-=======
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
         .req_mask       (mem_req_mask),
         .req_byteen     (mem_req_byteen),
         .req_addr       (mem_req_addr),
@@ -560,11 +527,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
         end        
     end   
 
-<<<<<<< HEAD
     assign rsp_tmask = rsp_is_dup ? rsp_tmask_uq : mem_rsp_mask[NUM_LANES-1:0];
-=======
-    assign rsp_tmask = rsp_is_dup ? rsp_tmask_uq : mem_rsp_mask;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
     // load commit
 
@@ -608,12 +571,8 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     `RESET_RELAY (commit_reset, reset);
 
     VX_commit_if #(
-<<<<<<< HEAD
         .NUM_LANES (NUM_LANES),
         .THREAD_CNT (THREAD_CNT)
-=======
-        .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) commit_arb_if[1]();
 
     VX_stream_arb #(

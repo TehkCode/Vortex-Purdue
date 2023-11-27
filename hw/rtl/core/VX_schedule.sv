@@ -118,24 +118,15 @@ module VX_schedule import VX_gpu_pkg::*; #(
         
         // TMC handling
         if (warp_ctl_if.valid && warp_ctl_if.tmc.valid) begin
-<<<<<<< HEAD
             active_warps_n[warp_ctl_if.wid]  = (warp_ctl_if.tmc.tmask[THREAD_CNT-1:0] != 0);
             thread_masks_n[warp_ctl_if.wid]  = warp_ctl_if.tmc.tmask[THREAD_CNT-1:0];
-=======
-            active_warps_n[warp_ctl_if.wid]  = (warp_ctl_if.tmc.tmask != 0);
-            thread_masks_n[warp_ctl_if.wid]  = warp_ctl_if.tmc.tmask;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
             stalled_warps_n[warp_ctl_if.wid] = 0; // unlock warp
         end
         
         // split handling
         if (warp_ctl_if.valid && warp_ctl_if.split.valid) begin
             if (warp_ctl_if.split.is_dvg) begin
-<<<<<<< HEAD
                 thread_masks_n[warp_ctl_if.wid] = warp_ctl_if.split.then_tmask[THREAD_CNT-1:0];
-=======
-                thread_masks_n[warp_ctl_if.wid] = warp_ctl_if.split.then_tmask;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
             end
             stalled_warps_n[warp_ctl_if.wid] = 0; // unlock warp
         end
@@ -271,12 +262,8 @@ module VX_schedule import VX_gpu_pkg::*; #(
     `RESET_RELAY (split_join_reset, reset);
 
     VX_split_join #(
-<<<<<<< HEAD
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT)
-=======
-        .CORE_ID (CORE_ID)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) split_join (
         .clk        (clk),
         .reset      (split_join_reset),

@@ -15,12 +15,8 @@
 `include "VX_fpu_define.vh"
 
 module VX_fpu_unit import VX_fpu_pkg::*; #(
-<<<<<<< HEAD
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS
-=======
-    parameter CORE_ID = 0
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 ) (
     input wire clk,
     input wire reset,
@@ -32,7 +28,6 @@ module VX_fpu_unit import VX_fpu_pkg::*; #(
 );
     `UNUSED_PARAM (CORE_ID)
     localparam BLOCK_SIZE = `NUM_FPU_BLOCKS;
-<<<<<<< HEAD
     localparam NUM_LANES  = `UP(THREAD_CNT/2); //`NUM_FPU_LANES;
     localparam PID_BITS   = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH  = `UP(PID_BITS);
@@ -42,16 +37,6 @@ module VX_fpu_unit import VX_fpu_pkg::*; #(
     VX_execute_if #(
         .NUM_LANES (NUM_LANES),
         .THREAD_CNT(THREAD_CNT)
-=======
-    localparam NUM_LANES  = `NUM_FPU_LANES;
-    localparam PID_BITS   = `CLOG2(`NUM_THREADS / NUM_LANES);
-    localparam PID_WIDTH  = `UP(PID_BITS);
-    localparam TAG_WIDTH  = `LOG2UP(`FPU_REQ_QUEUE_SIZE);
-    localparam PARTIAL_BW = (BLOCK_SIZE != `ISSUE_WIDTH) || (NUM_LANES != `NUM_THREADS);
-
-    VX_execute_if #(
-        .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) execute_if[BLOCK_SIZE]();
 
     `RESET_RELAY (dispatch_reset, reset);
@@ -69,12 +54,8 @@ module VX_fpu_unit import VX_fpu_pkg::*; #(
     );
 
     VX_commit_if #(
-<<<<<<< HEAD
         .NUM_LANES (NUM_LANES),
         .THREAD_CNT(THREAD_CNT)
-=======
-        .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) commit_block_if[BLOCK_SIZE]();
 
     for (genvar block_idx = 0; block_idx < BLOCK_SIZE; ++block_idx) begin

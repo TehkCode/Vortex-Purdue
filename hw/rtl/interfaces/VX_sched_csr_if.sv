@@ -12,11 +12,7 @@
 // limitations under the License.
 
 `include "VX_define.vh"
-<<<<<<< HEAD
 // parameter THREAD_CNT = `NUM_THREADS
-=======
-
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 interface VX_sched_csr_if #(parameter THREAD_CNT = `NUM_THREADS)();
 
     wire [`PERF_CTR_BITS-1:0] cycles;

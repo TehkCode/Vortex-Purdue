@@ -30,11 +30,7 @@ module VX_scoreboard import VX_gpu_pkg::*; #(
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
         reg [`UP(ISSUE_RATIO)-1:0][`NUM_REGS-1:0] inuse_regs, inuse_regs_n;
         reg [3:0] ready_masks, ready_masks_n;        
-<<<<<<< HEAD
         VX_ibuffer_if #(.THREAD_CNT(THREAD_CNT)) staging_if();
-=======
-        VX_ibuffer_if staging_if();
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
         
         wire writeback_fire = writeback_if[i].valid && writeback_if[i].data.eop;
 

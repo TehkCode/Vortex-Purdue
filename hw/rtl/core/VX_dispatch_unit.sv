@@ -32,11 +32,7 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
 );
     `STATIC_ASSERT ((THREAD_CNT == NUM_LANES  * (THREAD_CNT / NUM_LANES)), ("invalid parameter"))
     localparam BLOCK_SIZE_W = `LOG2UP(BLOCK_SIZE);
-<<<<<<< HEAD
     localparam NUM_PACKETS  = `UP(THREAD_CNT / NUM_LANES);
-=======
-    localparam NUM_PACKETS  = THREAD_CNT / NUM_LANES;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     localparam PID_BITS     = `CLOG2(NUM_PACKETS);
     localparam PID_WIDTH    = `UP(PID_BITS);
     localparam BATCH_COUNT  = `ISSUE_WIDTH / BLOCK_SIZE;

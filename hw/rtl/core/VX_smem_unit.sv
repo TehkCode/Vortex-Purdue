@@ -15,10 +15,7 @@
 
 module VX_smem_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0
-<<<<<<< HEAD
     //parameter THREAD_CNT = `NUM_THREADS
-=======
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 ) (
     input wire              clk,
     input wire              reset,

@@ -118,13 +118,9 @@ int main(int argc, char *argv[]) {
   RT_CHECK(vx_dev_caps(device, VX_CAPS_NUM_WARPS, &num_warps));
   RT_CHECK(vx_dev_caps(device, VX_CAPS_NUM_THREADS, &num_threads));
 
-<<<<<<< HEAD
   uint32_t num_tasks_nonpriority = ((num_cores/2) * (num_warps) * num_threads);
   uint32_t num_tasks_priority = ((num_cores/2)*num_warps * 1);
   uint32_t num_tasks  = num_tasks_nonpriority + num_tasks_priority ;
-=======
-  uint32_t num_tasks  = (num_cores) * (2*num_warps) * num_threads;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   uint32_t num_points = count * num_tasks;
   uint32_t buf_size   = num_points * sizeof(int32_t);
 
@@ -142,12 +138,8 @@ int main(int argc, char *argv[]) {
   RT_CHECK(vx_mem_alloc(device, buf_size, VX_MEM_TYPE_GLOBAL, &kernel_arg.src1_addr));
   RT_CHECK(vx_mem_alloc(device, buf_size, VX_MEM_TYPE_GLOBAL, &kernel_arg.dst_addr));
 
-<<<<<<< HEAD
   kernel_arg.num_tasks_nonpriority = num_tasks_nonpriority;
   kernel_arg.num_tasks_priority = num_tasks_priority;
-=======
-  kernel_arg.num_tasks = num_tasks;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   kernel_arg.task_size = count;
 
   std::cout << "dev_src0=0x" << std::hex << kernel_arg.src0_addr << std::endl;

@@ -18,11 +18,7 @@ interface VX_ibuffer_if import VX_gpu_pkg::*; #(parameter THREAD_CNT = `NUM_THRE
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]     uuid;
         logic [ISSUE_WIS_W-1:0]     wis;
-<<<<<<< HEAD
         logic [THREAD_CNT-1:0]    tmask;
-=======
-        logic [`THREAD_CNT-1:0]    tmask;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
         logic [`EX_BITS-1:0]        ex_type;    
         logic [`INST_OP_BITS-1:0]   op_type;
         logic [`INST_MOD_BITS-1:0]  op_mod;    

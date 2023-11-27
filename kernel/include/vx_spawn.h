@@ -46,10 +46,7 @@ typedef void (*vx_serial_cb)(void *arg);
 void vx_wspawn_wait();
 
 void vx_spawn_kernel(context_t * ctx, vx_spawn_kernel_cb callback, void * arg);
-<<<<<<< HEAD
 void vx_spawn_priority_tasks(int num_tasks, int priority_task_offset,vx_spawn_tasks_cb callback , void * arg);
-=======
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
 void vx_spawn_tasks(int num_tasks, vx_spawn_tasks_cb callback, void * arg);
 

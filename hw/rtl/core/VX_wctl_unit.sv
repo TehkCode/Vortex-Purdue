@@ -15,11 +15,7 @@
 
 module VX_wctl_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-<<<<<<< HEAD
     parameter NUM_LANES = 1,
-=======
-    parameter NUM_LANES = ,
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     parameter THREAD_CNT = `NUM_THREADS
 ) (
     input wire              clk,

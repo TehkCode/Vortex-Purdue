@@ -28,11 +28,7 @@ module VX_muldiv_unit #(
     VX_commit_if.master commit_if
 );
     `UNUSED_PARAM (CORE_ID)
-<<<<<<< HEAD
     localparam PID_BITS  = `CLOG2(THREAD_CNT / NUM_LANES);
-=======
-    localparam PID_BITS  = `CLOG2(`THREAD_CNT / NUM_LANES);
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     localparam PID_WIDTH = `UP(PID_BITS);
     localparam TAGW = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + PID_WIDTH + 1 + 1;
 

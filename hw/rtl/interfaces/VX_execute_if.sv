@@ -14,14 +14,9 @@
 `include "VX_define.vh"
 
 interface VX_execute_if #(
-<<<<<<< HEAD
     parameter THREAD_CNT = `NUM_THREADS,
     parameter NUM_LANES = 1,
     parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES)
-=======
-    parameter NUM_LANES = 1,
-    parameter PID_WIDTH = `LOG2UP(`NUM_THREADS / NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 ) ();
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]         uuid;                
