@@ -12,15 +12,9 @@ Vortex is a full-stack open-source RISC-V GPGPU.
     - configurable number of cores, warps, and threads.
     - configurable number of ALU, FPU, LSU, and SFU units per core.
     - configurable pipeline issue width.
-<<<<<<< HEAD
     - optional shared memory, L1, L2, and L3 caches.
 - Software: 
     - OpenCL 1.2 Support.
-=======
-    - optional graphics rasterizer, texture, ands ROP units.
-    - optional shared memory, L1, L2 and L3 caches.
-- Software: OpenCL 1.2 Support.
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 - Supported FPGAs: 
     - Altera Arria 10
     - Altera Stratix 10
@@ -49,10 +43,6 @@ Vortex is a full-stack open-source RISC-V GPGPU.
 - [Verilator](https://www.veripool.org/verilator)
 - [FpNew](https://github.com/pulp-platform/fpnew.git)
 - [SoftFloat](https://github.com/ucb-bar/berkeley-softfloat-3.git)
-<<<<<<< HEAD
-=======
-- [CocoGfx](https://github.com/gtcasl/cocogfx.git)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 - [Ramulator](https://github.com/CMU-SAFARI/ramulator.git)
 - [Yosys](https://github.com/YosysHQ/yosys)
 - [Sv2v](https://github.com/zachjs/sv2v)
@@ -63,26 +53,11 @@ Vortex is a full-stack open-source RISC-V GPGPU.
     $ git clone --recursive https://github.com/vortexgpgpu/vortex.git
     $ cd Vortex
 ### Install prebuilt toolchain
-<<<<<<< HEAD
     By default, the toolchain will install to /opt folder. 
     You can install the toolchain to a different directory by overriding TOOLDIR (e.g. export TOOLDIR=$HOME/tools).
     
     $ ./ci/toolchain_install.sh --all
     $ source ./ci/toolchain_env.sh
-=======
-    $ ./ci/toolchain_install.sh --all
-
-    By default, the toolchain will install to /opt folder. 
-    You can install the toolchain to a different directory by overiding DESTDIR.
-
-    $ DESTDIR=$TOOLDIR ./ci/toolchain_install.sh --all
-    $ export VORTEX_HOME=$TOOLDIR/vortex
-    $ export LLVM_VORTEX=$TOOLDIR/llvm-vortex
-    $ export LLVM_POCL=$TOOLDIR/llvm-pocl
-    $ export RISCV_TOOLCHAIN_PATH=$TOOLDIR/riscv-gnu-toolchain
-    $ export VERILATOR_ROOT=$TOOLDIR/verilator
-    $ export PATH=$VERILATOR_ROOT/bin:$PATH 
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 ### Build Vortex sources
     $ make -s
 ### Quick demo running vecadd OpenCL kernel on 2 cores

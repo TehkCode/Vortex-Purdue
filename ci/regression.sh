@@ -22,10 +22,7 @@ rm -f blackbox.*.cache
 unittest() 
 {
 make -C tests/unittest run
-<<<<<<< HEAD
 make -C hw/unittest
-=======
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 }
 
 isa() 
@@ -339,10 +336,6 @@ echo "begin stress0 tests..."
 # test verilator reset values
 CONFIGS="-DVERILATOR_RESET_VALUE=1" ./ci/blackbox.sh --driver=opae --cores=2 --clusters=2 --l2cache --l3cache --app=dogfood
 CONFIGS="-DVERILATOR_RESET_VALUE=1" ./ci/blackbox.sh --driver=opae --cores=2 --clusters=2 --l2cache --l3cache --app=io_addr
-<<<<<<< HEAD
-=======
-CONFIGS="-DVERILATOR_RESET_VALUE=1 -DEXT_GFX_ENABLE" ./ci/blackbox.sh --driver=opae --cores=2 --clusters=2 --l2cache --l3cache --app=draw3d --args="-tbox.cgltrace -rbox_ref_128.png"
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 CONFIGS="-DVERILATOR_RESET_VALUE=1" ./ci/blackbox.sh --driver=opae --app=printf
 
 echo "stress0 tests done!"
@@ -364,29 +357,15 @@ echo "begin synthesis tests..."
 PREFIX=build_base make -C hw/syn/yosys clean
 PREFIX=build_base CONFIGS="-DDPI_DISABLE -DEXT_F_DISABLE" make -C hw/syn/yosys elaborate
 
-<<<<<<< HEAD
-=======
-PREFIX=build_gfx make -C hw/syn/yosys clean
-PREFIX=build_gfx CONFIGS="-DDPI_DISABLE -DEXT_GFX_ENABLE -DEXT_F_DISABLE" make -C hw/syn/yosys elaborate
-
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 echo "synthesis tests done!"
 }
 
 show_usage()
 {
     echo "Vortex Regression Test" 
-<<<<<<< HEAD
     echo "Usage: $0 [--unittest] [--isa] [--regression] [--opencl] [--cluster] [--debug] [--config] [--stress[#n]] [--synthesis] [--all] [--h|--help]"
-=======
-    echo "Usage: $0 [--unittest] [--isa] [--regression] [--opencl] [--tex] [--rop] [--raster] [--graphics] [--cluster] [--debug] [--config] [--stress[#n]] [--synthesis] [--all] [--h|--help]"
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 }
-
 start=$SECONDS
-
-while [ "$1" != "" ]; do
-    case $1 in
         --unittest ) unittest
                 ;;
         --isa ) isa
@@ -395,17 +374,6 @@ while [ "$1" != "" ]; do
                 ;;
         --opencl ) opencl
                 ;;
-<<<<<<< HEAD
-=======
-        --tex ) tex
-                ;;
-        --rop ) rop
-                ;;
-        --raster ) raster
-                ;;
-        --graphics ) graphics
-                ;;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
         --cluster ) cluster
                 ;;
         --debug ) debug
@@ -425,13 +393,6 @@ while [ "$1" != "" ]; do
                isa
                regression
                opencl
-<<<<<<< HEAD
-=======
-               graphics
-               tex
-               rop
-               raster               
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
                cluster
                debug
                config
