@@ -30,11 +30,7 @@ module VX_alu_unit #(
 
     `UNUSED_PARAM (CORE_ID)
     localparam BLOCK_SIZE   = `NUM_ALU_BLOCKS;
-<<<<<<< HEAD
     localparam NUM_LANES    = `UP(THREAD_CNT/2); //`MIN(`UP(THREAD_CNT/2),`NUM_ALU_LANES); // need to figure out what this does. 
-=======
-    localparam NUM_LANES    = `NUM_ALU_LANES; // need to figure out what this does. 
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
     localparam RSP_ARB_DATAW= `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
@@ -42,12 +38,8 @@ module VX_alu_unit #(
     localparam PARTIAL_BW   = (BLOCK_SIZE != `ISSUE_WIDTH) || (NUM_LANES != THREAD_CNT);
 
     VX_execute_if #(
-<<<<<<< HEAD
         .NUM_LANES (NUM_LANES),
         .THREAD_CNT (THREAD_CNT)
-=======
-        .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) execute_if[BLOCK_SIZE]();
 
     `RESET_RELAY (dispatch_reset, reset);
@@ -65,12 +57,8 @@ module VX_alu_unit #(
     );
 
     VX_commit_if #(
-<<<<<<< HEAD
         .NUM_LANES (NUM_LANES),
         .THREAD_CNT (THREAD_CNT)
-=======
-        .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     ) commit_block_if[BLOCK_SIZE]();
 
     for (genvar block_idx = 0; block_idx < BLOCK_SIZE; ++block_idx) begin
@@ -78,24 +66,16 @@ module VX_alu_unit #(
         wire is_muldiv_op;
 
         VX_execute_if #(
-<<<<<<< HEAD
             .NUM_LANES (NUM_LANES),
         .THREAD_CNT (THREAD_CNT)
-=======
-            .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
         ) int_execute_if();
 
         assign int_execute_if.valid = execute_if[block_idx].valid && ~is_muldiv_op;
         assign int_execute_if.data = execute_if[block_idx].data;
 
         VX_commit_if #(
-<<<<<<< HEAD
             .NUM_LANES (NUM_LANES),
         .THREAD_CNT (THREAD_CNT)
-=======
-            .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
         ) int_commit_if();
 
         `RESET_RELAY (int_reset, reset);
@@ -120,24 +100,16 @@ module VX_alu_unit #(
         `RESET_RELAY (mdv_reset, reset);
 
         VX_execute_if #(
-<<<<<<< HEAD
             .NUM_LANES (NUM_LANES),
         .THREAD_CNT (THREAD_CNT)
-=======
-            .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
         ) mdv_execute_if();
         
         assign mdv_execute_if.valid = execute_if[block_idx].valid && is_muldiv_op;
         assign mdv_execute_if.data = execute_if[block_idx].data;
 
         VX_commit_if #(
-<<<<<<< HEAD
             .NUM_LANES (NUM_LANES),
         .THREAD_CNT (THREAD_CNT)
-=======
-            .NUM_LANES (NUM_LANES)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
         ) mdv_commit_if();
 
         VX_muldiv_unit #(

@@ -23,27 +23,6 @@ void DCRS::write(uint32_t addr, uint32_t value) {
       return;
   }
 
-<<<<<<< HEAD
-=======
-  if (addr >= VX_DCR_TEX_STATE_BEGIN
-   && addr < VX_DCR_TEX_STATE_END) {
-      tex_dcrs.write(addr, value);
-      return;
-  }
-
-  if (addr >= VX_DCR_RASTER_STATE_BEGIN
-   && addr < VX_DCR_RASTER_STATE_END) { 
-    raster_dcrs.write(addr, value);
-    return;
-  }
-
-  if (addr >= VX_DCR_ROP_STATE_BEGIN
-   && addr < VX_DCR_ROP_STATE_END) {
-    rop_dcrs.write(addr, value);
-    return;
-  }
-
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   std::cout << std::hex << "Error: invalid global DCR addr=0x" << addr << std::endl;
   std::abort();
 }

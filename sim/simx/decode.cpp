@@ -405,32 +405,14 @@ static const char* op_string(const Instr &instr) {
       default:
         std::abort();
       }
-<<<<<<< HEAD
-=======
-    case 1:
-      switch (func3) {
-      case 0: return "RASTER";      
-      default:
-        std::abort();
-      }
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     default:
       std::abort();
     }
   case Opcode::EXT2:
     switch (func3) {
-<<<<<<< HEAD
     case 1: {
       switch (func2) {
       case 0: return "CMOV"; 
-=======
-    case 0:
-      return "TEX";
-    case 1: {
-      switch (func2) {
-      case 0: return "CMOV";
-      case 1: return "ROP";      
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
       default:
         std::abort();
       }
@@ -571,18 +553,6 @@ std::shared_ptr<Instr> Decoder::decode(uint32_t code) const {
           std::abort();
         }
         break;
-<<<<<<< HEAD
-=======
-      case 1:
-        switch (func3) {
-        case 0: // RASTER
-          instr->setDestReg(rd, RegType::Integer);
-          break;
-        default:
-          std::abort();
-        }
-        break;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
       default:
         std::abort();
       }
@@ -743,15 +713,6 @@ std::shared_ptr<Instr> Decoder::decode(uint32_t code) const {
   case R4_TYPE:
     if (op == Opcode::EXT2) {
       switch (func3) {
-<<<<<<< HEAD
-=======
-      case 0: // TEX      
-        instr->setDestReg(rd, RegType::Integer);
-        instr->addSrcReg(rs1, RegType::Integer);
-        instr->addSrcReg(rs2, RegType::Integer);
-        instr->addSrcReg(rs3, RegType::Integer);
-        break;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
       case 1:
         switch (func2) {
         case 0: // CMOV
@@ -760,14 +721,6 @@ std::shared_ptr<Instr> Decoder::decode(uint32_t code) const {
           instr->addSrcReg(rs2, RegType::Integer);
           instr->addSrcReg(rs3, RegType::Integer);
           break;
-<<<<<<< HEAD
-=======
-        case 1: // ROP
-          instr->addSrcReg(rs1, RegType::Integer);
-          instr->addSrcReg(rs2, RegType::Integer);
-          instr->addSrcReg(rs3, RegType::Integer);
-          break;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
         default:
           std::abort();
         }
@@ -789,9 +742,4 @@ std::shared_ptr<Instr> Decoder::decode(uint32_t code) const {
   }
 
   return instr;
-<<<<<<< HEAD
 }
-=======
-  
-}
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b

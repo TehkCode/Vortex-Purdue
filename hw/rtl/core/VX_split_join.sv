@@ -35,13 +35,8 @@ module VX_split_join import VX_gpu_pkg::*; #(
     wire [(`XLEN+THREAD_CNT)-1:0] ipdom_data [`NUM_WARPS-1:0];
     wire ipdom_set [`NUM_WARPS-1:0];
 
-<<<<<<< HEAD
     wire [(`XLEN+THREAD_CNT)-1:0] ipdom_q0 = {split.then_tmask[THREAD_CNT-1:0] | split.else_tmask[THREAD_CNT-1:0], `XLEN'(0)};
     wire [(`XLEN+THREAD_CNT)-1:0] ipdom_q1 = {split.else_tmask[THREAD_CNT-1:0], split.next_pc};
-=======
-    wire [(`XLEN+THREAD_CNT)-1:0] ipdom_q0 = {split.then_tmask | split.else_tmask, `XLEN'(0)};
-    wire [(`XLEN+THREAD_CNT)-1:0] ipdom_q1 = {split.else_tmask, split.next_pc};
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
     wire ipdom_push = valid && split.valid && split.is_dvg;
     wire ipdom_pop = valid && sjoin.valid && sjoin.is_dvg;

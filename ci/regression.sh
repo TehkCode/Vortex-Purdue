@@ -100,8 +100,6 @@ make -C tests/opencl run-rtlsim
 echo "opencl tests done!"
 }
 
-<<<<<<< HEAD
-=======
 tex() 
 {
 echo "begin texture tests..."

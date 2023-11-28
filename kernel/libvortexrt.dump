@@ -3647,63 +3647,6 @@ Disassembly of section .riscv.attributes:
 vx_spawn.c.o:     file format elf32-littleriscv
 
 
-<<<<<<< HEAD
-=======
-Disassembly of section .text.spawn_tasks_all_stub:
-
-00000000 <spawn_tasks_all_stub>:
-   0:	fe010113          	add	sp,sp,-32
-   4:	00112e23          	sw	ra,28(sp)
-   8:	00812c23          	sw	s0,24(sp)
-   c:	00912a23          	sw	s1,20(sp)
-  10:	01212823          	sw	s2,16(sp)
-  14:	01312623          	sw	s3,12(sp)
-  18:	fc002573          	csrr	a0,0xfc0
-  1c:	cc202773          	csrr	a4,0xcc2
-  20:	cc1026f3          	csrr	a3,0xcc1
-  24:	cc002673          	csrr	a2,0xcc0
-  28:	00000797          	auipc	a5,0x0
-  2c:	00078793          	mv	a5,a5
-  30:	00271713          	sll	a4,a4,0x2
-  34:	00e787b3          	add	a5,a5,a4
-  38:	0007a703          	lw	a4,0(a5) # 28 <spawn_tasks_all_stub+0x28>
-  3c:	01072783          	lw	a5,16(a4)
-  40:	00c72583          	lw	a1,12(a4)
-  44:	00f6a4b3          	slt	s1,a3,a5
-  48:	02d58433          	mul	s0,a1,a3
-  4c:	00b484b3          	add	s1,s1,a1
-  50:	00f6d463          	bge	a3,a5,58 <.L2>
-  54:	00068793          	mv	a5,a3
-
-00000058 <.L2>:
-  58:	00f40433          	add	s0,s0,a5
-  5c:	00872683          	lw	a3,8(a4)
-  60:	00072983          	lw	s3,0(a4)
-  64:	00472903          	lw	s2,4(a4)
-  68:	02a40433          	mul	s0,s0,a0
-  6c:	02c487b3          	mul	a5,s1,a2
-  70:	00d40433          	add	s0,s0,a3
-  74:	00f40433          	add	s0,s0,a5
-  78:	008484b3          	add	s1,s1,s0
-  7c:	00945c63          	bge	s0,s1,94 <.L1>
-
-00000080 <.L4>:
-  80:	00040513          	mv	a0,s0
-  84:	00090593          	mv	a1,s2
-  88:	00140413          	add	s0,s0,1
-  8c:	000980e7          	jalr	s3
-  90:	fe8498e3          	bne	s1,s0,80 <.L4>
-
-00000094 <.L1>:
-  94:	01c12083          	lw	ra,28(sp)
-  98:	01812403          	lw	s0,24(sp)
-  9c:	01412483          	lw	s1,20(sp)
-  a0:	01012903          	lw	s2,16(sp)
-  a4:	00c12983          	lw	s3,12(sp)
-  a8:	02010113          	add	sp,sp,32
-  ac:	00008067          	ret
-
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 Disassembly of section .text.spawn_tasks_rem_stub:
 
 00000000 <spawn_tasks_rem_stub>:
@@ -3720,23 +3663,6 @@ Disassembly of section .text.spawn_tasks_rem_stub:
   28:	00d50533          	add	a0,a0,a3
   2c:	00070067          	jr	a4
 
-<<<<<<< HEAD
-=======
-Disassembly of section .text.spawn_tasks_all_cb:
-
-00000000 <spawn_tasks_all_cb>:
-   0:	ff010113          	add	sp,sp,-16
-   4:	00112623          	sw	ra,12(sp)
-   8:	fff00793          	li	a5,-1
-   c:	0007800b          	.4byte	0x7800b
-  10:	00000097          	auipc	ra,0x0
-  14:	000080e7          	jalr	ra # 10 <spawn_tasks_all_cb+0x10>
-  18:	0000000b          	.4byte	0xb
-  1c:	00c12083          	lw	ra,12(sp)
-  20:	01010113          	add	sp,sp,16
-  24:	00008067          	ret
-
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 Disassembly of section .text.spawn_kernel_all_stub:
 
 00000000 <spawn_kernel_all_stub>:
@@ -3761,17 +3687,10 @@ Disassembly of section .text.spawn_kernel_all_stub:
   48:	00f72a33          	slt	s4,a4,a5
   4c:	02e60433          	mul	s0,a2,a4
   50:	00ca0a33          	add	s4,s4,a2
-<<<<<<< HEAD
   54:	00f75463          	bge	a4,a5,5c <.L4>
   58:	00070793          	mv	a5,a4
 
 0000005c <.L4>:
-=======
-  54:	00f75463          	bge	a4,a5,5c <.L12>
-  58:	00070793          	mv	a5,a4
-
-0000005c <.L12>:
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   5c:	00f40433          	add	s0,s0,a5
   60:	0004a583          	lw	a1,0(s1)
   64:	00c4a603          	lw	a2,12(s1)
@@ -3784,17 +3703,10 @@ Disassembly of section .text.spawn_kernel_all_stub:
   80:	00f40433          	add	s0,s0,a5
   84:	033909b3          	mul	s3,s2,s3
   88:	008a0a33          	add	s4,s4,s0
-<<<<<<< HEAD
   8c:	08070063          	beqz	a4,10c <.L5>
   90:	03444463          	blt	s0,s4,b8 <.L7>
 
 00000094 <.L3>:
-=======
-  8c:	08070063          	beqz	a4,10c <.L13>
-  90:	03444463          	blt	s0,s4,b8 <.L15>
-
-00000094 <.L11>:
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   94:	01c12083          	lw	ra,28(sp)
   98:	01812403          	lw	s0,24(sp)
   9c:	01412483          	lw	s1,20(sp)
@@ -3804,17 +3716,10 @@ Disassembly of section .text.spawn_kernel_all_stub:
   ac:	02010113          	add	sp,sp,32
   b0:	00008067          	ret
 
-<<<<<<< HEAD
 000000b4 <.L12>:
   b4:	0004a583          	lw	a1,0(s1)
 
 000000b8 <.L7>:
-=======
-000000b4 <.L20>:
-  b4:	0004a583          	lw	a1,0(s1)
-
-000000b8 <.L15>:
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   b8:	0194c703          	lbu	a4,25(s1)
   bc:	01a4c683          	lbu	a3,26(s1)
   c0:	0044a803          	lw	a6,4(s1)
@@ -3827,11 +3732,7 @@ Disassembly of section .text.spawn_kernel_all_stub:
   dc:	00140413          	add	s0,s0,1
   e0:	40c78633          	sub	a2,a5,a2
   e4:	000800e7          	jalr	a6
-<<<<<<< HEAD
   e8:	fc8a16e3          	bne	s4,s0,b4 <.L12>
-=======
-  e8:	fc8a16e3          	bne	s4,s0,b4 <.L20>
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   ec:	01c12083          	lw	ra,28(sp)
   f0:	01812403          	lw	s0,24(sp)
   f4:	01412483          	lw	s1,20(sp)
@@ -3841,7 +3742,6 @@ Disassembly of section .text.spawn_kernel_all_stub:
  104:	02010113          	add	sp,sp,32
  108:	00008067          	ret
 
-<<<<<<< HEAD
 0000010c <.L5>:
  10c:	01444663          	blt	s0,s4,118 <.L8>
  110:	f85ff06f          	j	94 <.L3>
@@ -3850,16 +3750,6 @@ Disassembly of section .text.spawn_kernel_all_stub:
  114:	0004a583          	lw	a1,0(s1)
 
 00000118 <.L8>:
-=======
-0000010c <.L13>:
- 10c:	01444663          	blt	s0,s4,118 <.L16>
- 110:	f85ff06f          	j	94 <.L11>
-
-00000114 <.L21>:
- 114:	0004a583          	lw	a1,0(s1)
-
-00000118 <.L16>:
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
  118:	03346633          	rem	a2,s0,s3
  11c:	0044a783          	lw	a5,4(s1)
  120:	0084a503          	lw	a0,8(s1)
@@ -3868,11 +3758,7 @@ Disassembly of section .text.spawn_kernel_all_stub:
  12c:	032646b3          	div	a3,a2,s2
  130:	03266633          	rem	a2,a2,s2
  134:	000780e7          	jalr	a5
-<<<<<<< HEAD
  138:	fc8a1ee3          	bne	s4,s0,114 <.L13>
-=======
- 138:	fc8a1ee3          	bne	s4,s0,114 <.L21>
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
  13c:	01c12083          	lw	ra,28(sp)
  140:	01812403          	lw	s0,24(sp)
  144:	01412483          	lw	s1,20(sp)
@@ -3899,11 +3785,7 @@ Disassembly of section .text.spawn_kernel_rem_stub:
   2c:	0045a883          	lw	a7,4(a1)
   30:	00d80833          	add	a6,a6,a3
   34:	031608b3          	mul	a7,a2,a7
-<<<<<<< HEAD
   38:	02070863          	beqz	a4,68 <.L15>
-=======
-  38:	02070863          	beqz	a4,68 <.L23>
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   3c:	0197c703          	lbu	a4,25(a5)
   40:	01a7c683          	lbu	a3,26(a5)
   44:	0047a303          	lw	t1,4(a5)
@@ -3916,11 +3798,7 @@ Disassembly of section .text.spawn_kernel_rem_stub:
   60:	40c80633          	sub	a2,a6,a2
   64:	00030067          	jr	t1
 
-<<<<<<< HEAD
 00000068 <.L15>:
-=======
-00000068 <.L23>:
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   68:	03186333          	rem	t1,a6,a7
   6c:	0047ae03          	lw	t3,4(a5)
   70:	0087a503          	lw	a0,8(a5)
@@ -3943,7 +3821,6 @@ Disassembly of section .text.spawn_kernel_all_cb:
   20:	01010113          	add	sp,sp,16
   24:	00008067          	ret
 
-<<<<<<< HEAD
 Disassembly of section .rodata.spawn_tasks_all_stub.str1.4:
 
 00000000 <.LC0>:
@@ -4926,128 +4803,12 @@ Disassembly of section .text.vx_spawn_priority_tasks:
  330:	07010113          	add	sp,sp,112
  334:	00000317          	auipc	t1,0x0
  338:	00030067          	jr	t1 # 334 <.L82+0x44>
-=======
-Disassembly of section .text.vx_spawn_tasks:
-
-00000000 <vx_spawn_tasks>:
-   0:	fd010113          	add	sp,sp,-48
-   4:	02112623          	sw	ra,44(sp)
-   8:	02812423          	sw	s0,40(sp)
-   c:	02912223          	sw	s1,36(sp)
-  10:	03212023          	sw	s2,32(sp)
-  14:	fc202873          	csrr	a6,0xfc2
-  18:	fc1026f3          	csrr	a3,0xfc1
-  1c:	fc002473          	csrr	s0,0xfc0
-  20:	cc202773          	csrr	a4,0xcc2
-  24:	3ff00793          	li	a5,1023
-  28:	08e7c063          	blt	a5,a4,a8 <.L26>
-  2c:	02d408b3          	mul	a7,s0,a3
-  30:	00100793          	li	a5,1
-  34:	00a8d463          	bge	a7,a0,3c <.L28>
-  38:	031547b3          	div	a5,a0,a7
-
-0000003c <.L28>:
-  3c:	08f84263          	blt	a6,a5,c0 <.L42>
-  40:	06f75463          	bge	a4,a5,a8 <.L26>
-
-00000044 <.L45>:
-  44:	fff78313          	add	t1,a5,-1
-  48:	02f548b3          	div	a7,a0,a5
-  4c:	00088813          	mv	a6,a7
-  50:	00e31663          	bne	t1,a4,5c <.L30>
-  54:	02f56533          	rem	a0,a0,a5
-  58:	01150833          	add	a6,a0,a7
-
-0000005c <.L30>:
-  5c:	028844b3          	div	s1,a6,s0
-  60:	02886933          	rem	s2,a6,s0
-  64:	06d4c463          	blt	s1,a3,cc <.L37>
-  68:	02d4c833          	div	a6,s1,a3
-  6c:	02d4e533          	rem	a0,s1,a3
-
-00000070 <.L31>:
-  70:	00000797          	auipc	a5,0x0
-  74:	00078793          	mv	a5,a5
-  78:	00b12623          	sw	a1,12(sp)
-  7c:	00c12823          	sw	a2,16(sp)
-  80:	01012c23          	sw	a6,24(sp)
-  84:	00a12e23          	sw	a0,28(sp)
-  88:	02e888b3          	mul	a7,a7,a4
-  8c:	00271713          	sll	a4,a4,0x2
-  90:	00e787b3          	add	a5,a5,a4
-  94:	00c10713          	add	a4,sp,12
-  98:	00e7a023          	sw	a4,0(a5) # 70 <.L31>
-  9c:	01112a23          	sw	a7,20(sp)
-  a0:	02904c63          	bgtz	s1,d8 <.L43>
-  a4:	06091863          	bnez	s2,114 <.L44>
-
-000000a8 <.L26>:
-  a8:	02c12083          	lw	ra,44(sp)
-  ac:	02812403          	lw	s0,40(sp)
-  b0:	02412483          	lw	s1,36(sp)
-  b4:	02012903          	lw	s2,32(sp)
-  b8:	03010113          	add	sp,sp,48
-  bc:	00008067          	ret
-
-000000c0 <.L42>:
-  c0:	00080793          	mv	a5,a6
-  c4:	f8f740e3          	blt	a4,a5,44 <.L45>
-  c8:	fe1ff06f          	j	a8 <.L26>
-
-000000cc <.L37>:
-  cc:	00000513          	li	a0,0
-  d0:	00100813          	li	a6,1
-  d4:	f9dff06f          	j	70 <.L31>
-
-000000d8 <.L43>:
-  d8:	00048793          	mv	a5,s1
-  dc:	0096d463          	bge	a3,s1,e4 <.L33>
-  e0:	00068793          	mv	a5,a3
-
-000000e4 <.L33>:
-  e4:	00000717          	auipc	a4,0x0
-  e8:	00070713          	mv	a4,a4
-  ec:	00e7900b          	.4byte	0xe7900b
-  f0:	fff00793          	li	a5,-1
-  f4:	0007800b          	.4byte	0x7800b
-  f8:	00000097          	auipc	ra,0x0
-  fc:	000080e7          	jalr	ra # f8 <.L33+0x14>
- 100:	00100513          	li	a0,1
- 104:	0005000b          	.4byte	0x5000b
- 108:	00000097          	auipc	ra,0x0
- 10c:	000080e7          	jalr	ra # 108 <.L33+0x24>
- 110:	f8090ce3          	beqz	s2,a8 <.L26>
-
-00000114 <.L44>:
- 114:	028484b3          	mul	s1,s1,s0
- 118:	01412703          	lw	a4,20(sp)
- 11c:	00100793          	li	a5,1
- 120:	012797b3          	sll	a5,a5,s2
- 124:	fff78793          	add	a5,a5,-1
- 128:	00970733          	add	a4,a4,s1
- 12c:	00e12a23          	sw	a4,20(sp)
- 130:	0007800b          	.4byte	0x7800b
- 134:	00000097          	auipc	ra,0x0
- 138:	000080e7          	jalr	ra # 134 <.L44+0x20>
- 13c:	00100513          	li	a0,1
- 140:	0005000b          	.4byte	0x5000b
- 144:	02c12083          	lw	ra,44(sp)
- 148:	02812403          	lw	s0,40(sp)
- 14c:	02412483          	lw	s1,36(sp)
- 150:	02012903          	lw	s2,32(sp)
- 154:	03010113          	add	sp,sp,48
- 158:	00008067          	ret
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
 Disassembly of section .text.vx_spawn_kernel:
 
 00000000 <vx_spawn_kernel>:
    0:	fd010113          	add	sp,sp,-48
-<<<<<<< HEAD
    4:	00052f83          	lw	t6,0(a0) # 328 <.L82+0x38>
-=======
-   4:	00052f83          	lw	t6,0(a0)
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
    8:	00452683          	lw	a3,4(a0)
    c:	00852803          	lw	a6,8(a0)
   10:	02112623          	sw	ra,44(sp)
@@ -5059,16 +4820,11 @@ Disassembly of section .text.vx_spawn_kernel:
   28:	fc002473          	csrr	s0,0xfc0
   2c:	cc202773          	csrr	a4,0xcc2
   30:	3ff00793          	li	a5,1023
-<<<<<<< HEAD
   34:	0ce7c663          	blt	a5,a4,100 <.L85>
-=======
-  34:	0ce7c663          	blt	a5,a4,100 <.L46>
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   38:	03f686b3          	mul	a3,a3,t6
   3c:	00100793          	li	a5,1
   40:	02d80833          	mul	a6,a6,a3
   44:	02888e33          	mul	t3,a7,s0
-<<<<<<< HEAD
   48:	010e5463          	bge	t3,a6,50 <.L87>
   4c:	03c847b3          	div	a5,a6,t3
 
@@ -5092,31 +4848,6 @@ Disassembly of section .text.vx_spawn_kernel:
   80:	0314eeb3          	rem	t4,s1,a7
 
 00000084 <.L90>:
-=======
-  48:	010e5463          	bge	t3,a6,50 <.L48>
-  4c:	03c847b3          	div	a5,a6,t3
-
-00000050 <.L48>:
-  50:	0cf34463          	blt	t1,a5,118 <.L62>
-  54:	0af75663          	bge	a4,a5,100 <.L46>
-
-00000058 <.L65>:
-  58:	fff78313          	add	t1,a5,-1
-  5c:	02f84e33          	div	t3,a6,a5
-  60:	000e0913          	mv	s2,t3
-  64:	00e31663          	bne	t1,a4,70 <.L50>
-  68:	02f86833          	rem	a6,a6,a5
-  6c:	01c80933          	add	s2,a6,t3
-
-00000070 <.L50>:
-  70:	028944b3          	div	s1,s2,s0
-  74:	02896933          	rem	s2,s2,s0
-  78:	0b14c663          	blt	s1,a7,124 <.L57>
-  7c:	0314cf33          	div	t5,s1,a7
-  80:	0314eeb3          	rem	t4,s1,a7
-
-00000084 <.L51>:
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   84:	d006f7d3          	fcvt.s.w	fa5,a3
   88:	fff68813          	add	a6,a3,-1
   8c:	00d876b3          	and	a3,a6,a3
@@ -5144,21 +4875,12 @@ Disassembly of section .text.vx_spawn_kernel:
   e4:	02ee0e33          	mul	t3,t3,a4
   e8:	00271713          	sll	a4,a4,0x2
   ec:	00e80733          	add	a4,a6,a4
-<<<<<<< HEAD
   f0:	00f72023          	sw	a5,0(a4)
   f4:	01c12823          	sw	t3,16(sp)
   f8:	02904c63          	bgtz	s1,130 <.L102>
   fc:	06091863          	bnez	s2,16c <.L103>
 
 00000100 <.L85>:
-=======
-  f0:	00f72023          	sw	a5,0(a4) # e4 <.L51+0x60>
-  f4:	01c12823          	sw	t3,16(sp)
-  f8:	02904c63          	bgtz	s1,130 <.L63>
-  fc:	06091863          	bnez	s2,16c <.L64>
-
-00000100 <.L46>:
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
  100:	02c12083          	lw	ra,44(sp)
  104:	02812403          	lw	s0,40(sp)
  108:	02412483          	lw	s1,36(sp)
@@ -5166,7 +4888,6 @@ Disassembly of section .text.vx_spawn_kernel:
  110:	03010113          	add	sp,sp,48
  114:	00008067          	ret
 
-<<<<<<< HEAD
 00000118 <.L101>:
  118:	00030793          	mv	a5,t1
  11c:	f2f74ee3          	blt	a4,a5,58 <.L104>
@@ -5183,31 +4904,12 @@ Disassembly of section .text.vx_spawn_kernel:
  138:	00088793          	mv	a5,a7
 
 0000013c <.L92>:
-=======
-00000118 <.L62>:
- 118:	00030793          	mv	a5,t1
- 11c:	f2f74ee3          	blt	a4,a5,58 <.L65>
- 120:	fe1ff06f          	j	100 <.L46>
-
-00000124 <.L57>:
- 124:	00000e93          	li	t4,0
- 128:	00100f13          	li	t5,1
- 12c:	f59ff06f          	j	84 <.L51>
-
-00000130 <.L63>:
- 130:	00048793          	mv	a5,s1
- 134:	0098d463          	bge	a7,s1,13c <.L53>
- 138:	00088793          	mv	a5,a7
-
-0000013c <.L53>:
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
  13c:	00000717          	auipc	a4,0x0
  140:	00070713          	mv	a4,a4
  144:	00e7900b          	.4byte	0xe7900b
  148:	fff00793          	li	a5,-1
  14c:	0007800b          	.4byte	0x7800b
  150:	00000097          	auipc	ra,0x0
-<<<<<<< HEAD
  154:	000080e7          	jalr	ra # 150 <.L92+0x14>
  158:	00100513          	li	a0,1
  15c:	0005000b          	.4byte	0x5000b
@@ -5216,34 +4918,16 @@ Disassembly of section .text.vx_spawn_kernel:
  168:	f8090ce3          	beqz	s2,100 <.L85>
 
 0000016c <.L103>:
-=======
- 154:	000080e7          	jalr	ra # 150 <.L53+0x14>
- 158:	00100513          	li	a0,1
- 15c:	0005000b          	.4byte	0x5000b
- 160:	00000097          	auipc	ra,0x0
- 164:	000080e7          	jalr	ra # 160 <.L53+0x24>
- 168:	f8090ce3          	beqz	s2,100 <.L46>
-
-0000016c <.L64>:
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
  16c:	028487b3          	mul	a5,s1,s0
  170:	01012683          	lw	a3,16(sp)
  174:	00100713          	li	a4,1
  178:	01271733          	sll	a4,a4,s2
-<<<<<<< HEAD
  17c:	fff70713          	add	a4,a4,-1 # 13b <.L102+0xb>
-=======
- 17c:	fff70713          	add	a4,a4,-1 # 13b <.L63+0xb>
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
  180:	00f687b3          	add	a5,a3,a5
  184:	00f12823          	sw	a5,16(sp)
  188:	0007000b          	.4byte	0x7000b
  18c:	00000097          	auipc	ra,0x0
-<<<<<<< HEAD
  190:	000080e7          	jalr	ra # 18c <.L103+0x20>
-=======
- 190:	000080e7          	jalr	ra # 18c <.L64+0x20>
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
  194:	00100513          	li	a0,1
  198:	0005000b          	.4byte	0x5000b
  19c:	02c12083          	lw	ra,44(sp)

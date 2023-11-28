@@ -92,23 +92,14 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
 
     wire [THREAD_CNT-1:0] pred_mask = has_then ? then_tmask_n : rs2_data[THREAD_CNT-1:0];
     assign tmc.valid = (is_tmc || is_pred);
-<<<<<<< HEAD
     assign tmc.tmask[THREAD_CNT-1:0] = is_pred ? pred_mask : rs1_data[THREAD_CNT-1:0];
-=======
-    assign tmc.tmask = is_pred ? pred_mask : rs1_data[THREAD_CNT-1:0];
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
     // split
     
     assign split.valid      = is_split;
     assign split.is_dvg     = has_then && has_else;
-<<<<<<< HEAD
     assign split.then_tmask[THREAD_CNT-1:0] = then_tmask_n;
     assign split.else_tmask[THREAD_CNT-1:0] = else_tmask_n;
-=======
-    assign split.then_tmask = then_tmask_n;
-    assign split.else_tmask = else_tmask_n;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     assign split.next_pc    = execute_if.data.PC + 4;
 
     // join

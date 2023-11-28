@@ -18,12 +18,6 @@
 #include "arch.h"
 #include "cache_cluster.h"
 #include "shared_mem.h"
-<<<<<<< HEAD
-=======
-#include "raster_unit.h"
-#include "rop_unit.h"
-#include "tex_unit.h"
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 #include "core.h"
 #include "constants.h"
 
@@ -34,39 +28,16 @@ class ProcessorImpl;
 class Cluster : public SimObject<Cluster> {
 public:
   struct PerfStats {
-<<<<<<< HEAD
-=======
-    RasterUnit::PerfStats raster_unit;
-    RopUnit::PerfStats    rop_unit;
-    TexUnit::PerfStats    tex_unit;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
     CacheSim::PerfStats   icache;
     CacheSim::PerfStats   dcache;
     SharedMem::PerfStats  sharedmem;
     CacheSim::PerfStats   l2cache;
-<<<<<<< HEAD
 
     PerfStats& operator+=(const PerfStats& rhs) {
-=======
-    CacheSim::PerfStats   tcache;
-    CacheSim::PerfStats   ocache;
-    CacheSim::PerfStats   rcache;
-
-    PerfStats& operator+=(const PerfStats& rhs) {
-      this->raster_unit += rhs.raster_unit;
-      this->rop_unit    += rhs.rop_unit;
-      this->tex_unit    += rhs.tex_unit;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
       this->icache      += rhs.icache;
       this->dcache      += rhs.dcache;
       this->sharedmem   += rhs.sharedmem;
       this->l2cache     += rhs.l2cache;
-<<<<<<< HEAD
-=======
-      this->tcache      += rhs.tcache;
-      this->ocache      += rhs.ocache;
-      this->rcache      += rhs.rcache;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
       return *this;
     }
   };
@@ -102,12 +73,6 @@ private:
   uint32_t                     cluster_id_;  
   std::vector<Core::Ptr>       cores_;  
   std::vector<CoreMask>        barriers_;
-<<<<<<< HEAD
-=======
-  std::vector<RasterUnit::Ptr> raster_units_;
-  std::vector<RopUnit::Ptr>    rop_units_;
-  std::vector<TexUnit::Ptr>    tex_units_;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   CacheSim::Ptr                l2cache_;
   CacheCluster::Ptr            icaches_;
   CacheCluster::Ptr            dcaches_;

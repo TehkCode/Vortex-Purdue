@@ -60,7 +60,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
  
     // ALU dispatch    
 
-    VX_operands_if #(.THREAD_CNT (THREAD_CNT)) alu_operands_if[`ISSUE_WIDTH]();
+    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) alu_operands_if[`ISSUE_WIDTH]();
     
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
         assign alu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_ALU);
@@ -140,8 +140,12 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 `endif
 
     // SFU dispatch
+
     VX_operands_if#(.THREAD_CNT (THREAD_CNT)) sfu_operands_if[`ISSUE_WIDTH]();
 
+    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+        assign sfu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_SFU);
+        assign sfu_operands_if[i].data = operands_if[i].data;
 
         `RESET_RELAY (sfu_reset, reset);
 

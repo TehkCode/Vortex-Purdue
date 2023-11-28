@@ -16,12 +16,6 @@
 #include <simobject.h>
 #include "pipeline.h"
 #include "cache_sim.h"
-<<<<<<< HEAD
-=======
-#include "tex_unit.h"
-#include "raster_unit.h"
-#include "rop_unit.h"
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 
 namespace vortex {
 
@@ -51,7 +45,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-<<<<<<< HEAD
 class AluUnit : public ExeUnit {
 public:
     AluUnit(const SimContext& ctx, Core*);
@@ -70,8 +63,6 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-=======
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 class LsuUnit : public ExeUnit {
 public:
     LsuUnit(const SimContext& ctx, Core*);
@@ -95,42 +86,13 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-<<<<<<< HEAD
-=======
-class AluUnit : public ExeUnit {
-public:
-    AluUnit(const SimContext& ctx, Core*);
-    
-    void tick();
-};
-
-///////////////////////////////////////////////////////////////////////////////
-
-class FpuUnit : public ExeUnit {
-public:
-    FpuUnit(const SimContext& ctx, Core*);
-    
-    void tick();
-};
-
-///////////////////////////////////////////////////////////////////////////////
-
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
 class SfuUnit : public ExeUnit {
 public:
     SfuUnit(const SimContext& ctx, Core*);
     
     void tick();
 
-<<<<<<< HEAD
 private:
-=======
-private:    
-  std::vector<RasterUnit::Ptr> raster_units_;  
-  std::vector<RopUnit::Ptr>    rop_units_;
-  std::vector<TexUnit::Ptr>    tex_units_;
-  std::vector<SimPort<pipeline_trace_t*>*> pending_rsps_;
->>>>>>> 47b5f0545a5746524287aeb535791edc465b295b
   uint32_t input_idx_;
 };
 
