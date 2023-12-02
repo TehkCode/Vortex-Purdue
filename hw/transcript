@@ -1,6 +1,6 @@
 # vsim -lib work -c VX_local_mem_tb -voptargs="+acc" -coverage -do "tb/scripts/VX_i_d_caches.do" -do "run -all" -do "exit" 
-# Start time: 17:29:43 on Nov 15,2023
-# ** Note: (vsim-3812) Design is being optimized...
+# Start time: 03:36:10 on Dec 02,2023
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
 # ** Warning: ../third_party/fpnew/src/fpnew_opgroup_fmt_slice.sv(95): (vopt-2697) MSB of part-select into 'operands_i' is out of bounds.
 # ** Warning: ../third_party/fpnew/src/fpnew_opgroup_fmt_slice.sv(95): (vopt-2697) MSB of part-select into 'operands_i' is out of bounds.
 # ** Warning: ../third_party/fpnew/src/fpnew_opgroup_fmt_slice.sv(95): (vopt-2697) MSB of part-select into 'operands_i' is out of bounds.
@@ -369,5 +369,5 @@
 # Break in Module VX_local_mem_tb at tb/VX_local_mem_tb.sv line 319
 # Stopped at tb/VX_local_mem_tb.sv line 319
 # exit
-# End time: 17:29:47 on Nov 15,2023, Elapsed time: 0:00:04
+# End time: 03:36:13 on Dec 02,2023, Elapsed time: 0:00:03
 # Errors: 0, Warnings: 14

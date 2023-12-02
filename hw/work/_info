@@ -9,16 +9,16 @@ z2
 cModel Technology
 Z0 d/home/asicfab/a/socet152/Vortex-Purdue/hw
 T_opt
-!s110 1700087384
-Vo:lMHO?_i5E3nA_YCmSP>1
+!s110 1701506171
+VCgXUbVKTKOG8OQ>R[]WOS2
 04 15 4 work VX_local_mem_tb fast 0
-=1-70b5e8f06e3f-65554657-60e9d-15e3b
+=1-70b5e8f06e3f-656aec7a-3805d-e57e
 o-quiet -auto_acc_if_foreign -work work +acc
 Z1 tCvgOpt 0
 n@_opt
 OL;O;10.6b;65
 vaddr_decode
-Z2 !s10a 1700031863
+Z2 !s10a 1701506155
 Z3 DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
 Z4 DXx4 work 11 cf_math_pkg 0 22 8MNWF<2o6ogHl6kNA[Wkm3
 Z5 !s110 1700031872
@@ -45,7 +45,7 @@ Z13 o-suppress 13389 -sv -work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L m
 Z14 !s92 -suppress 13389 -sv -work work +define+VX_SYNTHESIS +define+FPU_FPNEW +define+VX_TOP_TRACE +define+SV_TRACE_EN +define+SV_TRACE_CORE_PIPELINE +define+SV_TRACE_CORE_DCACHE +define+SV_TRACE_CACHE_DATA +define+EXT_TEX_ENABLE +incdir+include +incdir+../third_party/fpnew/src/common_cells/include +incdir+../third_party/fpnew/src/common_cells/src -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
 R1
 Yahb_if
-Z15 !s10a 1700087377
+Z15 !s10a 1701505967
 R3
 Z16 !s110 1700031763
 !i10b 1
@@ -99,14 +99,14 @@ R21
 R1
 Xahb_pkg
 R3
-Z22 !s110 1700087381
+Z22 !s110 1701506167
 !i10b 1
 !s100 9<K_Oo:j50Lb]JUiL6NC^0
 IO_X5V=VCjAXbic[hY;AAR3
 VO_X5V=VCjAXbic[hY;AAR3
 S1
 R0
-Z23 w1700084085
+Z23 w1701505967
 8include/ahb_pkg.sv
 Finclude/ahb_pkg.sv
 L0 2
@@ -114,9 +114,9 @@ R9
 r1
 !s85 0
 31
-Z24 !s108 1700087381.000000
-Z25 !s107 include/VX_tex_define.vh|include/ahb_pkg.sv|include/VX_sv_trace_instr.vh|include/defs_div_sqrt_mvp.sv|include/fpnew_pkg.sv|include/VX_fpu_define.vh|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_define.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_cache_define.vh|rtl/tex_unit/VX_tex_sat.sv|rtl/tex_unit/VX_tex_unit.sv|rtl/tex_unit/VX_tex_lerp.sv|rtl/tex_unit/VX_tex_stride.sv|rtl/tex_unit/VX_tex_addr.sv|rtl/tex_unit/VX_tex_mem.sv|rtl/tex_unit/VX_tex_wrap.sv|rtl/tex_unit/VX_tex_sampler.sv|rtl/tex_unit/VX_tex_format.sv|rtl/Vortex.sv|rtl/VX_ahb.sv|rtl/VX_issue.sv|rtl/VX_cluster.sv|rtl/VX_commit.sv|rtl/VX_fetch.sv|rtl/VX_core.sv|rtl/VX_ibuffer.sv|rtl/Vortex_wrapper_condensed.sv|rtl/VX_vortex_local_mem.sv|rtl/VX_smem_arb.sv|rtl/VX_ipdom_stack.sv|rtl/VX_icache_stage.sv|rtl/VX_csr_data.sv|rtl/Vortex_wrapper.sv|rtl/VX_mem_unit.sv|rtl/vortex_gpu_ahb_dummy.sv|rtl/VX_pipeline.sv|rtl/VX_fpu_unit.sv|rtl/VX_gpr_stage.sv|rtl/Vortex_axi.sv|rtl/VX_muldiv.sv|rtl/VX_scoreboard.sv|rtl/VX_mem_arb.sv|rtl/VX_alu_unit.sv|rtl/VX_lsu_unit.sv|rtl/local_mem.sv|rtl/VX_execute.sv|rtl/VX_dispatch.sv|rtl/VX_warp_sched.sv|rtl/VX_csr_unit.sv|rtl/VX_decode.sv|rtl/VX_cache_arb.sv|rtl/VX_writeback.sv|rtl/VX_gpu_unit.sv|rtl/libs/VX_fair_arbiter.sv|rtl/libs/VX_shift_register.sv|rtl/libs/VX_bits_remove.sv|rtl/libs/VX_ahb_adapter.sv|rtl/libs/VX_priority_encoder.sv|rtl/libs/VX_serial_div.sv|rtl/libs/VX_fixed_arbiter.sv|rtl/libs/VX_rr_arbiter.sv|rtl/libs/VX_pending_size.sv|rtl/libs/VX_multiplier.sv|rtl/libs/VX_scope.sv|rtl/libs/VX_elastic_buffer.sv|rtl/libs/VX_onehot_encoder.sv|rtl/libs/VX_popcount.sv|rtl/libs/counter.sv|rtl/libs/VX_pipe_register.sv|rtl/libs/VX_stream_demux.sv|rtl/libs/VX_onehot_mux.sv|rtl/libs/VX_index_queue.sv|rtl/libs/VX_mux.sv|rtl/libs/VX_reset_relay.sv|rtl/libs/VX_bits_insert.sv|rtl/libs/VX_dp_ram.sv|rtl/libs/VX_matrix_arbiter.sv|rtl/libs/VX_fifo_queue.sv|rtl/libs/VX_index_buffer.sv|rtl/libs/VX_stream_arbiter.sv|rtl/libs/VX_find_first.sv|rtl/libs/VX_bypass_buffer.sv|rtl/libs/VX_axi_adapter.sv|rtl/libs/VX_sp_ram.sv|rtl/libs/VX_lzc.sv|rtl/libs/VX_divider.sv|rtl/libs/VX_scan.sv|rtl/libs/VX_skid_buffer.sv|rtl/fp_cores/VX_fp_rounding.sv|rtl/fp_cores/VX_fp_sqrt.sv|rtl/fp_cores/VX_fpu_dpi.sv|rtl/fp_cores/VX_fp_ncomp.sv|rtl/fp_cores/VX_fpu_fpnew.sv|rtl/fp_cores/VX_fp_class.sv|rtl/fp_cores/VX_fpu_fpga.sv|rtl/fp_cores/VX_fp_cvt.sv|rtl/fp_cores/VX_fp_fma.sv|rtl/fp_cores/VX_fp_div.sv|rtl/cache/VX_flush_ctrl.sv|rtl/cache/VX_nc_bypass.sv|rtl/cache/VX_shared_mem.sv|rtl/cache/VX_core_rsp_merge.sv|rtl/cache/VX_miss_resrv.sv|rtl/cache/VX_core_req_bank_sel.sv|rtl/cache/VX_data_access.sv|rtl/cache/VX_bank.sv|rtl/cache/VX_cache.sv|rtl/cache/VX_tag_access.sv|
-Z26 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|+incdir+../third_party/fpnew/src|+incdir+../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl|+incdir+dpi|rtl/cache/VX_tag_access.sv|rtl/cache/VX_cache.sv|rtl/cache/VX_bank.sv|rtl/cache/VX_data_access.sv|rtl/cache/VX_core_req_bank_sel.sv|rtl/cache/VX_miss_resrv.sv|rtl/cache/VX_core_rsp_merge.sv|rtl/cache/VX_shared_mem.sv|rtl/cache/VX_nc_bypass.sv|rtl/cache/VX_flush_ctrl.sv|rtl/fp_cores/VX_fp_div.sv|rtl/fp_cores/VX_fp_fma.sv|rtl/fp_cores/VX_fp_cvt.sv|rtl/fp_cores/VX_fpu_fpga.sv|rtl/fp_cores/VX_fp_class.sv|rtl/fp_cores/VX_fpu_fpnew.sv|rtl/fp_cores/VX_fp_ncomp.sv|rtl/fp_cores/VX_fpu_dpi.sv|rtl/fp_cores/VX_fp_sqrt.sv|rtl/fp_cores/VX_fp_rounding.sv|rtl/libs/VX_skid_buffer.sv|rtl/libs/VX_scan.sv|rtl/libs/VX_divider.sv|rtl/libs/VX_lzc.sv|rtl/libs/VX_sp_ram.sv|rtl/libs/VX_axi_adapter.sv|rtl/libs/VX_bypass_buffer.sv|rtl/libs/VX_find_first.sv|rtl/libs/VX_stream_arbiter.sv|rtl/libs/VX_index_buffer.sv|rtl/libs/VX_fifo_queue.sv|rtl/libs/VX_matrix_arbiter.sv|rtl/libs/VX_dp_ram.sv|rtl/libs/VX_bits_insert.sv|rtl/libs/VX_reset_relay.sv|rtl/libs/VX_mux.sv|rtl/libs/VX_index_queue.sv|rtl/libs/VX_onehot_mux.sv|rtl/libs/VX_stream_demux.sv|rtl/libs/VX_pipe_register.sv|rtl/libs/counter.sv|rtl/libs/VX_popcount.sv|rtl/libs/VX_onehot_encoder.sv|rtl/libs/VX_elastic_buffer.sv|rtl/libs/VX_scope.sv|rtl/libs/VX_multiplier.sv|rtl/libs/VX_pending_size.sv|rtl/libs/VX_rr_arbiter.sv|rtl/libs/VX_fixed_arbiter.sv|rtl/libs/VX_serial_div.sv|rtl/libs/VX_priority_encoder.sv|rtl/libs/VX_ahb_adapter.sv|rtl/libs/VX_bits_remove.sv|rtl/libs/VX_shift_register.sv|rtl/libs/VX_fair_arbiter.sv|rtl/VX_gpu_unit.sv|rtl/VX_writeback.sv|rtl/VX_cache_arb.sv|rtl/VX_decode.sv|rtl/VX_csr_unit.sv|rtl/VX_warp_sched.sv|rtl/VX_dispatch.sv|rtl/VX_execute.sv|rtl/local_mem.sv|rtl/VX_lsu_unit.sv|rtl/VX_alu_unit.sv|rtl/VX_mem_arb.sv|rtl/VX_scoreboard.sv|rtl/VX_muldiv.sv|rtl/Vortex_axi.sv|rtl/VX_gpr_stage.sv|rtl/VX_fpu_unit.sv|rtl/VX_pipeline.sv|rtl/vortex_gpu_ahb_dummy.sv|rtl/VX_mem_unit.sv|rtl/Vortex_wrapper.sv|rtl/VX_csr_data.sv|rtl/VX_icache_stage.sv|rtl/VX_ipdom_stack.sv|rtl/VX_smem_arb.sv|rtl/VX_vortex_local_mem.sv|rtl/Vortex_wrapper_condensed.sv|rtl/VX_ibuffer.sv|rtl/VX_core.sv|rtl/VX_fetch.sv|rtl/VX_commit.sv|rtl/VX_cluster.sv|rtl/VX_issue.sv|rtl/VX_ahb.sv|rtl/Vortex.sv|rtl/tex_unit/VX_tex_format.sv|rtl/tex_unit/VX_tex_sampler.sv|rtl/tex_unit/VX_tex_wrap.sv|rtl/tex_unit/VX_tex_mem.sv|rtl/tex_unit/VX_tex_addr.sv|rtl/tex_unit/VX_tex_stride.sv|rtl/tex_unit/VX_tex_lerp.sv|rtl/tex_unit/VX_tex_unit.sv|rtl/tex_unit/VX_tex_sat.sv|
+Z24 !s108 1701506167.000000
+Z25 !s107 include/VX_tex_define.vh|include/ahb_pkg.sv|include/VX_sv_trace_instr.vh|include/defs_div_sqrt_mvp.sv|include/fpnew_pkg.sv|include/VX_fpu_define.vh|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_define.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_cache_define.vh|rtl/tex_unit/VX_tex_sat.sv|rtl/tex_unit/VX_tex_unit.sv|rtl/tex_unit/VX_tex_lerp.sv|rtl/tex_unit/VX_tex_stride.sv|rtl/tex_unit/VX_tex_addr.sv|rtl/tex_unit/VX_tex_mem.sv|rtl/tex_unit/VX_tex_wrap.sv|rtl/tex_unit/VX_tex_sampler.sv|rtl/tex_unit/VX_tex_format.sv|rtl/Vortex.sv|rtl/local_mem.sv|rtl/VX_issue.sv|rtl/VX_cluster.sv|rtl/VX_commit.sv|rtl/VX_cache_arb.sv|rtl/VX_fetch.sv|rtl/VX_ipdom_stack.sv|rtl/VX_ibuffer.sv|rtl/Vortex_wrapper_condensed.sv|rtl/VX_vortex_local_mem.sv|rtl/VX_scoreboard.sv|rtl/Vortex_wrapper.sv|rtl/VX_alu_unit.sv|rtl/VX_icache_stage.sv|rtl/VX_csr_data.sv|rtl/VX_mem_unit.sv|rtl/vortex_gpu_ahb_dummy.sv|rtl/VX_pipeline.sv|rtl/VX_fpu_unit.sv|rtl/VX_gpr_stage.sv|rtl/VX_ahb.sv|rtl/Vortex_axi.sv|rtl/VX_muldiv.sv|rtl/VX_smem_arb.sv|rtl/VX_core.sv|rtl/VX_mem_arb.sv|rtl/VX_lsu_unit.sv|rtl/VX_csr_unit.sv|rtl/VX_execute.sv|rtl/VX_dispatch.sv|rtl/VX_warp_sched.sv|rtl/VX_writeback.sv|rtl/VX_decode.sv|rtl/VX_gpu_unit.sv|rtl/libs/VX_fair_arbiter.sv|rtl/libs/VX_shift_register.sv|rtl/libs/VX_matrix_arbiter.sv|rtl/libs/VX_ahb_adapter.sv|rtl/libs/VX_serial_div.sv|rtl/libs/VX_bits_remove.sv|rtl/libs/VX_rr_arbiter.sv|rtl/libs/VX_pending_size.sv|rtl/libs/VX_multiplier.sv|rtl/libs/VX_scope.sv|rtl/libs/VX_elastic_buffer.sv|rtl/libs/VX_onehot_encoder.sv|rtl/libs/VX_fifo_queue.sv|rtl/libs/VX_popcount.sv|rtl/libs/VX_pipe_register.sv|rtl/libs/VX_stream_demux.sv|rtl/libs/VX_onehot_mux.sv|rtl/libs/VX_index_queue.sv|rtl/libs/VX_bits_insert.sv|rtl/libs/VX_mux.sv|rtl/libs/VX_reset_relay.sv|rtl/libs/VX_index_buffer.sv|rtl/libs/VX_dp_ram.sv|rtl/libs/VX_fixed_arbiter.sv|rtl/libs/VX_priority_encoder.sv|rtl/libs/VX_stream_arbiter.sv|rtl/libs/VX_find_first.sv|rtl/libs/VX_bypass_buffer.sv|rtl/libs/VX_axi_adapter.sv|rtl/libs/VX_sp_ram.sv|rtl/libs/VX_lzc.sv|rtl/libs/counter.sv|rtl/libs/VX_scan.sv|rtl/libs/VX_skid_buffer.sv|rtl/libs/VX_divider.sv|rtl/fp_cores/VX_fp_rounding.sv|rtl/fp_cores/VX_fp_sqrt.sv|rtl/fp_cores/VX_fpu_dpi.sv|rtl/fp_cores/VX_fp_ncomp.sv|rtl/fp_cores/VX_fpu_fpnew.sv|rtl/fp_cores/VX_fp_class.sv|rtl/fp_cores/VX_fpu_fpga.sv|rtl/fp_cores/VX_fp_cvt.sv|rtl/fp_cores/VX_fp_fma.sv|rtl/fp_cores/VX_fp_div.sv|rtl/cache/VX_flush_ctrl.sv|rtl/cache/VX_nc_bypass.sv|rtl/cache/VX_shared_mem.sv|rtl/cache/VX_core_rsp_merge.sv|rtl/cache/VX_miss_resrv.sv|rtl/cache/VX_core_req_bank_sel.sv|rtl/cache/VX_data_access.sv|rtl/cache/VX_bank.sv|rtl/cache/VX_cache.sv|rtl/cache/VX_tag_access.sv|
+Z26 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|+incdir+../third_party/fpnew/src|+incdir+../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl|+incdir+dpi|rtl/cache/VX_tag_access.sv|rtl/cache/VX_cache.sv|rtl/cache/VX_bank.sv|rtl/cache/VX_data_access.sv|rtl/cache/VX_core_req_bank_sel.sv|rtl/cache/VX_miss_resrv.sv|rtl/cache/VX_core_rsp_merge.sv|rtl/cache/VX_shared_mem.sv|rtl/cache/VX_nc_bypass.sv|rtl/cache/VX_flush_ctrl.sv|rtl/fp_cores/VX_fp_div.sv|rtl/fp_cores/VX_fp_fma.sv|rtl/fp_cores/VX_fp_cvt.sv|rtl/fp_cores/VX_fpu_fpga.sv|rtl/fp_cores/VX_fp_class.sv|rtl/fp_cores/VX_fpu_fpnew.sv|rtl/fp_cores/VX_fp_ncomp.sv|rtl/fp_cores/VX_fpu_dpi.sv|rtl/fp_cores/VX_fp_sqrt.sv|rtl/fp_cores/VX_fp_rounding.sv|rtl/libs/VX_divider.sv|rtl/libs/VX_skid_buffer.sv|rtl/libs/VX_scan.sv|rtl/libs/counter.sv|rtl/libs/VX_lzc.sv|rtl/libs/VX_sp_ram.sv|rtl/libs/VX_axi_adapter.sv|rtl/libs/VX_bypass_buffer.sv|rtl/libs/VX_find_first.sv|rtl/libs/VX_stream_arbiter.sv|rtl/libs/VX_priority_encoder.sv|rtl/libs/VX_fixed_arbiter.sv|rtl/libs/VX_dp_ram.sv|rtl/libs/VX_index_buffer.sv|rtl/libs/VX_reset_relay.sv|rtl/libs/VX_mux.sv|rtl/libs/VX_bits_insert.sv|rtl/libs/VX_index_queue.sv|rtl/libs/VX_onehot_mux.sv|rtl/libs/VX_stream_demux.sv|rtl/libs/VX_pipe_register.sv|rtl/libs/VX_popcount.sv|rtl/libs/VX_fifo_queue.sv|rtl/libs/VX_onehot_encoder.sv|rtl/libs/VX_elastic_buffer.sv|rtl/libs/VX_scope.sv|rtl/libs/VX_multiplier.sv|rtl/libs/VX_pending_size.sv|rtl/libs/VX_rr_arbiter.sv|rtl/libs/VX_bits_remove.sv|rtl/libs/VX_serial_div.sv|rtl/libs/VX_ahb_adapter.sv|rtl/libs/VX_matrix_arbiter.sv|rtl/libs/VX_shift_register.sv|rtl/libs/VX_fair_arbiter.sv|rtl/VX_gpu_unit.sv|rtl/VX_decode.sv|rtl/VX_writeback.sv|rtl/VX_warp_sched.sv|rtl/VX_dispatch.sv|rtl/VX_execute.sv|rtl/VX_csr_unit.sv|rtl/VX_lsu_unit.sv|rtl/VX_mem_arb.sv|rtl/VX_core.sv|rtl/VX_smem_arb.sv|rtl/VX_muldiv.sv|rtl/Vortex_axi.sv|rtl/VX_ahb.sv|rtl/VX_gpr_stage.sv|rtl/VX_fpu_unit.sv|rtl/VX_pipeline.sv|rtl/vortex_gpu_ahb_dummy.sv|rtl/VX_mem_unit.sv|rtl/VX_csr_data.sv|rtl/VX_icache_stage.sv|rtl/VX_alu_unit.sv|rtl/Vortex_wrapper.sv|rtl/VX_scoreboard.sv|rtl/VX_vortex_local_mem.sv|rtl/Vortex_wrapper_condensed.sv|rtl/VX_ibuffer.sv|rtl/VX_ipdom_stack.sv|rtl/VX_fetch.sv|rtl/VX_cache_arb.sv|rtl/VX_commit.sv|rtl/VX_cluster.sv|rtl/VX_issue.sv|rtl/local_mem.sv|rtl/Vortex.sv|rtl/tex_unit/VX_tex_format.sv|rtl/tex_unit/VX_tex_sampler.sv|rtl/tex_unit/VX_tex_wrap.sv|rtl/tex_unit/VX_tex_mem.sv|rtl/tex_unit/VX_tex_addr.sv|rtl/tex_unit/VX_tex_stride.sv|rtl/tex_unit/VX_tex_lerp.sv|rtl/tex_unit/VX_tex_unit.sv|rtl/tex_unit/VX_tex_sat.sv|
 !i113 0
 R13
 Z27 !s92 -suppress 13389 -sv -work work +define+VX_SYNTHESIS +define+FPU_FPNEW +define+VX_TOP_TRACE +define+SV_TRACE_EN +define+SV_TRACE_CORE_PIPELINE +define+SV_TRACE_CORE_DCACHE +define+SV_TRACE_CACHE_DATA +define+EXT_TEX_ENABLE +incdir+include +incdir+../third_party/fpnew/src +incdir+../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl +incdir+dpi -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
@@ -209,10 +209,10 @@ I>[?5CbUQG4ckKSMoz_K;L2
 V>[?5CbUQG4ckKSMoz_K;L2
 S1
 R0
-R7
+Z35 w1701506155
 8../third_party/fpnew/src/common_cells/src/cb_filter_pkg.sv
 F../third_party/fpnew/src/common_cells/src/cb_filter_pkg.sv
-Z35 L0 14
+Z36 L0 14
 R9
 r1
 !s85 0
@@ -232,13 +232,13 @@ R28
 !s100 @FmWoWziN^X4bc<o?BKMC1
 IIJl]BlUAdYc_KIUU6emJe1
 R6
-Z36 !s105 cdc_2phase_sv_unit
+Z37 !s105 cdc_2phase_sv_unit
 S1
 R0
 R7
-Z37 8../third_party/fpnew/src/common_cells/src/cdc_2phase.sv
-Z38 F../third_party/fpnew/src/common_cells/src/cdc_2phase.sv
-Z39 L0 19
+Z38 8../third_party/fpnew/src/common_cells/src/cdc_2phase.sv
+Z39 F../third_party/fpnew/src/common_cells/src/cdc_2phase.sv
+Z40 L0 19
 R9
 r1
 !s85 0
@@ -258,12 +258,12 @@ R28
 !s100 ]eb9LIW5@:9d=kolkTPnf1
 IGS`Cl9QSdl0<F2F1W?z071
 R6
-R36
+R37
 S1
 R0
 R7
-R37
 R38
+R39
 L0 118
 R9
 r1
@@ -284,12 +284,12 @@ R28
 !s100 kFSZXCTDhhiAJc6BSmh9n0
 I_C5inZK<=WTTJb]XH4nE=1
 R6
-R36
+R37
 S1
 R0
 R7
-R37
 R38
+R39
 L0 68
 R9
 r1
@@ -316,7 +316,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/cdc_fifo_2phase.sv
 F../third_party/fpnew/src/common_cells/src/cdc_fifo_2phase.sv
-Z40 L0 22
+Z41 L0 22
 R9
 r1
 !s85 0
@@ -336,12 +336,12 @@ R28
 !s100 G<2kg8Ii9o>6R;3HzdX[J3
 I@1k[?^e34`TLK0E6L0KNa3
 R6
-Z41 !s105 cdc_fifo_gray_sv_unit
+Z42 !s105 cdc_fifo_gray_sv_unit
 S1
 R0
 R7
-Z42 8../third_party/fpnew/src/common_cells/src/cdc_fifo_gray.sv
-Z43 F../third_party/fpnew/src/common_cells/src/cdc_fifo_gray.sv
+Z43 8../third_party/fpnew/src/common_cells/src/cdc_fifo_gray.sv
+Z44 F../third_party/fpnew/src/common_cells/src/cdc_fifo_gray.sv
 L0 78
 R9
 r1
@@ -362,12 +362,12 @@ R28
 !s100 `m5Z@60I20_GfRz]aiO@30
 IF=iMOJ?C2`_R=g[ZVAgj61
 R6
-R41
+R42
 S1
 R0
 R7
-R42
 R43
+R44
 L0 206
 R9
 r1
@@ -388,12 +388,12 @@ R28
 !s100 ;3kdgLn;]TUE2Y[LITb`>1
 IC5;2KMXX^Q]WCB1?<5fOh0
 R6
-R41
+R42
 S1
 R0
 R7
-R42
 R43
+R44
 L0 148
 R9
 r1
@@ -415,10 +415,10 @@ I8MNWF<2o6ogHl6kNA[Wkm3
 V8MNWF<2o6ogHl6kNA[Wkm3
 S1
 R0
-R7
+R35
 8../third_party/fpnew/src/common_cells/src/cf_math_pkg.sv
 F../third_party/fpnew/src/common_cells/src/cf_math_pkg.sv
-Z44 L0 18
+Z45 L0 18
 R9
 r1
 !s85 0
@@ -444,7 +444,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/clk_div.sv
 F../third_party/fpnew/src/common_cells/src/clk_div.sv
-Z45 L0 13
+Z46 L0 13
 R9
 r1
 !s85 0
@@ -459,7 +459,7 @@ R1
 vcontrol_mvp
 R2
 R3
-Z46 DXx4 work 17 defs_div_sqrt_mvp 0 22 ZoM5c4BG7zzC_K24?MITb1
+Z47 DXx4 work 17 defs_div_sqrt_mvp 0 22 ZoM5c4BG7zzC_K24?MITb1
 DXx4 work 19 control_mvp_sv_unit 0 22 KNeIX34TE8Rd_f<`9C8Y40
 R6
 r1
@@ -472,21 +472,21 @@ InR=djU9JYLL]i2SX9ch_A3
 S1
 R0
 R7
-Z47 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv
-Z48 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv
+Z48 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv
+Z49 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv
 R34
 R9
-Z49 !s108 1700031872.000000
-Z50 !s107 ../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/iteration_div_sqrt_mvp.sv|
-Z51 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/iteration_div_sqrt_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv|
+Z50 !s108 1700031872.000000
+Z51 !s107 ../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/iteration_div_sqrt_mvp.sv|
+Z52 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/iteration_div_sqrt_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/control_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv|../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv|
 !i113 0
 R13
-Z52 !s92 -suppress 13389 -sv -work work +define+VX_SYNTHESIS +define+FPU_FPNEW +define+VX_TOP_TRACE +define+SV_TRACE_EN +define+SV_TRACE_CORE_PIPELINE +define+SV_TRACE_CORE_DCACHE +define+SV_TRACE_CACHE_DATA +define+EXT_TEX_ENABLE +incdir+../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z53 !s92 -suppress 13389 -sv -work work +define+VX_SYNTHESIS +define+FPU_FPNEW +define+VX_TOP_TRACE +define+SV_TRACE_EN +define+SV_TRACE_CORE_PIPELINE +define+SV_TRACE_CORE_DCACHE +define+SV_TRACE_CACHE_DATA +define+EXT_TEX_ENABLE +incdir+../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
 R1
 Xcontrol_mvp_sv_unit
 R2
 R3
-R46
+R47
 VKNeIX34TE8Rd_f<`9C8Y40
 r1
 !s85 0
@@ -498,20 +498,21 @@ IKNeIX34TE8Rd_f<`9C8Y40
 S1
 R0
 R7
-R47
 R48
-Z53 L0 41
+R49
+Z54 L0 41
 R9
-Z54 !s108 1700032204.000000
-R50
+Z55 !s108 1700032204.000000
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 vcounter
+Z56 !s10a 1701505968
 R3
-R22
+Z57 !s110 1700087381
 !i10b 1
 !s100 NdiD;2agQKif9c0cZkdkf0
 I@<nAR5L8UDZ54]`b6_m`I2
@@ -519,7 +520,7 @@ R6
 !s105 counter_sv_unit
 S1
 R0
-Z55 w1700087377
+Z58 w1700087377
 8rtl/libs/counter.sv
 Frtl/libs/counter.sv
 L0 1
@@ -527,9 +528,9 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+Z59 !s108 1700087381.000000
+Z60 !s107 include/VX_tex_define.vh|include/ahb_pkg.sv|include/VX_sv_trace_instr.vh|include/defs_div_sqrt_mvp.sv|include/fpnew_pkg.sv|include/VX_fpu_define.vh|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_define.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_cache_define.vh|rtl/tex_unit/VX_tex_sat.sv|rtl/tex_unit/VX_tex_unit.sv|rtl/tex_unit/VX_tex_lerp.sv|rtl/tex_unit/VX_tex_stride.sv|rtl/tex_unit/VX_tex_addr.sv|rtl/tex_unit/VX_tex_mem.sv|rtl/tex_unit/VX_tex_wrap.sv|rtl/tex_unit/VX_tex_sampler.sv|rtl/tex_unit/VX_tex_format.sv|rtl/Vortex.sv|rtl/VX_ahb.sv|rtl/VX_issue.sv|rtl/VX_cluster.sv|rtl/VX_commit.sv|rtl/VX_fetch.sv|rtl/VX_core.sv|rtl/VX_ibuffer.sv|rtl/Vortex_wrapper_condensed.sv|rtl/VX_vortex_local_mem.sv|rtl/VX_smem_arb.sv|rtl/VX_ipdom_stack.sv|rtl/VX_icache_stage.sv|rtl/VX_csr_data.sv|rtl/Vortex_wrapper.sv|rtl/VX_mem_unit.sv|rtl/vortex_gpu_ahb_dummy.sv|rtl/VX_pipeline.sv|rtl/VX_fpu_unit.sv|rtl/VX_gpr_stage.sv|rtl/Vortex_axi.sv|rtl/VX_muldiv.sv|rtl/VX_scoreboard.sv|rtl/VX_mem_arb.sv|rtl/VX_alu_unit.sv|rtl/VX_lsu_unit.sv|rtl/local_mem.sv|rtl/VX_execute.sv|rtl/VX_dispatch.sv|rtl/VX_warp_sched.sv|rtl/VX_csr_unit.sv|rtl/VX_decode.sv|rtl/VX_cache_arb.sv|rtl/VX_writeback.sv|rtl/VX_gpu_unit.sv|rtl/libs/VX_fair_arbiter.sv|rtl/libs/VX_shift_register.sv|rtl/libs/VX_bits_remove.sv|rtl/libs/VX_ahb_adapter.sv|rtl/libs/VX_priority_encoder.sv|rtl/libs/VX_serial_div.sv|rtl/libs/VX_fixed_arbiter.sv|rtl/libs/VX_rr_arbiter.sv|rtl/libs/VX_pending_size.sv|rtl/libs/VX_multiplier.sv|rtl/libs/VX_scope.sv|rtl/libs/VX_elastic_buffer.sv|rtl/libs/VX_onehot_encoder.sv|rtl/libs/VX_popcount.sv|rtl/libs/counter.sv|rtl/libs/VX_pipe_register.sv|rtl/libs/VX_stream_demux.sv|rtl/libs/VX_onehot_mux.sv|rtl/libs/VX_index_queue.sv|rtl/libs/VX_mux.sv|rtl/libs/VX_reset_relay.sv|rtl/libs/VX_bits_insert.sv|rtl/libs/VX_dp_ram.sv|rtl/libs/VX_matrix_arbiter.sv|rtl/libs/VX_fifo_queue.sv|rtl/libs/VX_index_buffer.sv|rtl/libs/VX_stream_arbiter.sv|rtl/libs/VX_find_first.sv|rtl/libs/VX_bypass_buffer.sv|rtl/libs/VX_axi_adapter.sv|rtl/libs/VX_sp_ram.sv|rtl/libs/VX_lzc.sv|rtl/libs/VX_divider.sv|rtl/libs/VX_scan.sv|rtl/libs/VX_skid_buffer.sv|rtl/fp_cores/VX_fp_rounding.sv|rtl/fp_cores/VX_fp_sqrt.sv|rtl/fp_cores/VX_fpu_dpi.sv|rtl/fp_cores/VX_fp_ncomp.sv|rtl/fp_cores/VX_fpu_fpnew.sv|rtl/fp_cores/VX_fp_class.sv|rtl/fp_cores/VX_fpu_fpga.sv|rtl/fp_cores/VX_fp_cvt.sv|rtl/fp_cores/VX_fp_fma.sv|rtl/fp_cores/VX_fp_div.sv|rtl/cache/VX_flush_ctrl.sv|rtl/cache/VX_nc_bypass.sv|rtl/cache/VX_shared_mem.sv|rtl/cache/VX_core_rsp_merge.sv|rtl/cache/VX_miss_resrv.sv|rtl/cache/VX_core_req_bank_sel.sv|rtl/cache/VX_data_access.sv|rtl/cache/VX_bank.sv|rtl/cache/VX_cache.sv|rtl/cache/VX_tag_access.sv|
+Z61 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|+incdir+../third_party/fpnew/src|+incdir+../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl|+incdir+dpi|rtl/cache/VX_tag_access.sv|rtl/cache/VX_cache.sv|rtl/cache/VX_bank.sv|rtl/cache/VX_data_access.sv|rtl/cache/VX_core_req_bank_sel.sv|rtl/cache/VX_miss_resrv.sv|rtl/cache/VX_core_rsp_merge.sv|rtl/cache/VX_shared_mem.sv|rtl/cache/VX_nc_bypass.sv|rtl/cache/VX_flush_ctrl.sv|rtl/fp_cores/VX_fp_div.sv|rtl/fp_cores/VX_fp_fma.sv|rtl/fp_cores/VX_fp_cvt.sv|rtl/fp_cores/VX_fpu_fpga.sv|rtl/fp_cores/VX_fp_class.sv|rtl/fp_cores/VX_fpu_fpnew.sv|rtl/fp_cores/VX_fp_ncomp.sv|rtl/fp_cores/VX_fpu_dpi.sv|rtl/fp_cores/VX_fp_sqrt.sv|rtl/fp_cores/VX_fp_rounding.sv|rtl/libs/VX_skid_buffer.sv|rtl/libs/VX_scan.sv|rtl/libs/VX_divider.sv|rtl/libs/VX_lzc.sv|rtl/libs/VX_sp_ram.sv|rtl/libs/VX_axi_adapter.sv|rtl/libs/VX_bypass_buffer.sv|rtl/libs/VX_find_first.sv|rtl/libs/VX_stream_arbiter.sv|rtl/libs/VX_index_buffer.sv|rtl/libs/VX_fifo_queue.sv|rtl/libs/VX_matrix_arbiter.sv|rtl/libs/VX_dp_ram.sv|rtl/libs/VX_bits_insert.sv|rtl/libs/VX_reset_relay.sv|rtl/libs/VX_mux.sv|rtl/libs/VX_index_queue.sv|rtl/libs/VX_onehot_mux.sv|rtl/libs/VX_stream_demux.sv|rtl/libs/VX_pipe_register.sv|rtl/libs/counter.sv|rtl/libs/VX_popcount.sv|rtl/libs/VX_onehot_encoder.sv|rtl/libs/VX_elastic_buffer.sv|rtl/libs/VX_scope.sv|rtl/libs/VX_multiplier.sv|rtl/libs/VX_pending_size.sv|rtl/libs/VX_rr_arbiter.sv|rtl/libs/VX_fixed_arbiter.sv|rtl/libs/VX_serial_div.sv|rtl/libs/VX_priority_encoder.sv|rtl/libs/VX_ahb_adapter.sv|rtl/libs/VX_bits_remove.sv|rtl/libs/VX_shift_register.sv|rtl/libs/VX_fair_arbiter.sv|rtl/VX_gpu_unit.sv|rtl/VX_writeback.sv|rtl/VX_cache_arb.sv|rtl/VX_decode.sv|rtl/VX_csr_unit.sv|rtl/VX_warp_sched.sv|rtl/VX_dispatch.sv|rtl/VX_execute.sv|rtl/local_mem.sv|rtl/VX_lsu_unit.sv|rtl/VX_alu_unit.sv|rtl/VX_mem_arb.sv|rtl/VX_scoreboard.sv|rtl/VX_muldiv.sv|rtl/Vortex_axi.sv|rtl/VX_gpr_stage.sv|rtl/VX_fpu_unit.sv|rtl/VX_pipeline.sv|rtl/vortex_gpu_ahb_dummy.sv|rtl/VX_mem_unit.sv|rtl/Vortex_wrapper.sv|rtl/VX_csr_data.sv|rtl/VX_icache_stage.sv|rtl/VX_ipdom_stack.sv|rtl/VX_smem_arb.sv|rtl/VX_vortex_local_mem.sv|rtl/Vortex_wrapper_condensed.sv|rtl/VX_ibuffer.sv|rtl/VX_core.sv|rtl/VX_fetch.sv|rtl/VX_commit.sv|rtl/VX_cluster.sv|rtl/VX_issue.sv|rtl/VX_ahb.sv|rtl/Vortex.sv|rtl/tex_unit/VX_tex_format.sv|rtl/tex_unit/VX_tex_sampler.sv|rtl/tex_unit/VX_tex_wrap.sv|rtl/tex_unit/VX_tex_mem.sv|rtl/tex_unit/VX_tex_addr.sv|rtl/tex_unit/VX_tex_stride.sv|rtl/tex_unit/VX_tex_lerp.sv|rtl/tex_unit/VX_tex_unit.sv|rtl/tex_unit/VX_tex_sat.sv|
 !i113 0
 R13
 R27
@@ -547,8 +548,8 @@ S1
 R0
 R23
 8include/defs_div_sqrt_mvp.sv
-Z56 Finclude/defs_div_sqrt_mvp.sv
-R35
+Z62 Finclude/defs_div_sqrt_mvp.sv
+R36
 R9
 R24
 R25
@@ -571,7 +572,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/delta_counter.sv
 F../third_party/fpnew/src/common_cells/src/delta_counter.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -586,7 +587,7 @@ R1
 vdiv_sqrt_mvp_wrapper
 R2
 R3
-R46
+R47
 DXx4 work 28 div_sqrt_mvp_wrapper_sv_unit 0 22 Z=`K]_mnjddccQ`z]CDg_2
 R6
 r1
@@ -599,21 +600,21 @@ IHn8AcZEg]5CLDbfD0NXKD0
 S1
 R0
 R7
-Z57 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv
-Z58 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv
-R53
+Z63 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv
+Z64 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_mvp_wrapper.sv
+R54
 R9
-R49
 R50
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 Xdiv_sqrt_mvp_wrapper_sv_unit
 R2
 R3
-R46
+R47
 VZ=`K]_mnjddccQ`z]CDg_2
 r1
 !s85 0
@@ -625,21 +626,21 @@ IZ=`K]_mnjddccQ`z]CDg_2
 S1
 R0
 R7
-R57
-R58
-Z59 L0 39
+R63
+R64
+Z65 L0 39
 R9
-R54
-R50
+R55
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 vdiv_sqrt_top_mvp
 R2
 R3
-R46
+R47
 DXx4 work 24 div_sqrt_top_mvp_sv_unit 0 22 WnhE6<0O:[WTzATEM;VI`0
 R6
 r1
@@ -652,21 +653,21 @@ IBi=7;>:nYdZLc4I1HZ=M13
 S1
 R0
 R7
-Z60 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv
-Z61 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv
-Z62 L0 37
+Z66 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv
+Z67 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/div_sqrt_top_mvp.sv
+Z68 L0 37
 R9
-R49
 R50
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 Xdiv_sqrt_top_mvp_sv_unit
 R2
 R3
-R46
+R47
 VWnhE6<0O:[WTzATEM;VI`0
 r1
 !s85 0
@@ -678,16 +679,16 @@ IWnhE6<0O:[WTzATEM;VI`0
 S1
 R0
 R7
-R60
-R61
-Z63 L0 35
+R66
+R67
+Z69 L0 35
 R9
-R54
-R50
+R55
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 vecc_decode
 R2
@@ -704,7 +705,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/ecc_decode.sv
 F../third_party/fpnew/src/common_cells/src/ecc_decode.sv
-Z64 L0 29
+Z70 L0 29
 R9
 r1
 !s85 0
@@ -731,7 +732,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/ecc_encode.sv
 F../third_party/fpnew/src/common_cells/src/ecc_encode.sv
-R40
+R41
 R9
 r1
 !s85 0
@@ -752,7 +753,7 @@ I1n3FfNf^bb4A_RfRVgLd93
 V1n3FfNf^bb4A_RfRVgLd93
 S1
 R0
-R7
+R35
 8../third_party/fpnew/src/common_cells/src/ecc_pkg.sv
 F../third_party/fpnew/src/common_cells/src/ecc_pkg.sv
 R29
@@ -781,7 +782,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/edge_detect.sv
 F../third_party/fpnew/src/common_cells/src/edge_detect.sv
-R35
+R36
 R9
 r1
 !s85 0
@@ -807,7 +808,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/edge_propagator.sv
 F../third_party/fpnew/src/common_cells/src/edge_propagator.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -833,7 +834,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/edge_propagator_rx.sv
 F../third_party/fpnew/src/common_cells/src/edge_propagator_rx.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -859,7 +860,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/edge_propagator_tx.sv
 F../third_party/fpnew/src/common_cells/src/edge_propagator_tx.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -937,7 +938,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/fifo_v3.sv
 F../third_party/fpnew/src/common_cells/src/fifo_v3.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -952,7 +953,7 @@ R1
 vfpnew_cast_multi
 R2
 R3
-Z65 DXx4 work 9 fpnew_pkg 0 22 8<3PN>K;8?mKBmjJ>lfTP3
+Z71 DXx4 work 9 fpnew_pkg 0 22 8<3PN>K;8?mKBmjJ>lfTP3
 R28
 !i10b 1
 !s100 D_g0@3aAFSFLHB`HhRGHC1
@@ -964,7 +965,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_cast_multi.sv
 F../third_party/fpnew/src/fpnew_cast_multi.sv
-Z66 L0 16
+Z72 L0 16
 R9
 r1
 !s85 0
@@ -979,7 +980,7 @@ R1
 vfpnew_classifier
 R2
 R3
-R65
+R71
 R28
 !i10b 1
 !s100 [YWUO1oM_;IAE?G5g6YN:2
@@ -991,7 +992,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_classifier.sv
 F../third_party/fpnew/src/fpnew_classifier.sv
-R35
+R36
 R9
 r1
 !s85 0
@@ -1006,7 +1007,7 @@ R1
 vfpnew_divsqrt_multi
 R2
 R3
-R65
+R71
 R28
 !i10b 1
 !s100 WVc0n_3_cAiCA`II:FXI@0
@@ -1018,7 +1019,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_divsqrt_multi.sv
 F../third_party/fpnew/src/fpnew_divsqrt_multi.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -1033,7 +1034,7 @@ R1
 vfpnew_fma
 R2
 R3
-R65
+R71
 R28
 !i10b 1
 !s100 ElH3W_;D5DA@M;`Laa??Q2
@@ -1045,7 +1046,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_fma.sv
 F../third_party/fpnew/src/fpnew_fma.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -1060,7 +1061,7 @@ R1
 vfpnew_fma_multi
 R2
 R3
-R65
+R71
 R28
 !i10b 1
 !s100 12nD7zVV1AzBbm0X3`g=Z2
@@ -1072,7 +1073,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_fma_multi.sv
 F../third_party/fpnew/src/fpnew_fma_multi.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -1087,7 +1088,7 @@ R1
 vfpnew_noncomp
 R2
 R3
-R65
+R71
 R28
 !i10b 1
 !s100 ;4bhgUQ4JHOWPAJ@;ooK93
@@ -1099,7 +1100,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_noncomp.sv
 F../third_party/fpnew/src/fpnew_noncomp.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -1114,7 +1115,7 @@ R1
 vfpnew_opgroup_block
 R2
 R3
-R65
+R71
 R28
 !i10b 1
 !s100 =]dNYGnSKB=ULf6gaKR^N2
@@ -1126,7 +1127,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_opgroup_block.sv
 F../third_party/fpnew/src/fpnew_opgroup_block.sv
-R35
+R36
 R9
 r1
 !s85 0
@@ -1141,7 +1142,7 @@ R1
 vfpnew_opgroup_fmt_slice
 R2
 R3
-R65
+R71
 R28
 !i10b 1
 !s100 m@e^C9DkZMVm6dMhk_FQL3
@@ -1153,7 +1154,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_opgroup_fmt_slice.sv
 F../third_party/fpnew/src/fpnew_opgroup_fmt_slice.sv
-R35
+R36
 R9
 r1
 !s85 0
@@ -1168,7 +1169,7 @@ R1
 vfpnew_opgroup_multifmt_slice
 R2
 R3
-R65
+R71
 R28
 !i10b 1
 !s100 92RlW>J3c_?]IdaNkQ9ON1
@@ -1180,7 +1181,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_opgroup_multifmt_slice.sv
 F../third_party/fpnew/src/fpnew_opgroup_multifmt_slice.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -1205,8 +1206,8 @@ S1
 R0
 R23
 8include/fpnew_pkg.sv
-Z67 Finclude/fpnew_pkg.sv
-R35
+Z73 Finclude/fpnew_pkg.sv
+R36
 R9
 R24
 R25
@@ -1218,7 +1219,7 @@ R1
 vfpnew_rounding
 R2
 R3
-Z68 DXx4 work 9 fpnew_pkg 0 22 0GZfndZ:JVf<WLKlRF`IF1
+Z74 DXx4 work 9 fpnew_pkg 0 22 0GZfndZ:JVf<WLKlRF`IF1
 R28
 !i10b 1
 !s100 YmaI2HO9T[M]gRmIY8DbB1
@@ -1230,7 +1231,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_rounding.sv
 F../third_party/fpnew/src/fpnew_rounding.sv
-R35
+R36
 R9
 r1
 !s85 0
@@ -1245,7 +1246,7 @@ R1
 vfpnew_top
 R2
 R3
-R68
+R74
 R28
 !i10b 1
 !s100 bMhOS2kzV85;Yml1PbmKa0
@@ -1257,7 +1258,7 @@ R0
 R7
 8../third_party/fpnew/src/fpnew_top.sv
 F../third_party/fpnew/src/fpnew_top.sv
-R35
+R36
 R9
 r1
 !s85 0
@@ -1270,9 +1271,9 @@ R13
 R14
 R1
 Xfpu_types
-Z69 !s10a 1700084085
+R15
 R3
-R22
+Z75 !s110 1701506168
 !i10b 1
 !s100 `CJo4@Oi?;WeU<j51n>U01
 I>^Y:UnO`If?J`Y5:jm8]J1
@@ -1281,23 +1282,23 @@ S1
 R0
 R23
 8include/VX_fpu_types.vh
-Z70 Finclude/VX_fpu_types.vh
+Z76 Finclude/VX_fpu_types.vh
 L0 6
 R9
 r1
 !s85 0
 31
-R24
-Z71 !s107 include/VX_gpu_types.vh|include/VX_define.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_scope.vh|include/VX_platform.vh|include/../include/VX_define.vh|rtl/Vortex_wrapper.sv|tb/Vortex_wrapper_no_Vortex.sv|tb/counter.sv|tb/VX_ahb_adapter.sv|tb/Vortex_mem_slave.vh|rtl/Vortex_wrapper_condensed.sv|tb/Vortex_wrapper_no_Vortex_condensed.sv|tb/Vortex_mem_slave_condensed.sv|tb/Vortex_mem_slave.sv|
-Z72 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|tb/Vortex_mem_slave.sv|tb/Vortex_mem_slave_condensed.sv|tb/Vortex_wrapper_no_Vortex_condensed.sv|rtl/Vortex_wrapper_condensed.sv|tb/Vortex_mem_slave.vh|tb/VX_ahb_adapter.sv|tb/counter.sv|tb/Vortex_wrapper_no_Vortex.sv|rtl/Vortex_wrapper.sv|
+Z77 !s108 1701506168.000000
+Z78 !s107 include/VX_gpu_types.vh|include/VX_define.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_scope.vh|include/VX_platform.vh|include/../include/VX_define.vh|rtl/Vortex_wrapper.sv|tb/Vortex_wrapper_no_Vortex.sv|tb/counter.sv|tb/VX_ahb_adapter.sv|tb/Vortex_mem_slave.vh|rtl/Vortex_wrapper_condensed.sv|tb/Vortex_wrapper_no_Vortex_condensed.sv|tb/Vortex_mem_slave_condensed.sv|tb/Vortex_mem_slave.sv|
+Z79 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|tb/Vortex_mem_slave.sv|tb/Vortex_mem_slave_condensed.sv|tb/Vortex_wrapper_no_Vortex_condensed.sv|rtl/Vortex_wrapper_condensed.sv|tb/Vortex_mem_slave.vh|tb/VX_ahb_adapter.sv|tb/counter.sv|tb/Vortex_wrapper_no_Vortex.sv|rtl/Vortex_wrapper.sv|
 !i113 0
 R13
 R21
 R1
 Xgpu_types
-R69
+R15
 R3
-R22
+R75
 !i10b 1
 !s100 SLNNW?7KX5`nj3@:Le6XZ3
 IcWj1>IFR9N8=9AQ87B7IU2
@@ -1306,15 +1307,15 @@ S1
 R0
 R23
 8include/VX_gpu_types.vh
-Z73 Finclude/VX_gpu_types.vh
+Z80 Finclude/VX_gpu_types.vh
 L0 6
 R9
 r1
 !s85 0
 31
-R24
-R71
-R72
+R77
+R78
+R79
 !i113 0
 R13
 R21
@@ -1375,7 +1376,7 @@ R1
 vid_queue
 R2
 R3
-Z74 DXx4 work 11 cf_math_pkg 0 22 Bi5F>f`bX<kgzD?TzE`Yn3
+Z81 DXx4 work 11 cf_math_pkg 0 22 Bi5F>f`bX<kgzD?TzE`Yn3
 R28
 !i10b 1
 !s100 b2TWjQcPF]44^Fbh=Gk6k3
@@ -1439,17 +1440,17 @@ R0
 R7
 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/iteration_div_sqrt_mvp.sv
 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/iteration_div_sqrt_mvp.sv
-Z75 L0 32
+Z82 L0 32
 R9
 r1
 !s85 0
 31
-R49
 R50
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 vlfsr
 R2
@@ -1465,7 +1466,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/lfsr.sv
 F../third_party/fpnew/src/common_cells/src/lfsr.sv
-R40
+R41
 R9
 r1
 !s85 0
@@ -1491,7 +1492,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/lfsr_16bit.sv
 F../third_party/fpnew/src/common_cells/src/lfsr_16bit.sv
-Z76 L0 21
+Z83 L0 21
 R9
 r1
 !s85 0
@@ -1517,7 +1518,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/lfsr_8bit.sv
 F../third_party/fpnew/src/common_cells/src/lfsr_8bit.sv
-Z77 L0 17
+Z84 L0 17
 R9
 r1
 !s85 0
@@ -1530,8 +1531,9 @@ R13
 R14
 R1
 vlocal_mem
+R56
 R3
-R22
+R57
 !i10b 1
 !s100 ZXH3?5d@GgBnV?EcABNFU2
 IC9=lb:h@UFA`HXYLaIlz32
@@ -1539,17 +1541,17 @@ R6
 !s105 local_mem_sv_unit
 S1
 R0
-R55
+R58
 8rtl/local_mem.sv
 Frtl/local_mem.sv
-R45
+R46
 R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
@@ -1557,7 +1559,7 @@ R1
 vlzc
 R2
 R3
-R74
+R81
 R28
 !i10b 1
 !s100 ;N^J@dd4l]d@[_Dz`Dc5K2
@@ -1595,7 +1597,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/max_counter.sv
 F../third_party/fpnew/src/common_cells/src/max_counter.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -1621,7 +1623,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/mv_filter.sv
 F../third_party/fpnew/src/common_cells/src/mv_filter.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -1636,7 +1638,7 @@ R1
 vnorm_div_sqrt_mvp
 R2
 R3
-R46
+R47
 DXx4 work 25 norm_div_sqrt_mvp_sv_unit 0 22 cSk44zZWlcNJ_o;ic?aEc1
 R6
 r1
@@ -1649,21 +1651,21 @@ IN4[Eg1X_NFJO^n<S4J@2W3
 S1
 R0
 R7
-Z78 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv
-Z79 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv
+Z85 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv
+Z86 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/norm_div_sqrt_mvp.sv
 L0 46
 R9
-R49
 R50
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 Xnorm_div_sqrt_mvp_sv_unit
 R2
 R3
-R46
+R47
 VcSk44zZWlcNJ_o;ic?aEc1
 r1
 !s85 0
@@ -1675,21 +1677,21 @@ IcSk44zZWlcNJ_o;ic?aEc1
 S1
 R0
 R7
-R78
-R79
+R85
+R86
 L0 44
 R9
-R54
-R50
+R55
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 vnrbd_nrsc_mvp
 R2
 R3
-R46
+R47
 DXx4 work 21 nrbd_nrsc_mvp_sv_unit 0 22 Q:WS`U[[BW>eiCS<7eDLz1
 R6
 r1
@@ -1702,16 +1704,16 @@ IzY8i1]4bo2kQ50EWe3KII0
 S1
 R0
 R7
-Z80 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv
-Z81 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv
+Z87 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv
+Z88 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/nrbd_nrsc_mvp.sv
 L0 36
 R9
-R49
 R50
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 Xnrbd_nrsc_mvp_sv_unit
 R2
@@ -1728,16 +1730,16 @@ IQ:WS`U[[BW>eiCS<7eDLz1
 S1
 R0
 R7
-R80
-R81
+R87
+R88
 L0 34
 R9
-R49
 R50
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 vonehot_to_bin
 R2
@@ -1753,7 +1755,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/onehot_to_bin.sv
 F../third_party/fpnew/src/common_cells/src/onehot_to_bin.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -1779,7 +1781,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/plru_tree.sv
 F../third_party/fpnew/src/common_cells/src/plru_tree.sv
-R77
+R84
 R9
 r1
 !s85 0
@@ -1805,7 +1807,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/popcount.sv
 F../third_party/fpnew/src/common_cells/src/popcount.sv
-R39
+R40
 R9
 r1
 !s85 0
@@ -1820,7 +1822,7 @@ R1
 vpreprocess_mvp
 R2
 R3
-R46
+R47
 DXx4 work 22 preprocess_mvp_sv_unit 0 22 io=WC[[m5za7Q5`106Voa3
 R6
 r1
@@ -1833,21 +1835,21 @@ I>NV;eefYDMlK9H3Amc26?1
 S1
 R0
 R7
-Z82 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv
-Z83 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv
-R62
+Z89 8../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv
+Z90 F../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl/preprocess_mvp.sv
+R68
 R9
-R49
 R50
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 Xpreprocess_mvp_sv_unit
 R2
 R3
-R46
+R47
 Vio=WC[[m5za7Q5`106Voa3
 r1
 !s85 0
@@ -1859,16 +1861,16 @@ Iio=WC[[m5za7Q5`106Voa3
 S1
 R0
 R7
-R82
-R83
-R63
+R89
+R90
+R69
 R9
-R54
-R50
+R55
 R51
+R52
 !i113 0
 R13
-R52
+R53
 R1
 vrr_arb_tree
 R2
@@ -1910,7 +1912,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/rstgen.sv
 F../third_party/fpnew/src/common_cells/src/rstgen.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -1988,7 +1990,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/shift_reg.sv
 F../third_party/fpnew/src/common_cells/src/shift_reg.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -2014,7 +2016,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/spill_register.sv
 F../third_party/fpnew/src/common_cells/src/spill_register.sv
-R77
+R84
 R9
 r1
 !s85 0
@@ -2040,7 +2042,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_arbiter.sv
 F../third_party/fpnew/src/common_cells/src/stream_arbiter.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -2066,7 +2068,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_arbiter_flushable.sv
 F../third_party/fpnew/src/common_cells/src/stream_arbiter_flushable.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -2092,7 +2094,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_delay.sv
 F../third_party/fpnew/src/common_cells/src/stream_delay.sv
-R35
+R36
 R9
 r1
 !s85 0
@@ -2144,7 +2146,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_intf.sv
 F../third_party/fpnew/src/common_cells/src/stream_intf.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -2171,7 +2173,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_fifo.sv
 F../third_party/fpnew/src/common_cells/src/stream_fifo.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -2197,7 +2199,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_filter.sv
 F../third_party/fpnew/src/common_cells/src/stream_filter.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -2223,7 +2225,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_fork.sv
 F../third_party/fpnew/src/common_cells/src/stream_fork.sv
-R39
+R40
 R9
 r1
 !s85 0
@@ -2249,7 +2251,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_fork_dynamic.sv
 F../third_party/fpnew/src/common_cells/src/stream_fork_dynamic.sv
-R40
+R41
 R9
 r1
 !s85 0
@@ -2275,7 +2277,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_join.sv
 F../third_party/fpnew/src/common_cells/src/stream_join.sv
-R77
+R84
 R9
 r1
 !s85 0
@@ -2301,7 +2303,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_mux.sv
 F../third_party/fpnew/src/common_cells/src/stream_mux.sv
-R35
+R36
 R9
 r1
 !s85 0
@@ -2328,7 +2330,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_omega_net.sv
 F../third_party/fpnew/src/common_cells/src/stream_omega_net.sv
-R44
+R45
 R9
 r1
 !s85 0
@@ -2354,7 +2356,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_register.sv
 F../third_party/fpnew/src/common_cells/src/stream_register.sv
-R35
+R36
 R9
 r1
 !s85 0
@@ -2380,7 +2382,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_to_mem.sv
 F../third_party/fpnew/src/common_cells/src/stream_to_mem.sv
-R77
+R84
 R9
 r1
 !s85 0
@@ -2406,7 +2408,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/stream_xbar.sv
 F../third_party/fpnew/src/common_cells/src/stream_xbar.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -2432,7 +2434,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/sub_per_hash.sv
 F../third_party/fpnew/src/common_cells/src/sub_per_hash.sv
-R59
+R65
 R9
 r1
 !s85 0
@@ -2458,7 +2460,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/sync.sv
 F../third_party/fpnew/src/common_cells/src/sync.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -2484,7 +2486,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/sync_wedge.sv
 F../third_party/fpnew/src/common_cells/src/sync_wedge.sv
-R45
+R46
 R9
 r1
 !s85 0
@@ -2510,7 +2512,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/unread.sv
 F../third_party/fpnew/src/common_cells/src/unread.sv
-R66
+R72
 R9
 r1
 !s85 0
@@ -2523,8 +2525,9 @@ R13
 R14
 R1
 vVortex
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 mjTaHW`;7;[R@ebn6OTVM2
 I6f7Bhbzbo0VgSFZ4X3:oC3
@@ -2532,7 +2535,7 @@ R6
 !s105 Vortex_sv_unit
 S1
 R0
-R55
+R58
 8rtl/Vortex.sv
 Frtl/Vortex.sv
 L0 5
@@ -2540,9 +2543,9 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
@@ -2559,7 +2562,7 @@ R6
 !s105 Vortex_axi_sv_unit
 S1
 R0
-Z84 w1694981853
+Z91 w1694981853
 8rtl/Vortex_axi.sv
 Frtl/Vortex_axi.sv
 L0 3
@@ -2567,17 +2570,18 @@ R9
 r1
 !s85 0
 31
-R49
-Z85 !s107 include/VX_tex_define.vh|include/defs_div_sqrt_mvp.sv|include/fpnew_pkg.sv|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_define.vh|include/VX_fpu_define.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_cache_define.vh|rtl/tex_unit/VX_tex_sat.sv|rtl/tex_unit/VX_tex_unit.sv|rtl/tex_unit/VX_tex_lerp.sv|rtl/tex_unit/VX_tex_stride.sv|rtl/tex_unit/VX_tex_addr.sv|rtl/tex_unit/VX_tex_mem.sv|rtl/tex_unit/VX_tex_wrap.sv|rtl/tex_unit/VX_tex_sampler.sv|rtl/tex_unit/VX_tex_format.sv|rtl/Vortex.sv|rtl/VX_issue.sv|rtl/VX_cluster.sv|rtl/VX_commit.sv|rtl/VX_fetch.sv|rtl/VX_core.sv|rtl/VX_ibuffer.sv|rtl/VX_smem_arb.sv|rtl/VX_ipdom_stack.sv|rtl/VX_icache_stage.sv|rtl/VX_csr_data.sv|rtl/VX_mem_unit.sv|rtl/VX_pipeline.sv|rtl/VX_fpu_unit.sv|rtl/VX_gpr_stage.sv|rtl/Vortex_axi.sv|rtl/VX_muldiv.sv|rtl/VX_scoreboard.sv|rtl/VX_mem_arb.sv|rtl/VX_alu_unit.sv|rtl/VX_lsu_unit.sv|rtl/VX_execute.sv|rtl/VX_dispatch.sv|rtl/VX_warp_sched.sv|rtl/VX_csr_unit.sv|rtl/VX_decode.sv|rtl/VX_cache_arb.sv|rtl/VX_writeback.sv|rtl/VX_gpu_unit.sv|rtl/libs/VX_fair_arbiter.sv|rtl/libs/VX_shift_register.sv|rtl/libs/VX_bits_remove.sv|rtl/libs/VX_priority_encoder.sv|rtl/libs/VX_serial_div.sv|rtl/libs/VX_fixed_arbiter.sv|rtl/libs/VX_rr_arbiter.sv|rtl/libs/VX_pending_size.sv|rtl/libs/VX_multiplier.sv|rtl/libs/VX_scope.sv|rtl/libs/VX_elastic_buffer.sv|rtl/libs/VX_onehot_encoder.sv|rtl/libs/VX_popcount.sv|rtl/libs/VX_pipe_register.sv|rtl/libs/VX_stream_demux.sv|rtl/libs/VX_onehot_mux.sv|rtl/libs/VX_index_queue.sv|rtl/libs/VX_mux.sv|rtl/libs/VX_reset_relay.sv|rtl/libs/VX_bits_insert.sv|rtl/libs/VX_dp_ram.sv|rtl/libs/VX_matrix_arbiter.sv|rtl/libs/VX_fifo_queue.sv|rtl/libs/VX_index_buffer.sv|rtl/libs/VX_stream_arbiter.sv|rtl/libs/VX_find_first.sv|rtl/libs/VX_bypass_buffer.sv|rtl/libs/VX_axi_adapter.sv|rtl/libs/VX_sp_ram.sv|rtl/libs/VX_lzc.sv|rtl/libs/VX_divider.sv|rtl/libs/VX_scan.sv|rtl/libs/VX_skid_buffer.sv|rtl/fp_cores/VX_fp_rounding.sv|rtl/fp_cores/VX_fp_sqrt.sv|rtl/fp_cores/VX_fpu_dpi.sv|rtl/fp_cores/VX_fp_ncomp.sv|rtl/fp_cores/VX_fpu_fpnew.sv|rtl/fp_cores/VX_fp_class.sv|rtl/fp_cores/VX_fpu_fpga.sv|rtl/fp_cores/VX_fp_cvt.sv|rtl/fp_cores/VX_fp_fma.sv|rtl/fp_cores/VX_fp_div.sv|rtl/cache/VX_flush_ctrl.sv|rtl/cache/VX_nc_bypass.sv|rtl/cache/VX_shared_mem.sv|rtl/cache/VX_core_rsp_merge.sv|rtl/cache/VX_miss_resrv.sv|rtl/cache/VX_core_req_bank_sel.sv|rtl/cache/VX_data_access.sv|rtl/cache/VX_bank.sv|rtl/cache/VX_cache.sv|rtl/cache/VX_tag_access.sv|
-Z86 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|+incdir+../third_party/fpnew/src|+incdir+../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl|+incdir+dpi|rtl/cache/VX_tag_access.sv|rtl/cache/VX_cache.sv|rtl/cache/VX_bank.sv|rtl/cache/VX_data_access.sv|rtl/cache/VX_core_req_bank_sel.sv|rtl/cache/VX_miss_resrv.sv|rtl/cache/VX_core_rsp_merge.sv|rtl/cache/VX_shared_mem.sv|rtl/cache/VX_nc_bypass.sv|rtl/cache/VX_flush_ctrl.sv|rtl/fp_cores/VX_fp_div.sv|rtl/fp_cores/VX_fp_fma.sv|rtl/fp_cores/VX_fp_cvt.sv|rtl/fp_cores/VX_fpu_fpga.sv|rtl/fp_cores/VX_fp_class.sv|rtl/fp_cores/VX_fpu_fpnew.sv|rtl/fp_cores/VX_fp_ncomp.sv|rtl/fp_cores/VX_fpu_dpi.sv|rtl/fp_cores/VX_fp_sqrt.sv|rtl/fp_cores/VX_fp_rounding.sv|rtl/libs/VX_skid_buffer.sv|rtl/libs/VX_scan.sv|rtl/libs/VX_divider.sv|rtl/libs/VX_lzc.sv|rtl/libs/VX_sp_ram.sv|rtl/libs/VX_axi_adapter.sv|rtl/libs/VX_bypass_buffer.sv|rtl/libs/VX_find_first.sv|rtl/libs/VX_stream_arbiter.sv|rtl/libs/VX_index_buffer.sv|rtl/libs/VX_fifo_queue.sv|rtl/libs/VX_matrix_arbiter.sv|rtl/libs/VX_dp_ram.sv|rtl/libs/VX_bits_insert.sv|rtl/libs/VX_reset_relay.sv|rtl/libs/VX_mux.sv|rtl/libs/VX_index_queue.sv|rtl/libs/VX_onehot_mux.sv|rtl/libs/VX_stream_demux.sv|rtl/libs/VX_pipe_register.sv|rtl/libs/VX_popcount.sv|rtl/libs/VX_onehot_encoder.sv|rtl/libs/VX_elastic_buffer.sv|rtl/libs/VX_scope.sv|rtl/libs/VX_multiplier.sv|rtl/libs/VX_pending_size.sv|rtl/libs/VX_rr_arbiter.sv|rtl/libs/VX_fixed_arbiter.sv|rtl/libs/VX_serial_div.sv|rtl/libs/VX_priority_encoder.sv|rtl/libs/VX_bits_remove.sv|rtl/libs/VX_shift_register.sv|rtl/libs/VX_fair_arbiter.sv|rtl/VX_gpu_unit.sv|rtl/VX_writeback.sv|rtl/VX_cache_arb.sv|rtl/VX_decode.sv|rtl/VX_csr_unit.sv|rtl/VX_warp_sched.sv|rtl/VX_dispatch.sv|rtl/VX_execute.sv|rtl/VX_lsu_unit.sv|rtl/VX_alu_unit.sv|rtl/VX_mem_arb.sv|rtl/VX_scoreboard.sv|rtl/VX_muldiv.sv|rtl/Vortex_axi.sv|rtl/VX_gpr_stage.sv|rtl/VX_fpu_unit.sv|rtl/VX_pipeline.sv|rtl/VX_mem_unit.sv|rtl/VX_csr_data.sv|rtl/VX_icache_stage.sv|rtl/VX_ipdom_stack.sv|rtl/VX_smem_arb.sv|rtl/VX_ibuffer.sv|rtl/VX_core.sv|rtl/VX_fetch.sv|rtl/VX_commit.sv|rtl/VX_cluster.sv|rtl/VX_issue.sv|rtl/Vortex.sv|rtl/tex_unit/VX_tex_format.sv|rtl/tex_unit/VX_tex_sampler.sv|rtl/tex_unit/VX_tex_wrap.sv|rtl/tex_unit/VX_tex_mem.sv|rtl/tex_unit/VX_tex_addr.sv|rtl/tex_unit/VX_tex_stride.sv|rtl/tex_unit/VX_tex_lerp.sv|rtl/tex_unit/VX_tex_unit.sv|rtl/tex_unit/VX_tex_sat.sv|
+R50
+Z92 !s107 include/VX_tex_define.vh|include/defs_div_sqrt_mvp.sv|include/fpnew_pkg.sv|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_define.vh|include/VX_fpu_define.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_cache_define.vh|rtl/tex_unit/VX_tex_sat.sv|rtl/tex_unit/VX_tex_unit.sv|rtl/tex_unit/VX_tex_lerp.sv|rtl/tex_unit/VX_tex_stride.sv|rtl/tex_unit/VX_tex_addr.sv|rtl/tex_unit/VX_tex_mem.sv|rtl/tex_unit/VX_tex_wrap.sv|rtl/tex_unit/VX_tex_sampler.sv|rtl/tex_unit/VX_tex_format.sv|rtl/Vortex.sv|rtl/VX_issue.sv|rtl/VX_cluster.sv|rtl/VX_commit.sv|rtl/VX_fetch.sv|rtl/VX_core.sv|rtl/VX_ibuffer.sv|rtl/VX_smem_arb.sv|rtl/VX_ipdom_stack.sv|rtl/VX_icache_stage.sv|rtl/VX_csr_data.sv|rtl/VX_mem_unit.sv|rtl/VX_pipeline.sv|rtl/VX_fpu_unit.sv|rtl/VX_gpr_stage.sv|rtl/Vortex_axi.sv|rtl/VX_muldiv.sv|rtl/VX_scoreboard.sv|rtl/VX_mem_arb.sv|rtl/VX_alu_unit.sv|rtl/VX_lsu_unit.sv|rtl/VX_execute.sv|rtl/VX_dispatch.sv|rtl/VX_warp_sched.sv|rtl/VX_csr_unit.sv|rtl/VX_decode.sv|rtl/VX_cache_arb.sv|rtl/VX_writeback.sv|rtl/VX_gpu_unit.sv|rtl/libs/VX_fair_arbiter.sv|rtl/libs/VX_shift_register.sv|rtl/libs/VX_bits_remove.sv|rtl/libs/VX_priority_encoder.sv|rtl/libs/VX_serial_div.sv|rtl/libs/VX_fixed_arbiter.sv|rtl/libs/VX_rr_arbiter.sv|rtl/libs/VX_pending_size.sv|rtl/libs/VX_multiplier.sv|rtl/libs/VX_scope.sv|rtl/libs/VX_elastic_buffer.sv|rtl/libs/VX_onehot_encoder.sv|rtl/libs/VX_popcount.sv|rtl/libs/VX_pipe_register.sv|rtl/libs/VX_stream_demux.sv|rtl/libs/VX_onehot_mux.sv|rtl/libs/VX_index_queue.sv|rtl/libs/VX_mux.sv|rtl/libs/VX_reset_relay.sv|rtl/libs/VX_bits_insert.sv|rtl/libs/VX_dp_ram.sv|rtl/libs/VX_matrix_arbiter.sv|rtl/libs/VX_fifo_queue.sv|rtl/libs/VX_index_buffer.sv|rtl/libs/VX_stream_arbiter.sv|rtl/libs/VX_find_first.sv|rtl/libs/VX_bypass_buffer.sv|rtl/libs/VX_axi_adapter.sv|rtl/libs/VX_sp_ram.sv|rtl/libs/VX_lzc.sv|rtl/libs/VX_divider.sv|rtl/libs/VX_scan.sv|rtl/libs/VX_skid_buffer.sv|rtl/fp_cores/VX_fp_rounding.sv|rtl/fp_cores/VX_fp_sqrt.sv|rtl/fp_cores/VX_fpu_dpi.sv|rtl/fp_cores/VX_fp_ncomp.sv|rtl/fp_cores/VX_fpu_fpnew.sv|rtl/fp_cores/VX_fp_class.sv|rtl/fp_cores/VX_fpu_fpga.sv|rtl/fp_cores/VX_fp_cvt.sv|rtl/fp_cores/VX_fp_fma.sv|rtl/fp_cores/VX_fp_div.sv|rtl/cache/VX_flush_ctrl.sv|rtl/cache/VX_nc_bypass.sv|rtl/cache/VX_shared_mem.sv|rtl/cache/VX_core_rsp_merge.sv|rtl/cache/VX_miss_resrv.sv|rtl/cache/VX_core_req_bank_sel.sv|rtl/cache/VX_data_access.sv|rtl/cache/VX_bank.sv|rtl/cache/VX_cache.sv|rtl/cache/VX_tag_access.sv|
+Z93 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|+incdir+../third_party/fpnew/src|+incdir+../third_party/fpnew/src/fpu_div_sqrt_mvp/hdl|+incdir+dpi|rtl/cache/VX_tag_access.sv|rtl/cache/VX_cache.sv|rtl/cache/VX_bank.sv|rtl/cache/VX_data_access.sv|rtl/cache/VX_core_req_bank_sel.sv|rtl/cache/VX_miss_resrv.sv|rtl/cache/VX_core_rsp_merge.sv|rtl/cache/VX_shared_mem.sv|rtl/cache/VX_nc_bypass.sv|rtl/cache/VX_flush_ctrl.sv|rtl/fp_cores/VX_fp_div.sv|rtl/fp_cores/VX_fp_fma.sv|rtl/fp_cores/VX_fp_cvt.sv|rtl/fp_cores/VX_fpu_fpga.sv|rtl/fp_cores/VX_fp_class.sv|rtl/fp_cores/VX_fpu_fpnew.sv|rtl/fp_cores/VX_fp_ncomp.sv|rtl/fp_cores/VX_fpu_dpi.sv|rtl/fp_cores/VX_fp_sqrt.sv|rtl/fp_cores/VX_fp_rounding.sv|rtl/libs/VX_skid_buffer.sv|rtl/libs/VX_scan.sv|rtl/libs/VX_divider.sv|rtl/libs/VX_lzc.sv|rtl/libs/VX_sp_ram.sv|rtl/libs/VX_axi_adapter.sv|rtl/libs/VX_bypass_buffer.sv|rtl/libs/VX_find_first.sv|rtl/libs/VX_stream_arbiter.sv|rtl/libs/VX_index_buffer.sv|rtl/libs/VX_fifo_queue.sv|rtl/libs/VX_matrix_arbiter.sv|rtl/libs/VX_dp_ram.sv|rtl/libs/VX_bits_insert.sv|rtl/libs/VX_reset_relay.sv|rtl/libs/VX_mux.sv|rtl/libs/VX_index_queue.sv|rtl/libs/VX_onehot_mux.sv|rtl/libs/VX_stream_demux.sv|rtl/libs/VX_pipe_register.sv|rtl/libs/VX_popcount.sv|rtl/libs/VX_onehot_encoder.sv|rtl/libs/VX_elastic_buffer.sv|rtl/libs/VX_scope.sv|rtl/libs/VX_multiplier.sv|rtl/libs/VX_pending_size.sv|rtl/libs/VX_rr_arbiter.sv|rtl/libs/VX_fixed_arbiter.sv|rtl/libs/VX_serial_div.sv|rtl/libs/VX_priority_encoder.sv|rtl/libs/VX_bits_remove.sv|rtl/libs/VX_shift_register.sv|rtl/libs/VX_fair_arbiter.sv|rtl/VX_gpu_unit.sv|rtl/VX_writeback.sv|rtl/VX_cache_arb.sv|rtl/VX_decode.sv|rtl/VX_csr_unit.sv|rtl/VX_warp_sched.sv|rtl/VX_dispatch.sv|rtl/VX_execute.sv|rtl/VX_lsu_unit.sv|rtl/VX_alu_unit.sv|rtl/VX_mem_arb.sv|rtl/VX_scoreboard.sv|rtl/VX_muldiv.sv|rtl/Vortex_axi.sv|rtl/VX_gpr_stage.sv|rtl/VX_fpu_unit.sv|rtl/VX_pipeline.sv|rtl/VX_mem_unit.sv|rtl/VX_csr_data.sv|rtl/VX_icache_stage.sv|rtl/VX_ipdom_stack.sv|rtl/VX_smem_arb.sv|rtl/VX_ibuffer.sv|rtl/VX_core.sv|rtl/VX_fetch.sv|rtl/VX_commit.sv|rtl/VX_cluster.sv|rtl/VX_issue.sv|rtl/Vortex.sv|rtl/tex_unit/VX_tex_format.sv|rtl/tex_unit/VX_tex_sampler.sv|rtl/tex_unit/VX_tex_wrap.sv|rtl/tex_unit/VX_tex_mem.sv|rtl/tex_unit/VX_tex_addr.sv|rtl/tex_unit/VX_tex_stride.sv|rtl/tex_unit/VX_tex_lerp.sv|rtl/tex_unit/VX_tex_unit.sv|rtl/tex_unit/VX_tex_sat.sv|
 !i113 0
 R13
 R27
 R1
 n@vortex_axi
 vvortex_gpu_ahb_dummy
+R56
 R3
-R22
+R57
 !i10b 1
 !s100 OkI0PM4jUP_N5Fl^oXFei2
 ILlk_4V4Shmf[HfcIIz]:R0
@@ -2585,7 +2589,7 @@ R6
 !s105 vortex_gpu_ahb_dummy_sv_unit
 S1
 R0
-R55
+R58
 8rtl/vortex_gpu_ahb_dummy.sv
 Frtl/vortex_gpu_ahb_dummy.sv
 L0 2
@@ -2593,17 +2597,17 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 vVortex_mem_slave
-!s10a 1700085729
+!s10a 1701505997
 R3
-Z87 !s110 1700084166
+Z94 !s110 1700084166
 !i10b 1
 !s100 UE4R^cIh]@hOMFDz?9f292
 I<6==?^i?E91P5B5^C^mM00
@@ -2614,23 +2618,23 @@ R0
 w1700083804
 8tb/Vortex_mem_slave.sv
 Ftb/Vortex_mem_slave.sv
-R40
+R41
 R9
 r1
 !s85 0
 31
-Z88 !s108 1700084165.000000
-R71
-R72
+Z95 !s108 1700084165.000000
+R78
+R79
 !i113 0
 R13
 R21
 R1
 n@vortex_mem_slave
 vVortex_mem_slave_condensed
-Z89 !s10a 1700031354
+Z96 !s10a 1701504794
 R3
-R87
+R94
 !i10b 1
 !s100 QaKT;?]al[jB3<PWa8hR02
 IGL7A49^>>eCjoCCa0R3z<1
@@ -2638,17 +2642,17 @@ R6
 !s105 Vortex_mem_slave_condensed_sv_unit
 S1
 R0
-Z90 w1700031354
+Z97 w1700031354
 8tb/Vortex_mem_slave_condensed.sv
 Ftb/Vortex_mem_slave_condensed.sv
-R64
+R70
 R9
 r1
 !s85 0
 31
-R88
-R71
-R72
+R95
+R78
+R79
 !i113 0
 R13
 R21
@@ -2656,7 +2660,7 @@ R1
 n@vortex_mem_slave_condensed
 vVortex_wrapper
 R3
-Z91 !s110 1700087382
+R75
 !i10b 1
 !s100 <oV1P8fQ9iG4BZ3P4FbMe3
 I]RaTaKfInHBU2RNd7Ph_B1
@@ -2664,7 +2668,7 @@ R6
 !s105 Vortex_wrapper_sv_unit
 S1
 R0
-R55
+R23
 8rtl/Vortex_wrapper.sv
 Frtl/Vortex_wrapper.sv
 L0 9
@@ -2672,9 +2676,9 @@ R9
 r1
 !s85 0
 31
-R24
-R71
-R72
+R77
+R78
+R79
 !i113 0
 R13
 R21
@@ -2682,7 +2686,7 @@ R1
 n@vortex_wrapper
 vVortex_wrapper_condensed
 R3
-R91
+R75
 !i10b 1
 !s100 F@YWoF19bNO>3JTSefZ[Q0
 I1KbFY5]BONQ?U63o:M5JW2
@@ -2690,7 +2694,7 @@ R6
 !s105 Vortex_wrapper_condensed_sv_unit
 S1
 R0
-R55
+R23
 8rtl/Vortex_wrapper_condensed.sv
 Frtl/Vortex_wrapper_condensed.sv
 L0 9
@@ -2698,16 +2702,16 @@ R9
 r1
 !s85 0
 31
-R24
-R71
-R72
+R77
+R78
+R79
 !i113 0
 R13
 R21
 R1
 n@vortex_wrapper_condensed
 vVortex_wrapper_condensed_tb
-R89
+R96
 R3
 DXx4 work 35 Vortex_wrapper_condensed_tb_sv_unit 0 22 nfkYh0=Z06g48T;f3V;UB0
 R6
@@ -2720,21 +2724,21 @@ IU38SchKbe`?g[7molJ`R21
 !s105 Vortex_wrapper_condensed_tb_sv_unit
 S1
 R0
-R90
-Z92 8tb/Vortex_wrapper_condensed_tb.sv
-Z93 Ftb/Vortex_wrapper_condensed_tb.sv
-R64
+R97
+Z98 8tb/Vortex_wrapper_condensed_tb.sv
+Z99 Ftb/Vortex_wrapper_condensed_tb.sv
+R70
 R9
-Z94 !s108 1700085530.000000
-Z95 !s107 tb/Vortex_mem_slave.vh|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_define.vh|tb/Vortex_wrapper_condensed_tb.sv|
-Z96 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|tb/Vortex_wrapper_condensed_tb.sv|
+Z100 !s108 1700085530.000000
+Z101 !s107 tb/Vortex_mem_slave.vh|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_define.vh|tb/Vortex_wrapper_condensed_tb.sv|
+Z102 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|tb/Vortex_wrapper_condensed_tb.sv|
 !i113 0
 R13
 R21
 R1
 n@vortex_wrapper_condensed_tb
 XVortex_wrapper_condensed_tb_sv_unit
-R69
+R15
 R3
 VnfkYh0=Z06g48T;f3V;UB0
 r1
@@ -2746,58 +2750,58 @@ InfkYh0=Z06g48T;f3V;UB0
 !i103 1
 S1
 R0
-R23
-R92
-R93
-Z97 Finclude/VX_define.vh
-Z98 Finclude/VX_platform.vh
-Z99 Finclude/VX_scope.vh
-Z100 Finclude/VX_config.vh
-Z101 Finclude/VX_sv_trace.vh
-R70
-R73
-Z102 Ftb/Vortex_mem_slave.vh
-Z103 L0 12
+Z103 w1700084085
+R98
+R99
+Z104 Finclude/VX_define.vh
+Z105 Finclude/VX_platform.vh
+Z106 Finclude/VX_scope.vh
+Z107 Finclude/VX_config.vh
+Z108 Finclude/VX_sv_trace.vh
+R76
+R80
+Z109 Ftb/Vortex_mem_slave.vh
+Z110 L0 12
 R9
-R94
-R95
-R96
+R100
+R101
+R102
 !i113 0
 R13
 R21
 R1
 n@vortex_wrapper_condensed_tb_sv_unit
 vVortex_wrapper_no_Vortex
-Z104 !s10a 1700031355
+R96
 R3
-R87
+R94
 !i10b 1
 !s100 00fke:cWdcjJVCz]:gmTT3
 I36zWnQ=Kl@[jR`:9z28kb0
 R6
-Z105 !s105 VX_ahb_adapter_sv_unit
+Z111 !s105 VX_ahb_adapter_sv_unit
 S1
 R0
-Z106 w1700031355
+Z112 w1700031355
 8tb/Vortex_wrapper_no_Vortex.sv
 Ftb/Vortex_wrapper_no_Vortex.sv
-R40
+R41
 R9
 r1
 !s85 0
 31
-R88
-R71
-R72
+R95
+R78
+R79
 !i113 0
 R13
 R21
 R1
 n@vortex_wrapper_no_@vortex
 vVortex_wrapper_no_Vortex_condensed
-R104
+R96
 R3
-R87
+R94
 !i10b 1
 !s100 _boe;TOKQ<^T>mYaeLURN3
 IciBNc7oLI<X3?;13KSQnk0
@@ -2805,7 +2809,7 @@ R6
 !s105 Vortex_wrapper_no_Vortex_condensed_sv_unit
 S1
 R0
-R106
+R112
 8tb/Vortex_wrapper_no_Vortex_condensed.sv
 Ftb/Vortex_wrapper_no_Vortex_condensed.sv
 L0 33
@@ -2813,16 +2817,16 @@ R9
 r1
 !s85 0
 31
-R88
-R71
-R72
+R95
+R78
+R79
 !i113 0
 R13
 R21
 R1
 n@vortex_wrapper_no_@vortex_condensed
 vVortex_wrapper_tb
-R89
+R96
 R3
 DXx4 work 25 Vortex_wrapper_tb_sv_unit 0 22 j^]Fz<UN7:KkbeC=@83nV0
 R6
@@ -2835,21 +2839,21 @@ I7jk=mLjNKL@0WoPWBAUQG3
 !s105 Vortex_wrapper_tb_sv_unit
 S1
 R0
-R90
-Z107 8tb/Vortex_wrapper_tb.sv
-Z108 Ftb/Vortex_wrapper_tb.sv
-R64
+R97
+Z113 8tb/Vortex_wrapper_tb.sv
+Z114 Ftb/Vortex_wrapper_tb.sv
+R70
 R9
-R94
-Z109 !s107 tb/Vortex_mem_slave.vh|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_define.vh|tb/Vortex_wrapper_tb.sv|
-Z110 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|tb/Vortex_wrapper_tb.sv|
+R100
+Z115 !s107 tb/Vortex_mem_slave.vh|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_define.vh|tb/Vortex_wrapper_tb.sv|
+Z116 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|tb/Vortex_wrapper_tb.sv|
 !i113 0
 R13
 R21
 R1
 n@vortex_wrapper_tb
 XVortex_wrapper_tb_sv_unit
-R69
+R15
 R3
 Vj^]Fz<UN7:KkbeC=@83nV0
 r1
@@ -2861,30 +2865,31 @@ Ij^]Fz<UN7:KkbeC=@83nV0
 !i103 1
 S1
 R0
-R23
+R103
+R113
+R114
+R104
+R105
+R106
 R107
 R108
-R97
-R98
-R99
-R100
-R101
-R70
-R73
-R102
-R103
-R9
-R94
+R76
+R80
 R109
 R110
+R9
+R100
+R115
+R116
 !i113 0
 R13
 R21
 R1
 n@vortex_wrapper_tb_sv_unit
 vVX_ahb
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 @PfPj5_oJo2MXSb24]`JQ1
 IUj0SUf6?I_ilG8biZ4B^a1
@@ -2892,7 +2897,7 @@ R6
 !s105 VX_ahb_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_ahb.sv
 Frtl/VX_ahb.sv
 L0 4
@@ -2900,9 +2905,9 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
@@ -2910,15 +2915,15 @@ R1
 n@v@x_ahb
 vVX_ahb_adapter
 R3
-R91
+R75
 !i10b 1
 !s100 5YHnPFV]GEnR`kzBL:Rzg2
 I_Vo<L4IE<Nz_;[ogJ2N052
 R6
-R105
+R111
 S1
 R0
-R90
+w1701504794
 8tb/VX_ahb_adapter.sv
 Ftb/VX_ahb_adapter.sv
 L0 3
@@ -2926,18 +2931,18 @@ R9
 r1
 !s85 0
 31
-R24
-R71
-R72
+R77
+R78
+R79
 !i113 0
 R13
 R21
 R1
 n@v@x_ahb_adapter
 YVX_alu_req_if
-R15
+R56
 R3
-Z111 !s110 1699989051
+Z117 !s110 1699989051
 !i10b 1
 !s100 ;[P>VgfZ`B=<5lPPB2kX_0
 I[=:YIFY_TKYk`XP?SAJYC2
@@ -2945,7 +2950,7 @@ R6
 !s105 VX_alu_req_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_alu_req_if.sv
 Frtl/interfaces/VX_alu_req_if.sv
 L0 6
@@ -2953,17 +2958,18 @@ R9
 r1
 !s85 0
 31
-Z112 !s108 1699989051.000000
-Z113 !s107 include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_define.vh|include/VX_scope.vh|include/VX_platform.vh|rtl/interfaces/../cache/VX_cache_define.vh|rtl/interfaces/VX_icache_req_if.sv|rtl/interfaces/VX_mem_rsp_if.sv|rtl/interfaces/VX_gpr_rsp_if.sv|rtl/interfaces/VX_join_if.sv|rtl/interfaces/VX_fpu_req_if.sv|rtl/interfaces/VX_gpr_req_if.sv|rtl/interfaces/VX_perf_cache_if.sv|rtl/interfaces/VX_fetch_to_csr_if.sv|rtl/interfaces/VX_tex_rsp_if.sv|rtl/interfaces/VX_perf_memsys_if.sv|rtl/interfaces/VX_alu_req_if.sv|rtl/interfaces/VX_lsu_req_if.sv|rtl/interfaces/VX_mem_req_if.sv|rtl/interfaces/VX_tex_req_if.sv|rtl/interfaces/VX_tex_csr_if.sv|rtl/interfaces/VX_wstall_if.sv|rtl/interfaces/VX_dcache_rsp_if.sv|rtl/interfaces/VX_csr_req_if.sv|rtl/interfaces/VX_perf_tex_if.sv|rtl/interfaces/VX_dcache_req_if.sv|rtl/interfaces/VX_gpu_req_if.sv|rtl/interfaces/VX_ifetch_rsp_if.sv|rtl/interfaces/VX_fpu_to_csr_if.sv|rtl/interfaces/VX_ifetch_req_if.sv|rtl/interfaces/VX_ibuffer_if.sv|rtl/interfaces/VX_perf_pipeline_if.sv|rtl/interfaces/VX_branch_ctl_if.sv|rtl/interfaces/VX_commit_if.sv|rtl/interfaces/VX_decode_if.sv|rtl/interfaces/VX_warp_ctl_if.sv|rtl/interfaces/VX_writeback_if.sv|rtl/interfaces/VX_cmt_to_csr_if.sv|rtl/interfaces/VX_icache_rsp_if.sv|
-Z114 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|rtl/interfaces/VX_icache_rsp_if.sv|rtl/interfaces/VX_cmt_to_csr_if.sv|rtl/interfaces/VX_writeback_if.sv|rtl/interfaces/VX_warp_ctl_if.sv|rtl/interfaces/VX_decode_if.sv|rtl/interfaces/VX_commit_if.sv|rtl/interfaces/VX_branch_ctl_if.sv|rtl/interfaces/VX_perf_pipeline_if.sv|rtl/interfaces/VX_ibuffer_if.sv|rtl/interfaces/VX_ifetch_req_if.sv|rtl/interfaces/VX_fpu_to_csr_if.sv|rtl/interfaces/VX_ifetch_rsp_if.sv|rtl/interfaces/VX_gpu_req_if.sv|rtl/interfaces/VX_dcache_req_if.sv|rtl/interfaces/VX_perf_tex_if.sv|rtl/interfaces/VX_csr_req_if.sv|rtl/interfaces/VX_dcache_rsp_if.sv|rtl/interfaces/VX_wstall_if.sv|rtl/interfaces/VX_tex_csr_if.sv|rtl/interfaces/VX_tex_req_if.sv|rtl/interfaces/VX_mem_req_if.sv|rtl/interfaces/VX_lsu_req_if.sv|rtl/interfaces/VX_alu_req_if.sv|rtl/interfaces/VX_perf_memsys_if.sv|rtl/interfaces/VX_tex_rsp_if.sv|rtl/interfaces/VX_fetch_to_csr_if.sv|rtl/interfaces/VX_perf_cache_if.sv|rtl/interfaces/VX_gpr_req_if.sv|rtl/interfaces/VX_fpu_req_if.sv|rtl/interfaces/VX_join_if.sv|rtl/interfaces/VX_gpr_rsp_if.sv|rtl/interfaces/VX_mem_rsp_if.sv|rtl/interfaces/VX_icache_req_if.sv|
+Z118 !s108 1699989051.000000
+Z119 !s107 include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_define.vh|include/VX_scope.vh|include/VX_platform.vh|rtl/interfaces/../cache/VX_cache_define.vh|rtl/interfaces/VX_icache_req_if.sv|rtl/interfaces/VX_mem_rsp_if.sv|rtl/interfaces/VX_gpr_rsp_if.sv|rtl/interfaces/VX_join_if.sv|rtl/interfaces/VX_fpu_req_if.sv|rtl/interfaces/VX_gpr_req_if.sv|rtl/interfaces/VX_perf_cache_if.sv|rtl/interfaces/VX_fetch_to_csr_if.sv|rtl/interfaces/VX_tex_rsp_if.sv|rtl/interfaces/VX_perf_memsys_if.sv|rtl/interfaces/VX_alu_req_if.sv|rtl/interfaces/VX_lsu_req_if.sv|rtl/interfaces/VX_mem_req_if.sv|rtl/interfaces/VX_tex_req_if.sv|rtl/interfaces/VX_tex_csr_if.sv|rtl/interfaces/VX_wstall_if.sv|rtl/interfaces/VX_dcache_rsp_if.sv|rtl/interfaces/VX_csr_req_if.sv|rtl/interfaces/VX_perf_tex_if.sv|rtl/interfaces/VX_dcache_req_if.sv|rtl/interfaces/VX_gpu_req_if.sv|rtl/interfaces/VX_ifetch_rsp_if.sv|rtl/interfaces/VX_fpu_to_csr_if.sv|rtl/interfaces/VX_ifetch_req_if.sv|rtl/interfaces/VX_ibuffer_if.sv|rtl/interfaces/VX_perf_pipeline_if.sv|rtl/interfaces/VX_branch_ctl_if.sv|rtl/interfaces/VX_commit_if.sv|rtl/interfaces/VX_decode_if.sv|rtl/interfaces/VX_warp_ctl_if.sv|rtl/interfaces/VX_writeback_if.sv|rtl/interfaces/VX_cmt_to_csr_if.sv|rtl/interfaces/VX_icache_rsp_if.sv|
+Z120 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|rtl/interfaces/VX_icache_rsp_if.sv|rtl/interfaces/VX_cmt_to_csr_if.sv|rtl/interfaces/VX_writeback_if.sv|rtl/interfaces/VX_warp_ctl_if.sv|rtl/interfaces/VX_decode_if.sv|rtl/interfaces/VX_commit_if.sv|rtl/interfaces/VX_branch_ctl_if.sv|rtl/interfaces/VX_perf_pipeline_if.sv|rtl/interfaces/VX_ibuffer_if.sv|rtl/interfaces/VX_ifetch_req_if.sv|rtl/interfaces/VX_fpu_to_csr_if.sv|rtl/interfaces/VX_ifetch_rsp_if.sv|rtl/interfaces/VX_gpu_req_if.sv|rtl/interfaces/VX_dcache_req_if.sv|rtl/interfaces/VX_perf_tex_if.sv|rtl/interfaces/VX_csr_req_if.sv|rtl/interfaces/VX_dcache_rsp_if.sv|rtl/interfaces/VX_wstall_if.sv|rtl/interfaces/VX_tex_csr_if.sv|rtl/interfaces/VX_tex_req_if.sv|rtl/interfaces/VX_mem_req_if.sv|rtl/interfaces/VX_lsu_req_if.sv|rtl/interfaces/VX_alu_req_if.sv|rtl/interfaces/VX_perf_memsys_if.sv|rtl/interfaces/VX_tex_rsp_if.sv|rtl/interfaces/VX_fetch_to_csr_if.sv|rtl/interfaces/VX_perf_cache_if.sv|rtl/interfaces/VX_gpr_req_if.sv|rtl/interfaces/VX_fpu_req_if.sv|rtl/interfaces/VX_join_if.sv|rtl/interfaces/VX_gpr_rsp_if.sv|rtl/interfaces/VX_mem_rsp_if.sv|rtl/interfaces/VX_icache_req_if.sv|
 !i113 0
 R13
 R21
 R1
 n@v@x_alu_req_if
 vVX_alu_unit
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 eN[MR[CH[JD@eTohKQILY2
 Il=VDf[PBDSe08C61@jhIz1
@@ -2971,7 +2977,7 @@ R6
 !s105 VX_alu_unit_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_alu_unit.sv
 Frtl/VX_alu_unit.sv
 L0 3
@@ -2979,16 +2985,16 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_alu_unit
 vVX_axi_adapter
-R15
+R56
 R3
 R5
 !i10b 1
@@ -2998,7 +3004,7 @@ R6
 !s105 VX_axi_adapter_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_axi_adapter.sv
 Frtl/libs/VX_axi_adapter.sv
 L0 3
@@ -3006,9 +3012,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -3025,7 +3031,7 @@ R6
 !s105 VX_bank_sv_unit
 S1
 R0
-R84
+R91
 8rtl/cache/VX_bank.sv
 Frtl/cache/VX_bank.sv
 L0 3
@@ -3033,16 +3039,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_bank
 vVX_bits_insert
-R15
+R56
 R3
 R5
 !i10b 1
@@ -3052,7 +3058,7 @@ R6
 !s105 VX_bits_insert_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_bits_insert.sv
 Frtl/libs/VX_bits_insert.sv
 L0 3
@@ -3060,16 +3066,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_bits_insert
 vVX_bits_remove
-R15
+R56
 R3
 R5
 !i10b 1
@@ -3079,7 +3085,7 @@ R6
 !s105 VX_bits_remove_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_bits_remove.sv
 Frtl/libs/VX_bits_remove.sv
 L0 3
@@ -3087,18 +3093,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_bits_remove
 YVX_branch_ctl_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 4VKiGfIE^9B0bG55B@5zn3
 Izo:Hd>]mP=;OMKzCgbK0N0
@@ -3106,7 +3112,7 @@ R6
 !s105 VX_branch_ctl_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_branch_ctl_if.sv
 Frtl/interfaces/VX_branch_ctl_if.sv
 L0 6
@@ -3114,16 +3120,16 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_branch_ctl_if
 vVX_bypass_buffer
-R15
+R56
 R3
 R5
 !i10b 1
@@ -3133,7 +3139,7 @@ R6
 !s105 VX_bypass_buffer_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_bypass_buffer.sv
 Frtl/libs/VX_bypass_buffer.sv
 L0 3
@@ -3141,9 +3147,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -3160,7 +3166,7 @@ R6
 !s105 VX_cache_sv_unit
 S1
 R0
-R84
+R91
 8rtl/cache/VX_cache.sv
 Frtl/cache/VX_cache.sv
 L0 3
@@ -3168,9 +3174,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -3187,7 +3193,7 @@ R6
 !s105 VX_cache_arb_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_cache_arb.sv
 Frtl/VX_cache_arb.sv
 L0 3
@@ -3195,17 +3201,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_cache_arb
 vVX_cluster
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 ^eCT;KJfFPAdh<OH5_:=42
 Iji6I]ZWjnV<7j>MD@aZW>0
@@ -3213,7 +3220,7 @@ R6
 !s105 VX_cluster_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_cluster.sv
 Frtl/VX_cluster.sv
 L0 3
@@ -3221,18 +3228,18 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_cluster
 YVX_cmt_to_csr_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 dRIe6iQkI6X=lXQOIK3<91
 IL19C7K9EhkkOdUKCJ<TP[0
@@ -3240,7 +3247,7 @@ R6
 !s105 VX_cmt_to_csr_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_cmt_to_csr_if.sv
 Frtl/interfaces/VX_cmt_to_csr_if.sv
 L0 6
@@ -3248,17 +3255,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_cmt_to_csr_if
 vVX_commit
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 ]HR;;5`a4df1GcJjElXMa1
 I@g1Rh]YHz<U6[TjEXh_k>2
@@ -3266,7 +3274,7 @@ R6
 !s105 VX_commit_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_commit.sv
 Frtl/VX_commit.sv
 L0 3
@@ -3274,18 +3282,18 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_commit
 YVX_commit_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 gF64inH1d=5nQZMoFRfCY3
 ISP;g?jKa=mFbnoNnz6]SW3
@@ -3293,7 +3301,7 @@ R6
 !s105 VX_commit_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_commit_if.sv
 Frtl/interfaces/VX_commit_if.sv
 L0 6
@@ -3301,9 +3309,9 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
@@ -3323,7 +3331,7 @@ R0
 R7
 8../third_party/fpnew/src/common_cells/src/VX_common_cells_counter.sv
 F../third_party/fpnew/src/common_cells/src/VX_common_cells_counter.sv
-R35
+R36
 R9
 r1
 !s85 0
@@ -3337,8 +3345,9 @@ R14
 R1
 n@v@x_common_cells_counter
 vVX_core
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 fjSG`_BGIf^g``8:a]mFT1
 InUlmcl``AkHYP3gQ=;Wmh3
@@ -3346,7 +3355,7 @@ R6
 !s105 VX_core_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_core.sv
 Frtl/VX_core.sv
 L0 3
@@ -3354,17 +3363,18 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_core
 vVX_core_req_bank_sel
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 f@P<Y=hCKe=2Uo7cVD90J3
 IChVh@gIVRX[FI7:CPZONX1
@@ -3372,7 +3382,7 @@ R6
 !s105 VX_core_req_bank_sel_sv_unit
 S1
 R0
-R55
+R58
 8rtl/cache/VX_core_req_bank_sel.sv
 Frtl/cache/VX_core_req_bank_sel.sv
 L0 3
@@ -3380,9 +3390,9 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
@@ -3399,7 +3409,7 @@ R6
 !s105 VX_core_rsp_merge_sv_unit
 S1
 R0
-R84
+R91
 8rtl/cache/VX_core_rsp_merge.sv
 Frtl/cache/VX_core_rsp_merge.sv
 L0 3
@@ -3407,9 +3417,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -3418,7 +3428,7 @@ n@v@x_core_rsp_merge
 vVX_csr_data
 R15
 R3
-Z115 DXx4 work 9 fpu_types 0 22 biQa15o;A2kgCYOTWRgfE3
+Z121 DXx4 work 9 fpu_types 0 22 biQa15o;A2kgCYOTWRgfE3
 R5
 !i10b 1
 !s100 X2`WfdTOk@1@2;DEhNSJ@1
@@ -3427,7 +3437,7 @@ R6
 !s105 VX_csr_data_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_csr_data.sv
 Frtl/VX_csr_data.sv
 L0 3
@@ -3435,18 +3445,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_csr_data
 YVX_csr_req_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 A4Z:0;2dmL_OX=9g2?VOo3
 I^7;?WanJ=Q;`Ae[lU:zo[2
@@ -3454,7 +3464,7 @@ R6
 !s105 VX_csr_req_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_csr_req_if.sv
 Frtl/interfaces/VX_csr_req_if.sv
 L0 6
@@ -3462,9 +3472,9 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
@@ -3481,7 +3491,7 @@ R6
 !s105 VX_csr_unit_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_csr_unit.sv
 Frtl/VX_csr_unit.sv
 L0 3
@@ -3489,17 +3499,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_csr_unit
 vVX_data_access
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 [z>7`oKXS35Y;mUg`LozW2
 Io@;aT<3DXDZoD<Yj]ZTPi1
@@ -3507,7 +3518,7 @@ R6
 !s105 VX_data_access_sv_unit
 S1
 R0
-R55
+R58
 8rtl/cache/VX_data_access.sv
 Frtl/cache/VX_data_access.sv
 L0 4
@@ -3515,18 +3526,18 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_data_access
 YVX_dcache_req_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 ADCZE3_llW?6c5z]lZP<n0
 IXN1FP=WmTeehmM[ND_PSk0
@@ -3534,7 +3545,7 @@ R6
 !s105 VX_dcache_req_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_dcache_req_if.sv
 Frtl/interfaces/VX_dcache_req_if.sv
 L0 6
@@ -3542,18 +3553,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_dcache_req_if
 YVX_dcache_rsp_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 7>bAg6J4bPGgQ7mC:SE7:0
 I_1j?9:CBiW`@9U40O0Ngd2
@@ -3561,7 +3572,7 @@ R6
 !s105 VX_dcache_rsp_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_dcache_rsp_if.sv
 Frtl/interfaces/VX_dcache_rsp_if.sv
 L0 6
@@ -3569,9 +3580,9 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
@@ -3579,34 +3590,35 @@ R1
 n@v@x_dcache_rsp_if
 vVX_decode
 R3
-DXx4 work 17 VX_decode_sv_unit 0 22 b4>SQ?8ml@[BN@^23dLeV1
+DXx4 work 17 VX_decode_sv_unit 0 22 k4NU>;mKDPMZAb@NfSgAg3
 R6
 r1
 !s85 0
 31
+R15
 !i10b 1
 !s100 HDE67<ljhz8?N9CB@[2=I3
 IS=zDccZ6CVm3;^>B935Mz1
 !s105 VX_decode_sv_unit
 S1
 R0
-R55
-Z116 8rtl/VX_decode.sv
-Z117 Frtl/VX_decode.sv
-R76
+R58
+Z122 8rtl/VX_decode.sv
+Z123 Frtl/VX_decode.sv
+R83
 R9
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_decode
 YVX_decode_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 i3LKGJ0GeEmF:G3`NM[k[2
 I;T0U2AFN6VC;R1n7`8hoR1
@@ -3614,7 +3626,7 @@ R6
 !s105 VX_decode_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_decode_if.sv
 Frtl/interfaces/VX_decode_if.sv
 L0 6
@@ -3622,9 +3634,9 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
@@ -3632,26 +3644,26 @@ R1
 n@v@x_decode_if
 XVX_decode_sv_unit
 R3
-Vb4>SQ?8ml@[BN@^23dLeV1
+Vk4NU>;mKDPMZAb@NfSgAg3
 r1
 !s85 0
 31
 !i10b 1
-!s100 Q2HJKEJem2RNWbi7K^N`M2
-Ib4>SQ?8ml@[BN@^23dLeV1
+!s100 m3cF2e5DTB?MfdKPRmkSe2
+Ik4NU>;mKDPMZAb@NfSgAg3
 !i103 1
 S1
 R0
-R55
-R116
-R117
-R97
-R98
-R99
-R100
-R101
-R70
-R73
+R23
+R122
+R123
+R104
+R105
+R106
+R107
+R108
+R76
+R80
 Finclude/VX_sv_trace_instr.vh
 L0 8
 R9
@@ -3674,7 +3686,7 @@ R6
 !s105 VX_dispatch_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_dispatch.sv
 Frtl/VX_dispatch.sv
 L0 3
@@ -3682,16 +3694,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_dispatch
 vVX_divider
-R15
+R56
 R3
 R5
 !i10b 1
@@ -3701,7 +3713,7 @@ R6
 !s105 VX_divider_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_divider.sv
 Frtl/libs/VX_divider.sv
 L0 4
@@ -3709,17 +3721,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_divider
 vVX_dp_ram
+R56
 R3
-R22
+R57
 !i10b 1
 !s100 HA^fe`61d2X6Demd_5;kB2
 I?CQAMW6NG7:?<5gNYGeJb1
@@ -3727,7 +3740,7 @@ R6
 !s105 VX_dp_ram_sv_unit
 S1
 R0
-R55
+R58
 8rtl/libs/VX_dp_ram.sv
 Frtl/libs/VX_dp_ram.sv
 L0 4
@@ -3735,16 +3748,16 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_dp_ram
 vVX_elastic_buffer
-R15
+R56
 R3
 R5
 !i10b 1
@@ -3754,7 +3767,7 @@ R6
 !s105 VX_elastic_buffer_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_elastic_buffer.sv
 Frtl/libs/VX_elastic_buffer.sv
 L0 4
@@ -3762,9 +3775,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -3781,7 +3794,7 @@ R6
 !s105 VX_execute_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_execute.sv
 Frtl/VX_execute.sv
 L0 3
@@ -3789,16 +3802,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_execute
 vVX_fair_arbiter
-R15
+R56
 R3
 R5
 !i10b 1
@@ -3808,7 +3821,7 @@ R6
 !s105 VX_fair_arbiter_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_fair_arbiter.sv
 Frtl/libs/VX_fair_arbiter.sv
 L0 4
@@ -3816,17 +3829,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fair_arbiter
 vVX_fetch
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 ZlHj[<6Q9d=3Lj:4kFCdi0
 Iz0kZ9[`fA=QCnzHbk8=Je1
@@ -3834,7 +3848,7 @@ R6
 !s105 VX_fetch_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_fetch.sv
 Frtl/VX_fetch.sv
 L0 3
@@ -3842,18 +3856,18 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_fetch
 YVX_fetch_to_csr_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 <ZM>WHBi5n6@W<7dJdGKj1
 IW7XlbdPmYb2D`BWVHkc6K2
@@ -3861,7 +3875,7 @@ R6
 !s105 VX_fetch_to_csr_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_fetch_to_csr_if.sv
 Frtl/interfaces/VX_fetch_to_csr_if.sv
 L0 6
@@ -3869,16 +3883,16 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_fetch_to_csr_if
 vVX_fifo_queue
-R15
+R56
 R3
 R5
 !i10b 1
@@ -3888,7 +3902,7 @@ R6
 !s105 VX_fifo_queue_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_fifo_queue.sv
 Frtl/libs/VX_fifo_queue.sv
 L0 4
@@ -3896,16 +3910,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fifo_queue
 vVX_find_first
-R15
+R56
 R3
 R5
 !i10b 1
@@ -3915,7 +3929,7 @@ R6
 !s105 VX_find_first_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_find_first.sv
 Frtl/libs/VX_find_first.sv
 L0 4
@@ -3923,16 +3937,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_find_first
 vVX_fixed_arbiter
-R15
+R56
 R3
 R5
 !i10b 1
@@ -3942,7 +3956,7 @@ R6
 !s105 VX_fixed_arbiter_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_fixed_arbiter.sv
 Frtl/libs/VX_fixed_arbiter.sv
 L0 4
@@ -3950,9 +3964,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -3969,7 +3983,7 @@ R6
 !s105 VX_flush_ctrl_sv_unit
 S1
 R0
-R84
+R91
 8rtl/cache/VX_flush_ctrl.sv
 Frtl/cache/VX_flush_ctrl.sv
 L0 3
@@ -3977,9 +3991,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -3987,36 +4001,36 @@ R1
 n@v@x_flush_ctrl
 vVX_fp_class
 R3
-R115
+R121
 DXx4 work 19 VX_fp_class_sv_unit 0 22 ?IJVQW4XfeM?iiP?[GnR_1
 R6
 r1
 !s85 0
 31
-R15
+R56
 !i10b 1
 !s100 Kc3^AEhM0eTYeo^R_MdAR0
 IeIhi@Z9W[>b1JgVY6KlYW0
 !s105 VX_fp_class_sv_unit
 S1
 R0
-R84
-Z118 8rtl/fp_cores/VX_fp_class.sv
-Z119 Frtl/fp_cores/VX_fp_class.sv
+R91
+Z124 8rtl/fp_cores/VX_fp_class.sv
+Z125 Frtl/fp_cores/VX_fp_class.sv
 L0 4
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fp_class
 XVX_fp_class_sv_unit
-R15
+R56
 R3
-R115
+R121
 V?IJVQW4XfeM?iiP?[GnR_1
 r1
 !s85 0
@@ -4027,22 +4041,22 @@ I?IJVQW4XfeM?iiP?[GnR_1
 !i103 1
 S1
 R0
-Z120 w1699172339
-R118
-R119
-Z121 Finclude/VX_fpu_define.vh
-R97
-R98
-R99
-R100
-R101
-R70
-R73
-Z122 L0 11
+Z126 w1699172339
+R124
+R125
+Z127 Finclude/VX_fpu_define.vh
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+Z128 L0 11
 R9
-R54
-R85
-R86
+R55
+R92
+R93
 !i113 0
 R13
 R27
@@ -4050,36 +4064,36 @@ R1
 n@v@x_fp_class_sv_unit
 vVX_fp_cvt
 R3
-R115
+R121
 DXx4 work 17 VX_fp_cvt_sv_unit 0 22 Iz]f^cJGbC2f9IMIka_I92
 R6
 r1
 !s85 0
 31
-R15
+R56
 !i10b 1
 !s100 >e:7XM:UEN79EmK697BFi3
 ILRcfOCFTS;=H2>R6=TmOQ2
 !s105 VX_fp_cvt_sv_unit
 S1
 R0
-R84
-Z123 8rtl/fp_cores/VX_fp_cvt.sv
-Z124 Frtl/fp_cores/VX_fp_cvt.sv
+R91
+Z129 8rtl/fp_cores/VX_fp_cvt.sv
+Z130 Frtl/fp_cores/VX_fp_cvt.sv
 L0 6
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fp_cvt
 XVX_fp_cvt_sv_unit
-R15
+R56
 R3
-R115
+R121
 VIz]f^cJGbC2f9IMIka_I92
 r1
 !s85 0
@@ -4090,22 +4104,22 @@ IIz]f^cJGbC2f9IMIka_I92
 !i103 1
 S1
 R0
-R120
-R123
-R124
-R121
-R97
-R98
-R99
-R100
-R101
-R70
-R73
-R122
+R126
+R129
+R130
+R127
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+R128
 R9
-R54
-R85
-R86
+R55
+R92
+R93
 !i113 0
 R13
 R27
@@ -4113,36 +4127,36 @@ R1
 n@v@x_fp_cvt_sv_unit
 vVX_fp_div
 R3
-R115
+R121
 DXx4 work 17 VX_fp_div_sv_unit 0 22 o^GUz[YfCI1Z:OAQI:2X82
 R6
 r1
 !s85 0
 31
-R15
+R56
 !i10b 1
 !s100 zNTR1aazU_4S9Yn6?:Mka0
 IL28hm3cBhfh1OQ[Ne?S1P1
 !s105 VX_fp_div_sv_unit
 S1
 R0
-R84
-Z125 8rtl/fp_cores/VX_fp_div.sv
-Z126 Frtl/fp_cores/VX_fp_div.sv
+R91
+Z131 8rtl/fp_cores/VX_fp_div.sv
+Z132 Frtl/fp_cores/VX_fp_div.sv
 L0 3
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fp_div
 XVX_fp_div_sv_unit
-R15
+R56
 R3
-R115
+R121
 Vo^GUz[YfCI1Z:OAQI:2X82
 r1
 !s85 0
@@ -4153,22 +4167,22 @@ Io^GUz[YfCI1Z:OAQI:2X82
 !i103 1
 S1
 R0
-R120
-R125
 R126
-R121
-R97
-R98
-R99
-R100
-R101
-R70
-R73
-R122
+R131
+R132
+R127
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+R128
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -4176,36 +4190,36 @@ R1
 n@v@x_fp_div_sv_unit
 vVX_fp_fma
 R3
-R115
+R121
 DXx4 work 17 VX_fp_fma_sv_unit 0 22 i8>aO?Q0<b=k2M9Zg>jJb2
 R6
 r1
 !s85 0
 31
-R15
+R56
 !i10b 1
 !s100 K9N`3EZ=mkoiE`^0lj5PN1
 I`6OIK<]djmLd7Vj9EAaA60
 !s105 VX_fp_fma_sv_unit
 S1
 R0
-R84
-Z127 8rtl/fp_cores/VX_fp_fma.sv
-Z128 Frtl/fp_cores/VX_fp_fma.sv
+R91
+Z133 8rtl/fp_cores/VX_fp_fma.sv
+Z134 Frtl/fp_cores/VX_fp_fma.sv
 L0 3
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fp_fma
 XVX_fp_fma_sv_unit
-R15
+R56
 R3
-R115
+R121
 Vi8>aO?Q0<b=k2M9Zg>jJb2
 r1
 !s85 0
@@ -4216,24 +4230,24 @@ Ii8>aO?Q0<b=k2M9Zg>jJb2
 !i103 1
 S1
 R0
-R120
-R125
 R126
-R121
-R97
-R98
-R99
-R100
-R101
-R70
-R73
+R131
+R132
 R127
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+R133
+R134
 R128
-R122
 R9
-R54
-R85
-R86
+R55
+R92
+R93
 !i113 0
 R13
 R27
@@ -4241,36 +4255,36 @@ R1
 n@v@x_fp_fma_sv_unit
 vVX_fp_ncomp
 R3
-R115
+R121
 DXx4 work 19 VX_fp_ncomp_sv_unit 0 22 la:jUVQIeank@:0Y2GblT2
 R6
 r1
 !s85 0
 31
-R15
+R56
 !i10b 1
 !s100 `Rg]f:FdzAmd>@_A?T]]d3
 If]LA7S<5mAVd5F8fIJNXn2
 !s105 VX_fp_ncomp_sv_unit
 S1
 R0
-R84
-Z129 8rtl/fp_cores/VX_fp_ncomp.sv
-Z130 Frtl/fp_cores/VX_fp_ncomp.sv
+R91
+Z135 8rtl/fp_cores/VX_fp_ncomp.sv
+Z136 Frtl/fp_cores/VX_fp_ncomp.sv
 L0 6
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fp_ncomp
 XVX_fp_ncomp_sv_unit
-R15
+R56
 R3
-R115
+R121
 Vla:jUVQIeank@:0Y2GblT2
 r1
 !s85 0
@@ -4281,22 +4295,22 @@ Ila:jUVQIeank@:0Y2GblT2
 !i103 1
 S1
 R0
-R120
-R129
-R130
-R121
-R97
-R98
-R99
-R100
-R101
-R70
-R73
-R122
+R126
+R135
+R136
+R127
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+R128
 R9
-R54
-R85
-R86
+R55
+R92
+R93
 !i113 0
 R13
 R27
@@ -4304,36 +4318,36 @@ R1
 n@v@x_fp_ncomp_sv_unit
 vVX_fp_rounding
 R3
-R115
+R121
 DXx4 work 22 VX_fp_rounding_sv_unit 0 22 i:cj]C^WmUOjz`ZC5O1G=0
 R6
 r1
 !s85 0
 31
-R15
+R56
 !i10b 1
 !s100 fQBQ[jJK47FDK=:[d1F6g3
 IWF^_SX:J`00HJKNacX=d^3
 !s105 VX_fp_rounding_sv_unit
 S1
 R0
-R84
-Z131 8rtl/fp_cores/VX_fp_rounding.sv
-Z132 Frtl/fp_cores/VX_fp_rounding.sv
+R91
+Z137 8rtl/fp_cores/VX_fp_rounding.sv
+Z138 Frtl/fp_cores/VX_fp_rounding.sv
 L0 6
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fp_rounding
 XVX_fp_rounding_sv_unit
-R15
+R56
 R3
-R115
+R121
 Vi:cj]C^WmUOjz`ZC5O1G=0
 r1
 !s85 0
@@ -4344,22 +4358,22 @@ Ii:cj]C^WmUOjz`ZC5O1G=0
 !i103 1
 S1
 R0
-R120
-R131
-R132
-R121
-R97
-R98
-R99
-R100
-R101
-R70
-R73
-R122
+R126
+R137
+R138
+R127
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+R128
 R9
-R54
-R85
-R86
+R55
+R92
+R93
 !i113 0
 R13
 R27
@@ -4367,36 +4381,36 @@ R1
 n@v@x_fp_rounding_sv_unit
 vVX_fp_sqrt
 R3
-R115
+R121
 DXx4 work 18 VX_fp_sqrt_sv_unit 0 22 bKf?Z?mEL=>?D2EdSX^;K0
 R6
 r1
 !s85 0
 31
-R15
+R56
 !i10b 1
 !s100 iAF]M2991Xj3BXz;_;Bl33
 IEcg;k<`CME3YeRY_S=d7U1
 !s105 VX_fp_sqrt_sv_unit
 S1
 R0
-R84
-Z133 8rtl/fp_cores/VX_fp_sqrt.sv
-Z134 Frtl/fp_cores/VX_fp_sqrt.sv
+R91
+Z139 8rtl/fp_cores/VX_fp_sqrt.sv
+Z140 Frtl/fp_cores/VX_fp_sqrt.sv
 L0 3
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fp_sqrt
 XVX_fp_sqrt_sv_unit
-R15
+R56
 R3
-R115
+R121
 VbKf?Z?mEL=>?D2EdSX^;K0
 r1
 !s85 0
@@ -4407,22 +4421,22 @@ IbKf?Z?mEL=>?D2EdSX^;K0
 !i103 1
 S1
 R0
-R120
-R133
-R134
-R121
-R97
-R98
-R99
-R100
-R101
-R70
-R73
-R122
+R126
+R139
+R140
+R127
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+R128
 R9
-R54
-R85
-R86
+R55
+R92
+R93
 !i113 0
 R13
 R27
@@ -4430,36 +4444,36 @@ R1
 n@v@x_fp_sqrt_sv_unit
 vVX_fpu_dpi
 R3
-R115
+R121
 DXx4 work 18 VX_fpu_dpi_sv_unit 0 22 kEi]>mo07VzbA7D8<LB3P0
 R6
 r1
 !s85 0
 31
-R15
+R56
 !i10b 1
 !s100 jCNo7:M8BTYB:ChLPiBhl0
 Ic?;4dRVmb`j;@1>d9ZVBJ0
 !s105 VX_fpu_dpi_sv_unit
 S1
 R0
-R84
-Z135 8rtl/fp_cores/VX_fpu_dpi.sv
-Z136 Frtl/fp_cores/VX_fpu_dpi.sv
+R91
+Z141 8rtl/fp_cores/VX_fpu_dpi.sv
+Z142 Frtl/fp_cores/VX_fpu_dpi.sv
 L0 3
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fpu_dpi
 XVX_fpu_dpi_sv_unit
-R15
+R56
 R3
-R115
+R121
 VkEi]>mo07VzbA7D8<LB3P0
 r1
 !s85 0
@@ -4470,22 +4484,22 @@ IkEi]>mo07VzbA7D8<LB3P0
 !i103 1
 S1
 R0
-R120
-R135
-R136
-R121
-R97
-R98
-R99
-R100
-R101
-R70
-R73
-R122
+R126
+R141
+R142
+R127
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+R128
 R9
-R54
-R85
-R86
+R55
+R92
+R93
 !i113 0
 R13
 R27
@@ -4493,36 +4507,36 @@ R1
 n@v@x_fpu_dpi_sv_unit
 vVX_fpu_fpga
 R3
-R115
+R121
 DXx4 work 19 VX_fpu_fpga_sv_unit 0 22 CY=<cAYm=2Bd:b1XdjEGb3
 R6
 r1
 !s85 0
 31
-R15
+R56
 !i10b 1
 !s100 >EoDcRUaC[O1[kQYWllmh2
 IK6JY]deo@^lgI=1HDcd882
 !s105 VX_fpu_fpga_sv_unit
 S1
 R0
-R84
-Z137 8rtl/fp_cores/VX_fpu_fpga.sv
-Z138 Frtl/fp_cores/VX_fpu_fpga.sv
+R91
+Z143 8rtl/fp_cores/VX_fpu_fpga.sv
+Z144 Frtl/fp_cores/VX_fpu_fpga.sv
 L0 3
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fpu_fpga
 XVX_fpu_fpga_sv_unit
-R15
+R56
 R3
-R115
+R121
 VCY=<cAYm=2Bd:b1XdjEGb3
 r1
 !s85 0
@@ -4533,22 +4547,22 @@ ICY=<cAYm=2Bd:b1XdjEGb3
 !i103 1
 S1
 R0
-R120
-R137
-R138
-R121
-R97
-R98
-R99
-R100
-R101
-R70
-R73
-R122
+R126
+R143
+R144
+R127
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+R128
 R9
-R54
-R85
-R86
+R55
+R92
+R93
 !i113 0
 R13
 R27
@@ -4556,37 +4570,37 @@ R1
 n@v@x_fpu_fpga_sv_unit
 vVX_fpu_fpnew
 R3
-R115
+R121
 DXx4 work 20 VX_fpu_fpnew_sv_unit 0 22 ]lF[43HDSNdMV_E`fbQ>D0
 DXx4 work 9 fpnew_pkg 0 22 dVED4ndKoPUCOWR?ZTE463
 R6
 r1
 !s85 0
 31
-R15
+R56
 !i10b 1
 !s100 I?_z8J38??P@R6PPcl9k>3
 IoCY9o;le=fU4:?cSTH]:Q1
 !s105 VX_fpu_fpnew_sv_unit
 S1
 R0
-R84
-Z139 8rtl/fp_cores/VX_fpu_fpnew.sv
-Z140 Frtl/fp_cores/VX_fpu_fpnew.sv
+R91
+Z145 8rtl/fp_cores/VX_fpu_fpnew.sv
+Z146 Frtl/fp_cores/VX_fpu_fpnew.sv
 L0 6
 R9
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fpu_fpnew
 XVX_fpu_fpnew_sv_unit
-R15
+R56
 R3
-R115
+R121
 V]lF[43HDSNdMV_E`fbQ>D0
 r1
 !s85 0
@@ -4597,43 +4611,43 @@ I]lF[43HDSNdMV_E`fbQ>D0
 !i103 1
 S1
 R0
-R120
-R125
 R126
-R121
-R97
-R98
-R99
-R100
-R101
-R70
-R73
+R131
+R132
 R127
-R128
-R123
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+R133
+R134
+R129
+R130
+R143
+R144
 R124
-R137
-R138
-R118
-R119
-R139
-R140
-R67
-R56
-R122
+R125
+R145
+R146
+R73
+R62
+R128
 R9
 !s108 1700032212.000000
-R85
-R86
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fpu_fpnew_sv_unit
 YVX_fpu_req_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 f_DZ7zMh_hWIQ]oSBWQJD3
 IfmEl<Z?d``ddjen6PeTdZ0
@@ -4641,7 +4655,7 @@ R6
 !s105 VX_fpu_req_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_fpu_req_if.sv
 Frtl/interfaces/VX_fpu_req_if.sv
 L0 6
@@ -4649,19 +4663,19 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_fpu_req_if
 YVX_fpu_to_csr_if
-R15
+R56
 R3
 DXx4 work 9 fpu_types 0 22 >^Y:UnO`If?J`Y5:jm8]J1
-R111
+R117
 !i10b 1
 !s100 I^lf1E^oSjCGbdmS[k<B>2
 In8^fm=HM4NZmeACA>Q]cL1
@@ -4669,7 +4683,7 @@ R6
 !s105 VX_fpu_to_csr_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_fpu_to_csr_if.sv
 Frtl/interfaces/VX_fpu_to_csr_if.sv
 L0 6
@@ -4677,9 +4691,9 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
@@ -4688,7 +4702,7 @@ n@v@x_fpu_to_csr_if
 vVX_fpu_unit
 R15
 R3
-R115
+R121
 R5
 !i10b 1
 !s100 0<;KQOAVX>cUi9X0M?Pc03
@@ -4697,7 +4711,7 @@ R6
 !s105 VX_fpu_unit_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_fpu_unit.sv
 Frtl/VX_fpu_unit.sv
 L0 3
@@ -4705,18 +4719,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_fpu_unit
 YVX_gpr_req_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 [FjdMWI`CU4jUg<o@Z^o`3
 IEFiX1M@H[J`eV9gb:9<Aj3
@@ -4724,7 +4738,7 @@ R6
 !s105 VX_gpr_req_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_gpr_req_if.sv
 Frtl/interfaces/VX_gpr_req_if.sv
 L0 6
@@ -4732,18 +4746,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_gpr_req_if
 YVX_gpr_rsp_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 HVT<NcmCl]c;A1jjJ:[422
 I^3=CYS3d9nBjYOTAVSALM1
@@ -4751,7 +4765,7 @@ R6
 !s105 VX_gpr_rsp_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_gpr_rsp_if.sv
 Frtl/interfaces/VX_gpr_rsp_if.sv
 L0 6
@@ -4759,9 +4773,9 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
@@ -4778,7 +4792,7 @@ R6
 !s105 VX_gpr_stage_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_gpr_stage.sv
 Frtl/VX_gpr_stage.sv
 L0 3
@@ -4786,18 +4800,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_gpr_stage
 YVX_gpu_req_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 C4@Pg[F:[26[2D3f1AS;U1
 I6z]U6Yb52:ikUgI=F3XcP3
@@ -4805,7 +4819,7 @@ R6
 !s105 VX_gpu_req_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_gpu_req_if.sv
 Frtl/interfaces/VX_gpu_req_if.sv
 L0 6
@@ -4813,9 +4827,9 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
@@ -4833,7 +4847,7 @@ R6
 !s105 VX_gpu_unit_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_gpu_unit.sv
 Frtl/VX_gpu_unit.sv
 L0 3
@@ -4841,9 +4855,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -4860,7 +4874,7 @@ R6
 !s105 VX_ibuffer_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_ibuffer.sv
 Frtl/VX_ibuffer.sv
 L0 3
@@ -4868,18 +4882,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_ibuffer
 YVX_ibuffer_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 MgDLeiI^cd]U?04@9XhRa0
 IQT`8o]V41RcgWIzSHzoPb3
@@ -4887,7 +4901,7 @@ R6
 !s105 VX_ibuffer_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_ibuffer_if.sv
 Frtl/interfaces/VX_ibuffer_if.sv
 L0 6
@@ -4895,18 +4909,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_ibuffer_if
 YVX_icache_req_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 `XoS9jgoaCY0nS=8n7CmU1
 IYGC8MOzgCO<L6g87daU483
@@ -4914,7 +4928,7 @@ R6
 !s105 VX_icache_req_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_icache_req_if.sv
 Frtl/interfaces/VX_icache_req_if.sv
 L0 6
@@ -4922,18 +4936,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_icache_req_if
 YVX_icache_rsp_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 >_<HcN8<[nROnMMG=J<_33
 I30I4f7d6khBoTmPdz:RzX0
@@ -4941,7 +4955,7 @@ R6
 !s105 VX_icache_rsp_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_icache_rsp_if.sv
 Frtl/interfaces/VX_icache_rsp_if.sv
 L0 6
@@ -4949,9 +4963,9 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
@@ -4968,7 +4982,7 @@ R6
 !s105 VX_icache_stage_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_icache_stage.sv
 Frtl/VX_icache_stage.sv
 L0 3
@@ -4976,18 +4990,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_icache_stage
 YVX_ifetch_req_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 c_gnZLz7;VKO7Kf?@;n3S0
 IXlO8BldO[TShJ2c6BL6V?2
@@ -4995,7 +5009,7 @@ R6
 !s105 VX_ifetch_req_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_ifetch_req_if.sv
 Frtl/interfaces/VX_ifetch_req_if.sv
 L0 6
@@ -5003,18 +5017,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_ifetch_req_if
 YVX_ifetch_rsp_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 E[lgBaQ5oL:PS1AjGc:L61
 I<0:<hffP`INQ=@8K=QGlN1
@@ -5022,7 +5036,7 @@ R6
 !s105 VX_ifetch_rsp_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_ifetch_rsp_if.sv
 Frtl/interfaces/VX_ifetch_rsp_if.sv
 L0 6
@@ -5030,16 +5044,16 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_ifetch_rsp_if
 vVX_index_buffer
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5049,7 +5063,7 @@ R6
 !s105 VX_index_buffer_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_index_buffer.sv
 Frtl/libs/VX_index_buffer.sv
 L0 4
@@ -5057,16 +5071,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_index_buffer
 vVX_index_queue
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5076,7 +5090,7 @@ R6
 !s105 VX_index_queue_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_index_queue.sv
 Frtl/libs/VX_index_queue.sv
 L0 4
@@ -5084,9 +5098,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -5103,7 +5117,7 @@ R6
 !s105 VX_ipdom_stack_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_ipdom_stack.sv
 Frtl/VX_ipdom_stack.sv
 L0 3
@@ -5111,17 +5125,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_ipdom_stack
 vVX_issue
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 lP[?>::E2EN6fS8^d:[L]0
 IA6eQ9a?W1;RdG<WK4d;Ik3
@@ -5129,7 +5144,7 @@ R6
 !s105 VX_issue_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_issue.sv
 Frtl/VX_issue.sv
 L0 3
@@ -5137,18 +5152,18 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_issue
 YVX_join_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 02N@3oFP0lzUBHZX0]5B:0
 Ien=T:B09d_JO61gHg?1bc1
@@ -5156,7 +5171,7 @@ R6
 !s105 VX_join_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_join_if.sv
 Frtl/interfaces/VX_join_if.sv
 L0 6
@@ -5164,16 +5179,16 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_join_if
 vVX_local_mem_tb
-R104
+R96
 R3
 DXx4 work 23 VX_local_mem_tb_sv_unit 0 22 YCN=YIN^Q5fI0SSSM2D1O2
 R6
@@ -5186,21 +5201,21 @@ I?;>lioUe0];JUQgWoG7k72
 !s105 VX_local_mem_tb_sv_unit
 S1
 R0
-R106
-Z141 8tb/VX_local_mem_tb.sv
-Z142 Ftb/VX_local_mem_tb.sv
-R76
+R112
+Z147 8tb/VX_local_mem_tb.sv
+Z148 Ftb/VX_local_mem_tb.sv
+R83
 R9
-R94
-Z143 !s107 tb/Vortex_mem_slave.vh|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_define.vh|tb/VX_local_mem_tb.sv|
-Z144 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|tb/VX_local_mem_tb.sv|
+R100
+Z149 !s107 tb/Vortex_mem_slave.vh|include/VX_gpu_types.vh|include/VX_fpu_types.vh|include/VX_sv_trace.vh|include/VX_config.vh|include/VX_scope.vh|include/VX_platform.vh|include/VX_define.vh|tb/VX_local_mem_tb.sv|
+Z150 !s90 -sv|-work|work|-suppress|13389|-incr|-vopt|+define+VX_SYNTHESIS|+define+FPU_FPNEW|+define+VX_TOP_TRACE|+define+SV_TRACE_EN|+define+SV_TRACE_CORE_PIPELINE|+define+SV_TRACE_CORE_DCACHE|+define+SV_TRACE_CACHE_DATA|+define+EXT_TEX_ENABLE|+incdir+include|tb/VX_local_mem_tb.sv|
 !i113 0
 R13
 R21
 R1
 n@v@x_local_mem_tb
 XVX_local_mem_tb_sv_unit
-R69
+R15
 R3
 VYCN=YIN^Q5fI0SSSM2D1O2
 r1
@@ -5212,31 +5227,31 @@ IYCN=YIN^Q5fI0SSSM2D1O2
 !i103 1
 S1
 R0
-R23
-R141
-R142
-R97
-R98
-R99
-R100
-R101
-R70
-R73
-R102
-R45
+R103
+R147
+R148
+R104
+R105
+R106
+R107
+R108
+R76
+R80
+R109
+R46
 R9
-R94
-R143
-R144
+R100
+R149
+R150
 !i113 0
 R13
 R21
 R1
 n@v@x_local_mem_tb_sv_unit
 YVX_lsu_req_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 jQich[]`?N]:8d1eZkim?2
 I@o92Wl7z_bbQU?e6AOElf3
@@ -5244,7 +5259,7 @@ R6
 !s105 VX_lsu_req_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_lsu_req_if.sv
 Frtl/interfaces/VX_lsu_req_if.sv
 L0 6
@@ -5252,17 +5267,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_lsu_req_if
 vVX_lsu_unit
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 14QF0:^`kLb1;PSR3aAm]0
 IYkPz9CemL>5?YJNRHg_Kl0
@@ -5270,7 +5286,7 @@ R6
 !s105 VX_lsu_unit_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_lsu_unit.sv
 Frtl/VX_lsu_unit.sv
 L0 3
@@ -5278,16 +5294,16 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_lsu_unit
 vVX_lzc
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5297,7 +5313,7 @@ R6
 !s105 VX_lzc_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_lzc.sv
 Frtl/libs/VX_lzc.sv
 L0 4
@@ -5305,16 +5321,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_lzc
 vVX_matrix_arbiter
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5324,7 +5340,7 @@ R6
 !s105 VX_matrix_arbiter_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_matrix_arbiter.sv
 Frtl/libs/VX_matrix_arbiter.sv
 L0 4
@@ -5332,9 +5348,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -5351,7 +5367,7 @@ R6
 !s105 VX_mem_arb_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_mem_arb.sv
 Frtl/VX_mem_arb.sv
 L0 3
@@ -5359,17 +5375,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_mem_arb
 YVX_mem_req_if
+R56
 R3
-Z145 !s110 1700087380
+Z151 !s110 1700087380
 !i10b 1
 !s100 `[Uc4TM=]Ii2Z[V58mUUD0
 IC6oC0@<cjM^CKZNB_FPbI2
@@ -5377,7 +5394,7 @@ R6
 !s105 VX_mem_req_if_sv_unit
 S1
 R0
-R55
+R58
 8rtl/interfaces/VX_mem_req_if.sv
 Frtl/interfaces/VX_mem_req_if.sv
 L0 6
@@ -5385,17 +5402,18 @@ R9
 r1
 !s85 0
 31
-Z146 !s108 1700087380.000000
-R113
-R114
+Z152 !s108 1700087380.000000
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_mem_req_if
 YVX_mem_rsp_if
+R56
 R3
-R145
+R151
 !i10b 1
 !s100 DgI90M^CzAY0<f_@4EKi?3
 ITa5Af<B<OWJ<1n<k<Qdk12
@@ -5403,7 +5421,7 @@ R6
 !s105 VX_mem_rsp_if_sv_unit
 S1
 R0
-R55
+R58
 8rtl/interfaces/VX_mem_rsp_if.sv
 Frtl/interfaces/VX_mem_rsp_if.sv
 L0 6
@@ -5411,9 +5429,9 @@ R9
 r1
 !s85 0
 31
-R146
-R113
-R114
+R152
+R119
+R120
 !i113 0
 R13
 R21
@@ -5430,7 +5448,7 @@ R6
 !s105 VX_mem_unit_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_mem_unit.sv
 Frtl/VX_mem_unit.sv
 L0 3
@@ -5438,9 +5456,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -5457,7 +5475,7 @@ R6
 !s105 VX_miss_resrv_sv_unit
 S1
 R0
-R84
+R91
 8rtl/cache/VX_miss_resrv.sv
 Frtl/cache/VX_miss_resrv.sv
 L0 3
@@ -5465,9 +5483,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -5484,7 +5502,7 @@ R6
 !s105 VX_muldiv_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_muldiv.sv
 Frtl/VX_muldiv.sv
 L0 3
@@ -5492,16 +5510,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_muldiv
 vVX_multiplier
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5511,7 +5529,7 @@ R6
 !s105 VX_multiplier_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_multiplier.sv
 Frtl/libs/VX_multiplier.sv
 L0 4
@@ -5519,16 +5537,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_multiplier
 vVX_mux
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5538,7 +5556,7 @@ R6
 !s105 VX_mux_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_mux.sv
 Frtl/libs/VX_mux.sv
 L0 4
@@ -5546,9 +5564,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -5565,7 +5583,7 @@ R6
 !s105 VX_nc_bypass_sv_unit
 S1
 R0
-R84
+R91
 8rtl/cache/VX_nc_bypass.sv
 Frtl/cache/VX_nc_bypass.sv
 L0 3
@@ -5573,16 +5591,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_nc_bypass
 vVX_onehot_encoder
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5592,7 +5610,7 @@ R6
 !s105 VX_onehot_encoder_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_onehot_encoder.sv
 Frtl/libs/VX_onehot_encoder.sv
 L0 7
@@ -5600,16 +5618,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_onehot_encoder
 vVX_onehot_mux
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5619,7 +5637,7 @@ R6
 !s105 VX_onehot_mux_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_onehot_mux.sv
 Frtl/libs/VX_onehot_mux.sv
 L0 4
@@ -5627,16 +5645,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_onehot_mux
 vVX_pending_size
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5646,7 +5664,7 @@ R6
 !s105 VX_pending_size_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_pending_size.sv
 Frtl/libs/VX_pending_size.sv
 L0 4
@@ -5654,18 +5672,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_pending_size
 YVX_perf_cache_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 SIlS>nj8XX^a=Q<=D3:S^0
 IMY?`lk=NQlIf1_a5^HJmX1
@@ -5673,7 +5691,7 @@ R6
 !s105 VX_perf_cache_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_perf_cache_if.sv
 Frtl/interfaces/VX_perf_cache_if.sv
 L0 6
@@ -5681,18 +5699,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_perf_cache_if
 YVX_perf_memsys_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 37Q1I<1eCMUTj=2_O;`Vc2
 IOJR1VlKc1MSPW`^D>>bZn2
@@ -5700,7 +5718,7 @@ R6
 !s105 VX_perf_memsys_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_perf_memsys_if.sv
 Frtl/interfaces/VX_perf_memsys_if.sv
 L0 6
@@ -5708,18 +5726,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_perf_memsys_if
 YVX_perf_pipeline_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 TNVhjZ[U4D]OmYf7aXJi02
 IB8EzMcm;=Lk:h:_9`_IEk1
@@ -5727,7 +5745,7 @@ R6
 !s105 VX_perf_pipeline_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_perf_pipeline_if.sv
 Frtl/interfaces/VX_perf_pipeline_if.sv
 L0 6
@@ -5735,18 +5753,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_perf_pipeline_if
 YVX_perf_tex_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 1l;MD1bFRe]QV=l]K[jkd3
 IcX7a[5GI0oTbJ?OPal_Y?2
@@ -5754,7 +5772,7 @@ R6
 !s105 VX_perf_tex_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_perf_tex_if.sv
 Frtl/interfaces/VX_perf_tex_if.sv
 L0 6
@@ -5762,16 +5780,16 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_perf_tex_if
 vVX_pipe_register
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5781,7 +5799,7 @@ R6
 !s105 VX_pipe_register_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_pipe_register.sv
 Frtl/libs/VX_pipe_register.sv
 L0 4
@@ -5789,17 +5807,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_pipe_register
 vVX_pipeline
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 8DK;0LQ0gU_zX=TJU<`a?0
 IA3PQW2:kzmiLOPG`SnXX31
@@ -5807,7 +5826,7 @@ R6
 !s105 VX_pipeline_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_pipeline.sv
 Frtl/VX_pipeline.sv
 L0 3
@@ -5815,17 +5834,18 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_pipeline
 vVX_popcount
+R56
 R3
-R22
+R57
 !i10b 1
 !s100 T=VdEL^5nLLnOX>Eh;AfZ3
 IEchmHU2QE]kan7PMb1z=J3
@@ -5833,7 +5853,7 @@ R6
 !s105 VX_popcount_sv_unit
 S1
 R0
-R55
+R58
 8rtl/libs/VX_popcount.sv
 Frtl/libs/VX_popcount.sv
 L0 4
@@ -5841,16 +5861,16 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_popcount
 vVX_priority_encoder
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5860,7 +5880,7 @@ R6
 !s105 VX_priority_encoder_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_priority_encoder.sv
 Frtl/libs/VX_priority_encoder.sv
 L0 4
@@ -5868,16 +5888,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_priority_encoder
 vVX_reset_relay
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5887,7 +5907,7 @@ R6
 !s105 VX_reset_relay_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_reset_relay.sv
 Frtl/libs/VX_reset_relay.sv
 L0 3
@@ -5895,16 +5915,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_reset_relay
 vVX_rr_arbiter
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5914,7 +5934,7 @@ R6
 !s105 VX_rr_arbiter_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_rr_arbiter.sv
 Frtl/libs/VX_rr_arbiter.sv
 L0 4
@@ -5922,16 +5942,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_rr_arbiter
 vVX_scan
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5941,7 +5961,7 @@ R6
 !s105 VX_scan_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_scan.sv
 Frtl/libs/VX_scan.sv
 L0 7
@@ -5949,16 +5969,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_scan
 vVX_scope
-R15
+R56
 R3
 R5
 !i10b 1
@@ -5968,7 +5988,7 @@ R6
 !s105 VX_scope_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_scope.sv
 Frtl/libs/VX_scope.sv
 L0 4
@@ -5976,17 +5996,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_scope
 vVX_scoreboard
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 IdIRF^6O8@kVlCVN;DJSm1
 I<JM=FGzSYiBnD^Y?P3b?H1
@@ -5994,7 +6015,7 @@ R6
 !s105 VX_scoreboard_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_scoreboard.sv
 Frtl/VX_scoreboard.sv
 L0 3
@@ -6002,16 +6023,16 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_scoreboard
 vVX_serial_div
-R15
+R56
 R3
 R5
 !i10b 1
@@ -6021,7 +6042,7 @@ R6
 !s105 VX_serial_div_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_serial_div.sv
 Frtl/libs/VX_serial_div.sv
 L0 4
@@ -6029,9 +6050,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -6048,7 +6069,7 @@ R6
 !s105 VX_shared_mem_sv_unit
 S1
 R0
-R84
+R91
 8rtl/cache/VX_shared_mem.sv
 Frtl/cache/VX_shared_mem.sv
 L0 3
@@ -6056,97 +6077,97 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_shared_mem
 vVX_shift_register
-R15
+R56
 R3
 R5
 !i10b 1
 !s100 cV>OGMGCm?6K=ER=Dz0U:2
 I9EabXo:06JN5ifIGnz7FG0
 R6
-Z147 !s105 VX_shift_register_sv_unit
+Z153 !s105 VX_shift_register_sv_unit
 S1
 R0
-R84
-Z148 8rtl/libs/VX_shift_register.sv
-Z149 Frtl/libs/VX_shift_register.sv
+R91
+Z154 8rtl/libs/VX_shift_register.sv
+Z155 Frtl/libs/VX_shift_register.sv
 L0 63
 R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_shift_register
 vVX_shift_register_nr
-R15
+R56
 R3
 R5
 !i10b 1
 !s100 V?AbWCRz[:4Rn2C;oizVN0
 I[b0Bo=hEn:CY?OP:lWZJg2
 R6
-R147
+R153
 S1
 R0
-R84
-R148
-R149
+R91
+R154
+R155
 L0 4
 R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_shift_register_nr
 vVX_shift_register_wr
-R15
+R56
 R3
 R5
 !i10b 1
 !s100 RW8ET`X127UP0fEi0JQL?3
 IW5B@<zhAiKOK:>kJCDUbO1
 R6
-R147
+R153
 S1
 R0
-R84
-R148
-R149
-R75
+R91
+R154
+R155
+R82
 R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_shift_register_wr
 vVX_skid_buffer
-R15
+R56
 R3
 R5
 !i10b 1
@@ -6156,7 +6177,7 @@ R6
 !s105 VX_skid_buffer_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_skid_buffer.sv
 Frtl/libs/VX_skid_buffer.sv
 L0 4
@@ -6164,9 +6185,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -6183,7 +6204,7 @@ R6
 !s105 VX_smem_arb_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_smem_arb.sv
 Frtl/VX_smem_arb.sv
 L0 3
@@ -6191,17 +6212,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_smem_arb
 vVX_sp_ram
+R56
 R3
-R22
+R57
 !i10b 1
 !s100 9PQSZJ>WJ7T]]WLjXe15T1
 I:Y;VJ8POUZ[UnZlFL_UNU0
@@ -6209,7 +6231,7 @@ R6
 !s105 VX_sp_ram_sv_unit
 S1
 R0
-R55
+R58
 8rtl/libs/VX_sp_ram.sv
 Frtl/libs/VX_sp_ram.sv
 L0 4
@@ -6217,16 +6239,16 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_sp_ram
 vVX_stream_arbiter
-R15
+R56
 R3
 R5
 !i10b 1
@@ -6236,7 +6258,7 @@ R6
 !s105 VX_stream_arbiter_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_stream_arbiter.sv
 Frtl/libs/VX_stream_arbiter.sv
 L0 3
@@ -6244,16 +6266,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_stream_arbiter
 vVX_stream_demux
-R15
+R56
 R3
 R5
 !i10b 1
@@ -6263,7 +6285,7 @@ R6
 !s105 VX_stream_demux_sv_unit
 S1
 R0
-R84
+R91
 8rtl/libs/VX_stream_demux.sv
 Frtl/libs/VX_stream_demux.sv
 L0 3
@@ -6271,9 +6293,9 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
@@ -6290,7 +6312,7 @@ R6
 !s105 VX_tag_access_sv_unit
 S1
 R0
-R84
+R91
 8rtl/cache/VX_tag_access.sv
 Frtl/cache/VX_tag_access.sv
 L0 3
@@ -6298,16 +6320,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_tag_access
 vVX_tex_addr
-R15
+R56
 R3
 !s110 1700084165
 !i10b 1
@@ -6325,18 +6347,18 @@ R9
 r1
 !s85 0
 31
-R88
-R85
-R86
+R95
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_tex_addr
 YVX_tex_csr_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 DHWRSP:9ZWnQzc@Eo@bCI1
 IZG6bSJ_6Z9OfAa]?Tja0K0
@@ -6344,7 +6366,7 @@ R6
 !s105 VX_tex_csr_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_tex_csr_if.sv
 Frtl/interfaces/VX_tex_csr_if.sv
 L0 6
@@ -6352,16 +6374,16 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_tex_csr_if
 vVX_tex_format
-R15
+R56
 R3
 R5
 !i10b 1
@@ -6371,7 +6393,7 @@ R6
 !s105 VX_tex_format_sv_unit
 S1
 R0
-R84
+R91
 8rtl/tex_unit/VX_tex_format.sv
 Frtl/tex_unit/VX_tex_format.sv
 L0 3
@@ -6379,26 +6401,26 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_tex_format
 vVX_tex_lerp
-R15
+R56
 R3
 R5
 !i10b 1
 !s100 KCkd5moYaeA`J9Y_zngin3
 I^0Wab81KmQ4C?fGl09<mj3
 R6
-Z150 !s105 VX_tex_stride_sv_unit
+Z156 !s105 VX_tex_stride_sv_unit
 S1
 R0
-R84
+R91
 8rtl/tex_unit/VX_tex_lerp.sv
 Frtl/tex_unit/VX_tex_lerp.sv
 L0 3
@@ -6406,16 +6428,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_tex_lerp
 vVX_tex_mem
-R15
+R56
 R3
 R5
 !i10b 1
@@ -6425,7 +6447,7 @@ R6
 !s105 VX_tex_mem_sv_unit
 S1
 R0
-R84
+R91
 8rtl/tex_unit/VX_tex_mem.sv
 Frtl/tex_unit/VX_tex_mem.sv
 L0 2
@@ -6433,18 +6455,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_tex_mem
 YVX_tex_req_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 @kX:WYCM<H=^Hb[_hH9gS0
 ID:IVZUKEIg`R@1H1LjFkP2
@@ -6452,7 +6474,7 @@ R6
 !s105 VX_tex_req_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_tex_req_if.sv
 Frtl/interfaces/VX_tex_req_if.sv
 L0 6
@@ -6460,18 +6482,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_tex_req_if
 YVX_tex_rsp_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 F9BA`J_3YK7aQ[HBhJEo_3
 I>hz;?DnXmDT22A:S<4T]C1
@@ -6479,7 +6501,7 @@ R6
 !s105 VX_tex_rsp_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_tex_rsp_if.sv
 Frtl/interfaces/VX_tex_rsp_if.sv
 L0 6
@@ -6487,16 +6509,16 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_tex_rsp_if
 vVX_tex_sampler
-R15
+R56
 R3
 R5
 !i10b 1
@@ -6506,7 +6528,7 @@ R6
 !s105 VX_tex_sampler_sv_unit
 S1
 R0
-R84
+R91
 8rtl/tex_unit/VX_tex_sampler.sv
 Frtl/tex_unit/VX_tex_sampler.sv
 L0 3
@@ -6514,26 +6536,26 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_tex_sampler
 vVX_tex_sat
-R15
+R56
 R3
 R5
 !i10b 1
 !s100 FEdmQf=86l2k[[]lR]SJQ1
 IGoHULAclE?SDCAaOYZ=UE1
 R6
-R150
+R156
 S1
 R0
-R84
+R91
 8rtl/tex_unit/VX_tex_sat.sv
 Frtl/tex_unit/VX_tex_sat.sv
 L0 3
@@ -6541,26 +6563,26 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_tex_sat
 vVX_tex_stride
-R15
+R56
 R3
 R5
 !i10b 1
 !s100 KXn?Fz]nh6AhnOiOSD^Ai3
 Ik:Fb@DVC^@O3c[5;ocSB10
 R6
-R150
+R156
 S1
 R0
-R84
+R91
 8rtl/tex_unit/VX_tex_stride.sv
 Frtl/tex_unit/VX_tex_stride.sv
 L0 3
@@ -6568,26 +6590,26 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_tex_stride
 vVX_tex_unit
-R15
+R56
 R3
 R5
 !i10b 1
 !s100 06TeUVMf<59L6hegV3]<80
 IRzB32cIQ7ozIV4?49P_e[1
 R6
-R150
+R156
 S1
 R0
-R84
+R91
 8rtl/tex_unit/VX_tex_unit.sv
 Frtl/tex_unit/VX_tex_unit.sv
 L0 3
@@ -6595,16 +6617,16 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_tex_unit
 vVX_tex_wrap
-R15
+R56
 R3
 R5
 !i10b 1
@@ -6614,7 +6636,7 @@ R6
 !s105 VX_tex_wrap_sv_unit
 S1
 R0
-R84
+R91
 8rtl/tex_unit/VX_tex_wrap.sv
 Frtl/tex_unit/VX_tex_wrap.sv
 L0 3
@@ -6622,17 +6644,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_tex_wrap
 vVX_vortex_to_local_mem
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 f8ZP>mLzjHe8McG4::OU[3
 IPZ0@=YR@kf;`f9`HED55=1
@@ -6640,7 +6663,7 @@ R6
 !s105 VX_vortex_local_mem_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_vortex_local_mem.sv
 Frtl/VX_vortex_local_mem.sv
 L0 4
@@ -6648,19 +6671,19 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
 R1
 n@v@x_vortex_to_local_mem
 YVX_warp_ctl_if
-R15
+R56
 R3
 DXx4 work 9 gpu_types 0 22 cWj1>IFR9N8=9AQ87B7IU2
-R111
+R117
 !i10b 1
 !s100 cP714zCUlR`RlnDggzeW_2
 IiD^fO=3;c1[cUKGh@X`kP3
@@ -6668,7 +6691,7 @@ R6
 !s105 VX_warp_ctl_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_warp_ctl_if.sv
 Frtl/interfaces/VX_warp_ctl_if.sv
 L0 6
@@ -6676,17 +6699,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_warp_ctl_if
 vVX_warp_sched
+R15
 R3
-R22
+R57
 !i10b 1
 !s100 EZEAdlCZdhCQa161bM4]h1
 IKU3LLW0OXEbKHeS>L:^gk1
@@ -6694,7 +6718,7 @@ R6
 !s105 VX_warp_sched_sv_unit
 S1
 R0
-R55
+R58
 8rtl/VX_warp_sched.sv
 Frtl/VX_warp_sched.sv
 L0 3
@@ -6702,9 +6726,9 @@ R9
 r1
 !s85 0
 31
-R24
-R25
-R26
+R59
+R60
+R61
 !i113 0
 R13
 R27
@@ -6721,7 +6745,7 @@ R6
 !s105 VX_writeback_sv_unit
 S1
 R0
-R84
+R91
 8rtl/VX_writeback.sv
 Frtl/VX_writeback.sv
 L0 3
@@ -6729,18 +6753,18 @@ R9
 r1
 !s85 0
 31
-R49
-R85
-R86
+R50
+R92
+R93
 !i113 0
 R13
 R27
 R1
 n@v@x_writeback
 YVX_writeback_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 o2n7?WT@SKO`8R28o@T^G0
 I[RD:CP]1m4UzJQ?V@Ze0Z0
@@ -6748,7 +6772,7 @@ R6
 !s105 VX_writeback_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_writeback_if.sv
 Frtl/interfaces/VX_writeback_if.sv
 L0 6
@@ -6756,18 +6780,18 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_writeback_if
 YVX_wstall_if
-R15
+R56
 R3
-R111
+R117
 !i10b 1
 !s100 IhOa]LhORNRW6^P[2ez=;0
 ID5CJGMiZNTkQicgGId>]Y1
@@ -6775,7 +6799,7 @@ R6
 !s105 VX_wstall_if_sv_unit
 S1
 R0
-R84
+R91
 8rtl/interfaces/VX_wstall_if.sv
 Frtl/interfaces/VX_wstall_if.sv
 L0 6
@@ -6783,26 +6807,26 @@ R9
 r1
 !s85 0
 31
-R112
-R113
-R114
+R118
+R119
+R120
 !i113 0
 R13
 R21
 R1
 n@v@x_wstall_if
 vwrapper_counter
-R89
+R96
 R3
-R87
+R94
 !i10b 1
 !s100 `jbkeTXm1lZ@jJ1_EEP9f0
 Id_1Y:=Ra=oRkA_cm`Lf5E3
 R6
-R105
+R111
 S1
 R0
-R90
+R97
 8tb/counter.sv
 Ftb/counter.sv
 L0 1
@@ -6810,9 +6834,9 @@ R9
 r1
 !s85 0
 31
-R88
-R71
-R72
+R95
+R78
+R79
 !i113 0
 R13
 R21
