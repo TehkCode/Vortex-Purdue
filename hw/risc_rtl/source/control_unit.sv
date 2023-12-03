@@ -8,27 +8,36 @@ module control_unit (
 );
  
 logic [11:0] alu_imm;
-word_t instr = ctrlunt.ins;
 
-r_t r_ins = r_t'(instr);
-i_t i_ins = i_t'(instr);
-s_t s_ins = s_t'(instr);
-u_t u_ins = u_t'(instr);
+r_t r_ins; 
+i_t i_ins; 
+s_t s_ins; 
+u_t u_ins; 
 
-logic [11:0] s_imm   = {s_ins.imm_1, s_ins.imm_0};
-logic [12:0] b_imm   = {instr[31], instr[7], instr[30:25], instr[11:8], 1'b0};
-logic [20:0] jal_imm = {instr[31], instr[19:12], instr[20], instr[30:21], 1'b0};
+logic [11:0] s_imm   ;
+logic [12:0] b_imm   ;
+logic [20:0] jal_imm ;
+
+assign i_ins = i_t'(ctrlunt.ins);
+assign r_ins = r_t'(ctrlunt.ins);
+assign s_ins = s_t'(ctrlunt.ins);
+assign u_ins = u_t'(ctrlunt.ins);
+
+assign s_imm   = {s_ins.imm_1, s_ins.imm_0};
+assign b_imm   = {ctrlunt.ins[31], ctrlunt.ins[7], ctrlunt.ins[30:25], ctrlunt.ins[11:8], 1'b0};
+assign jal_imm = {ctrlunt.ins[31], ctrlunt.ins[19:12], ctrlunt.ins[20], ctrlunt.ins[30:21], 1'b0};
 
 always_comb 
 begin
+
 
 ctrlunt.RegWr = 1'b1;
 ctrlunt.ALUSrc = 1'b0;
 ctrlunt.MemWr = 1'b0;
 ctrlunt.MemtoReg = 1'b0;
-ctrlunt.Rs = 5'b0;
-ctrlunt.Rt = 5'b0;
-ctrlunt.Rd = 5'b0;
+ctrlunt.rs1 = 5'b0;
+ctrlunt.rs2 = 5'b0;
+ctrlunt.rd  = 5'b0;
 ctrlunt.ALUOp = ALU_ADD;
 ctrlunt.PCSrc = 1'b0;
 ctrlunt.dmemREN = 1'b0;
@@ -120,14 +129,14 @@ end
 JAL:
 begin
   ctrlunt.PCSrc = 1'b1;
-  ctrlunt.Rd = u_ins.rd;
+  ctrlunt.rd = u_ins.rd;
   ctrlunt.imm  = {{11{jal_imm[20]}}, jal_imm};
 end
 
 JALR:
 begin
   ctrlunt.PCSrc = 1'b1;
-  ctrlunt.Rd = i_ins.rd;
+  ctrlunt.rd = i_ins.rd;
   ctrlunt.rs1 = i_ins.rs1;
   ctrlunt.imm  = {{20{i_ins.imm[11]}}, i_ins.imm};
   ctrlunt.ALUOp = ALU_ADD;
@@ -137,14 +146,14 @@ end
 
 LUI:
 begin
-  ctrlunt.Rd = u_ins.rd;
+  ctrlunt.rd = u_ins.rd;
   ctrlunt.ALUSrc = 1'b1;
   ctrlunt.imm  = {u_ins.imm, 12'(0)};
 end
 
 AUIPC:
 begin
-  ctrlunt.Rd = u_ins.rd;
+  ctrlunt.rd = u_ins.rd;
   ctrlunt.ALUSrc = 1'b1;
   ctrlunt.imm  = {u_ins.imm, 12'(0)};
 end

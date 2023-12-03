@@ -85,14 +85,33 @@ module datapath (
   
   always_comb
   begin 
+  PC_nxt = PC_incr;
   casez (s_type_ins_mem.opcode)
-    BEQ: if(ex_mem_intf.alu_zero == 1'b1) {PC_nxt, is_branch_taken} = {ex_mem_intf.extended_imm << 1 + ex_mem_intf.PC, 1'b1};
-    BNE: if(ex_mem_intf.alu_zero == 1'b0) {PC_nxt, is_branch_taken} = {ex_mem_intf.extended_imm << 1 + ex_mem_intf.PC, 1'b1};
-    BLT: if(ex_mem_intf.alu_zero == 1'b0) {PC_nxt, is_branch_taken} = {ex_mem_intf.extended_imm << 1 + ex_mem_intf.PC, 1'b1};
-    BGE: if(ex_mem_intf.alu_zero == 1'b1) {PC_nxt, is_branch_taken} = {ex_mem_intf.extended_imm << 1 + ex_mem_intf.PC, 1'b1};
+    
+    RTYPE,
+    ITYPE,
+    LW,
+    SW,
+    LUI,
+    AUIPC,
+    CSR,
+    HALT: {PC_nxt, is_branch_taken} = {PC_incr, 1'b0};
+   
+    SBTYPE:
+    begin
+      casez(s_type_ins_mem.funct3)
+        BEQ: if(ex_mem_intf.alu_zero == 1'b1) {PC_nxt, is_branch_taken} = {ex_mem_intf.extended_imm << 1 + ex_mem_intf.PC, 1'b1};
+        BNE: if(ex_mem_intf.alu_zero == 1'b0) {PC_nxt, is_branch_taken} = {ex_mem_intf.extended_imm << 1 + ex_mem_intf.PC, 1'b1};
+        BLT: if(ex_mem_intf.alu_zero == 1'b0) {PC_nxt, is_branch_taken} = {ex_mem_intf.extended_imm << 1 + ex_mem_intf.PC, 1'b1};
+        BGE: if(ex_mem_intf.alu_zero == 1'b1) {PC_nxt, is_branch_taken} = {ex_mem_intf.extended_imm << 1 + ex_mem_intf.PC, 1'b1};
+        default: {PC_nxt, is_branch_taken} = {PC_incr, 1'b0};
+      endcase
+    end
+
     JAL: {PC_nxt, is_branch_taken} = {ex_mem_intf.extended_imm << 1 + ex_mem_intf.PC, 1'b1};
     JALR: {PC_nxt, is_branch_taken} = {ex_mem_intf.alu_output, 1'b1};
     default: {PC_nxt, is_branch_taken} = {PC_incr, 1'b0};
+
   endcase
   end
 

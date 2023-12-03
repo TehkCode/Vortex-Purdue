@@ -75,15 +75,15 @@ def write_hex_record(outfile, address, data):
     outfile.write(':{:02X}{:04X}00{}{:02X}\n'.format(record_length, address, data, (0x100 - record_checksum) & 0xFF))
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Process into hex files')
+    # parser = argparse.ArgumentParser(description='Process into hex files')
 
-    parser.add_argument('InputFile', metavar='input', type=str, help='the input file')
-    parser.add_argument('OutputFile', metavar='output', type=str, nargs='?', default='meminit.hex', help='the output file (default: meminit.hex)')
+    # parser.add_argument('InputFile', metavar='input', type=str, help='the input file')
+    # parser.add_argument('OutputFile', metavar='output', type=str, nargs='?', default='meminit.hex', help='the output file (default: meminit.hex)')
 
-    args = parser.parse_args()
+    # args = parser.parse_args()
 
-    input_file = str(args.InputFile)
-    output_file = str(args.OutputFile)
+    input_file = "/home/ecegridfs/a/mg397/ece437/GPU_scalar_riscV_design/test_cases/add.hex" #str(args.InputFile)
+    output_file = "/home/ecegridfs/a/mg397/ece437/GPU_scalar_riscV_design/meminit.hex" #str(args.OutputFile)
     
     hex_to_hex(input_file, output_file)
     # bin_to_hex(input_file, output_file)

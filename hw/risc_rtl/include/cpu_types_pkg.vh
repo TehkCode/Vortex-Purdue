@@ -47,7 +47,7 @@ package cpu_types_pkg;
     //CSR
     CSR     = 7'b1110011,
     
-    HALT    = 7'b111111
+    HALT    = 7'b1111111
 
   } opcode_t;
 
