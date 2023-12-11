@@ -44,7 +44,7 @@ void kernel_body_priority(int task_id, kernel_arg_t* __UNIFORM__ arg) {
     int32_t* dst_ptr  = (int32_t*)arg->dst_addr;
 
    
-    // TaskData* taskDataArray = (TaskData*)arg->src0_addr;  // Assuming task data is passed in src0_addr
+    TaskData* taskDataArray = (TaskData*)arg->src0_addr;  // Assuming task data is passed in src0_addr
     uint32_t offset = task_id * count;
     
 // 0,1,2,3,4,5,6,7,8,9
@@ -53,54 +53,30 @@ void kernel_body_priority(int task_id, kernel_arg_t* __UNIFORM__ arg) {
 
     for(int i=0; i<count; ++i)
     {
-
-        newPost(offset + i, "New_post + i");
-
-        int64_t postID =  1;
-
-        //save to built-in memcached
-        struct post _newpost;
-        _newpost.user_id=userID;
-        _newpost.post_id=postID;
-        _newpost.post_string=post;
-        
-        post_memcached.insert(make_pair(userID, _newpost));
-        
-        //save to storage
-        post_storage<<userID<<","<<postID<<","<<post<<endl;
-
-
-        // TaskData task = taskDataArray[offset + i];        
-        // newPost(task.userID, task.postContent);
+        TaskData task = taskDataArray[offset + i];        
+        newPost(task.userID, task.postContent);
     }
 }
 
 void kernel_body_nonpriority(int task_id, kernel_arg_t* __UNIFORM__ arg) {
     uint32_t count    = arg->task_size;
     
-    int32_t* src0_ptr = (int32_t*)arg->src0_addr;
-    int32_t* src1_ptr = (int32_t*)arg->src1_addr;
-    int32_t* dst_ptr  = (int32_t*)arg->dst_addr;
-
     TaskData* taskDataArray = (TaskData*)arg->src1_addr;  // Assuming task data is passed in src0_addr
+    char* postsBuffer = (char*)arg->dst_addr;
 
     uint32_t offset = task_id * count;
+    int MAX_POST_SIZE = 100;
 
     for(int i=0; i<count; ++i)
     {
         TaskData task = taskDataArray[offset + i];
 
         vector<string> posts;        
-        getPostByUser(task.userID, posts, 10); //get 10 posts from this user
+        int numPosts = getPostByUser(task.userID, posts, 10); //get 10 posts from this user
+        postsBuffer += numPosts * MAX_POST_SIZE;
         
         cout << "number of posts: " << posts.size() <<endl;
         for(int i=0; i < posts.size(); ++i) cout << "post " << i << " : "<< posts[i]  <<endl;
-
-        // char* postsBuffer = (char*)arg->dst_addr;
-        // TaskData task = taskDataArray[offset + i];
-        // int numPosts = getPostByUser(task.userID, postsBuffer, 10); 
-        // postsBuffer += numPosts * MAX_POST_SIZE;
-
     }
     
 }
