@@ -10,3 +10,6 @@
 [submodule "third_party/cocogfx"]
 	path = third_party/cocogfx
 	url = https://github.com/gtcasl/cocogfx.git
+[submodule "hw/OpenLane"]
+	path = hw/OpenLane
+	url = git@github.com:The-OpenROAD-Project/OpenLane.git
