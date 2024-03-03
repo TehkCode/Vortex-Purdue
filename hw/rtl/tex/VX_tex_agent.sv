@@ -32,7 +32,7 @@ module VX_tex_agent import VX_tex_pkg::*; #(
     VX_commit_if.master     commit_if
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam PID_BITS   = `CLOG2(`THREAD_CNT / NUM_LANES);
+    localparam PID_BITS   = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH  = `UP(PID_BITS);
     localparam REQ_QUEUE_BITS = `LOG2UP(`TEX_REQ_QUEUE_SIZE);
 

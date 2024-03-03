@@ -400,8 +400,8 @@ endmodule
 
 module VX_rop_unit_top import VX_gpu_pkg::*; import VX_rop_pkg::*; #(
     parameter `STRING INSTANCE_ID = "",
-    parameter THREAD_CNT = `NUM_THREADS
-    parameter NUM_LANES = `THREAD_CNT
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter NUM_LANES = THREAD_CNT
 ) (
     input wire                              clk,
     input wire                              reset,

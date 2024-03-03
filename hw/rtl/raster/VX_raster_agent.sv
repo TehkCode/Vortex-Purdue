@@ -32,7 +32,7 @@ module VX_raster_agent #(
     VX_commit_if.master    commit_if
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam PID_BITS   = `CLOG2(`THREAD_CNT / NUM_LANES);
+    localparam PID_BITS   = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH  = `UP(PID_BITS);
 
     wire raster_rsp_valid, raster_rsp_ready;
