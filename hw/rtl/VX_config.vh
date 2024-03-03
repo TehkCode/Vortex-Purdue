@@ -168,7 +168,7 @@
 `ifndef FPU_DSP
 `ifndef FPU_DPI
 `ifdef SYNTHESIS
-`define FPU_DSP
+// `define FPU_DSP
 `else
 `define FPU_DPI
 `endif
