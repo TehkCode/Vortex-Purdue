@@ -13,7 +13,8 @@
 
 `include "VX_define.vh"
 
-interface VX_warp_ctl_if import VX_gpu_pkg::*; ();
+interface VX_warp_ctl_if import VX_gpu_pkg::*; (); 
+
 
     wire        valid;
     wire [`NW_WIDTH-1:0] wid;

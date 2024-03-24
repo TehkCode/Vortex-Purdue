@@ -15,6 +15,7 @@
 
 interface VX_ibuffer_if import VX_gpu_pkg::*; #(parameter THREAD_CNT = `NUM_THREADS)();
 
+
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]     uuid;
         logic [ISSUE_WIS_W-1:0]     wis;

@@ -366,6 +366,29 @@ module VX_socket import VX_gpu_pkg::*; #(
         );
         end
     end
+    //***************************************
+    // Hardware Interrupt Controller Module *
+    //***************************************
+    `RESET_RELAY (interrupt_ctl_reset, reset);
+    VX_interrupt_ctl_if interrupt_ctl_if ();
+    VX_interrupt_ctl interrupt_controller
+    (
+        .clk              (clk), 
+        .reset            (interrupt_ctl_reset),
+        .interrupt_ctl_if (interrupt_ctl_if)
+    );
+
+    assign interrupt_ctl_if.err         = 0; 
+    assign interrupt_ctl_if.pipe_clean  = 0; 
+    assign interrupt_ctl_if.PC          = 32'h00000008;
+    assign interrupt_ctl_if.scalarAddr  = 32'h00000000;
+    assign interrupt_ctl_if.scalarStore = 32'h00000000;
+    assign interrupt_ctl_if.scalarRd    = 0;
+    assign interrupt_ctl_if.scalarWr    = 0;
+    assign interrupt_ctl_if.vectorAddr  = 32'h00000000;
+    assign interrupt_ctl_if.vectorStore = 32'h00000000;
+    assign interrupt_ctl_if.vectorRd    = 0;
+    assign interrupt_ctl_if.vectorWr    = 0;
 
     // for (genvar i = 0; i < `SOCKET_SIZE; ++i) begin
 
