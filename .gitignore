@@ -1,7 +1,3 @@
 thirdparty/*
 *.log
 *.vcd
-tests/opencl/*
-tests/kernel/*
-tests/riscv/*
-tests/unittest/*
