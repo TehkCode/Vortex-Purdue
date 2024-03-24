@@ -1,0 +1,15 @@
+export VORTEX_HOME=${PWD}
+export OSDIR=ubuntu/focal
+export OS=ubuntu/focal
+export TOOLDIR=$VORTEX_HOME/tools
+export LLVM_VORTEX=$TOOLDIR/llvm-vortex
+export LLVM_POCL=$TOOLDIR/llvm-pocl
+export POCL_CC_PATH=$TOOLDIR/pocl/compiler
+export POCL_RT_PATH=$TOOLDIR/pocl/runtime
+export RISCV_TOOLCHAIN_PATH=$TOOLDIR/riscv-gnu-toolchain
+export VERILATOR_ROOT=$TOOLDIR/verilator
+export SV2V_PATH=$TOOLDIR/sv2v
+export YOSYS_PATH=$TOOLDIR/yosys
+
+export PATH=$YOSYS_PATH/bin:$SV2V_PATH/bin:$VERILATOR_ROOT/bin:$PATH
+export LD_LIBRARY_PATH="/usr/local/lib64:/usr/local/lib:$LD_LIBRARY_PATH"
