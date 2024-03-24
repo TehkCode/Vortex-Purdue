@@ -1,2 +1,0 @@
-main.o: main.cpp /home/anu/vortextry3/vortex/runtime/include/vortex.h \
- /home/anu/vortextry3/vortex/kernel/../hw/VX_config.h common.h
