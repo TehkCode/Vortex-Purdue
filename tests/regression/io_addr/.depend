@@ -1,0 +1,4 @@
+main.o: main.cpp \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/runtime/include/vortex.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/kernel/../hw/VX_config.h \
+ common.h

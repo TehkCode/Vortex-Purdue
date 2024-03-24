@@ -1,0 +1,14 @@
+main.o: main.cc gaussianElim.h clutils.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_version.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_platform.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/opencl.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_gl.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_ext.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_ext_pocl.h
+clutils.o: clutils.cpp \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_version.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_platform.h \
+ clutils.h utils.h
+utils.o: utils.cpp utils.h

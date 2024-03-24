@@ -1,0 +1,8 @@
+main.o: main.cc \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/opencl.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_version.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_platform.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_gl.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_ext.h \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/tools/pocl/runtime/include/CL/cl_ext_pocl.h

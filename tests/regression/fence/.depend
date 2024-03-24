@@ -1,0 +1,3 @@
+main.o: main.cpp \
+ /home/ecegridfs/a/socet10/socet/Vortex-Purdue/runtime/include/vortex.h \
+ common.h
