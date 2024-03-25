@@ -441,4 +441,29 @@ module VX_cluster import VX_gpu_pkg::*; #(
 
     `BUFFER_BUSY (busy, (| per_socket_busy), (`NUM_SOCKETS > 1));
 
+
+    //***************************************
+    // Hardware Interrupt Controller Module *
+    //***************************************
+    `RESET_RELAY (interrupt_ctl_reset, reset);
+    VX_interrupt_ctl_if interrupt_ctl_if ();
+    VX_interrupt_ctl interrupt_controller
+    (
+        .clk              (clk), 
+        .reset            (interrupt_ctl_reset),
+        .interrupt_ctl_if (interrupt_ctl_if)
+    );
+
+    assign interrupt_ctl_if.err         = 0; 
+    assign interrupt_ctl_if.pipe_clean  = 0; 
+    assign interrupt_ctl_if.PC          = 32'h00000008;
+    assign interrupt_ctl_if.scalarAddr  = 32'h00000000;
+    assign interrupt_ctl_if.scalarStore = 32'h00000000;
+    assign interrupt_ctl_if.scalarRd    = 0;
+    assign interrupt_ctl_if.scalarWr    = 0;
+    assign interrupt_ctl_if.simtAddr    = 32'h00000004;
+    assign interrupt_ctl_if.simtStore   = 32'hDEADBEEF;
+    assign interrupt_ctl_if.simtRd      = 0;
+    assign interrupt_ctl_if.simtWr      = 1;
+
 endmodule

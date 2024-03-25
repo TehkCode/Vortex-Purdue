@@ -1,5 +1,5 @@
 //**************************************************************************
-// Hardware Interrput Controller for thread transfer from Vector to Scalar
+// Hardware Interrput Controller for thread transfer from SIMT to Scalar
 //**************************************************************************
 
 `include "VX_define.vh"
@@ -21,7 +21,11 @@ module VX_interrupt_ctl //import VX_gpu_pkg::*;
         REVERT_WARP
     } hw_int_state_t;
 
-    data_t nextRegisters;
+    parameter INTREG_CNT = 8;
+
+
+    // 32 data_t structs. Each data_t struct contains the eight 32-bit interrupt registers (8 words) -> 8*32 = 256 words 4 words
+    data_t [(256 / INTREG_CNT) - 1:0] nextRegisters, registers; 
     hw_int_state_t nextState, currState; 
 
 
@@ -29,18 +33,21 @@ module VX_interrupt_ctl //import VX_gpu_pkg::*;
     begin 
         if(reset)
         begin 
-            interrupt_ctl_if.registers  <= '0;
+            registers                   <= '{default:256'd0};
             currState                   <= IDLE;
         end
         else 
         begin 
-            interrupt_ctl_if.registers <= nextRegisters;
+            registers                  <= nextRegisters;
             currState                  <= nextState;
         end
     end
 
     //**************************************************************************
     // Interrupt Controller Next State Logic
+    // Currently, there is only 1 state machine to support one SIMT/SCALAR 
+    // pair. Later on, this should be parameterized to work with up to 32 
+    // SIMT/SCALAR pairs by generating 32 FSMs.
     //**************************************************************************
     always @(*)
     begin 
@@ -48,7 +55,7 @@ module VX_interrupt_ctl //import VX_gpu_pkg::*;
         casez(currState)
         IDLE: 
         begin 
-            if(interrupt_ctl_if.registers.S2V) 
+            if(registers[0].S2V == 32'd1)  // hard-code to 0 for now since only 1 SIMT/SCALAR pair
                 nextState = WAIT; 
         end
         WAIT: 
@@ -64,7 +71,7 @@ module VX_interrupt_ctl //import VX_gpu_pkg::*;
         end
         WAIT_IRQ: 
         begin 
-            if(~interrupt_ctl_if.registers.S2V)
+            if(registers[0].S2V == 32'd0)
                 nextState = REVERT_WARP;
         end
         REVERT_WARP: 
@@ -84,10 +91,10 @@ module VX_interrupt_ctl //import VX_gpu_pkg::*;
     //always @(*)
     always_comb
     begin 
-        nextRegisters               = interrupt_ctl_if.registers;
+        nextRegisters               = registers;
         interrupt_ctl_if.controls   = '0;
         interrupt_ctl_if.scalarLoad = '0;
-        interrupt_ctl_if.vectorLoad = '0;
+        interrupt_ctl_if.simtLoad   = '0;
 
 
         //********************************************************************
@@ -96,91 +103,101 @@ module VX_interrupt_ctl //import VX_gpu_pkg::*;
         // SW read/write access for every 
         // register, but I temporarily kept it
         // for now
-        // writing priority: FSM writes > Vector SW writes > Scalar SW Writes
+        // writing priority: FSM writes > SIMT SW writes > Scalar SW Writes
         //********************************************************************
-        casez(interrupt_ctl_if.scalarAddr)
+        casez(interrupt_ctl_if.scalarAddr % 32)
         32'h00000000: 
         begin 
-            interrupt_ctl_if.scalarLoad[0]   = (interrupt_ctl_if.scalarRd) ? interrupt_ctl_if.registers.accel : '0;
-            nextRegisters.accel              = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore[0]  : interrupt_ctl_if.registers.accel;
+            interrupt_ctl_if.scalarLoad                            = (interrupt_ctl_if.scalarRd) ? registers[interrupt_ctl_if.scalarAddr >> 5].accel  : '0;
+            nextRegisters[interrupt_ctl_if.scalarAddr >> 5].accel  = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : registers[interrupt_ctl_if.scalarAddr >> 5].accel;
         end
         32'h00000004:
         begin
-            interrupt_ctl_if.scalarLoad      = (interrupt_ctl_if.scalarRd) ? interrupt_ctl_if.registers.IPC   : '0; 
-            nextRegisters.IPC                = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore     : interrupt_ctl_if.registers.IPC;
+            interrupt_ctl_if.scalarLoad                            = (interrupt_ctl_if.scalarRd) ? registers[interrupt_ctl_if.scalarAddr >> 5].IPC    : '0; 
+            nextRegisters[interrupt_ctl_if.scalarAddr >> 5].IPC    = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : registers[interrupt_ctl_if.scalarAddr >> 5].IPC;
         end
         32'h00000008: 
         begin
-            interrupt_ctl_if.scalarLoad[0]   = (interrupt_ctl_if.scalarRd) ? interrupt_ctl_if.registers.error : '0; 
-            nextRegisters.error              = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore[0]  : interrupt_ctl_if.registers.error;
+            interrupt_ctl_if.scalarLoad                            = (interrupt_ctl_if.scalarRd) ? registers[interrupt_ctl_if.scalarAddr >> 5].error  : '0; 
+            nextRegisters[interrupt_ctl_if.scalarAddr >> 5].error  = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : registers[interrupt_ctl_if.scalarAddr >> 5].error;
         end
         32'h0000000C: 
         begin 
-            interrupt_ctl_if.scalarLoad[0]   = (interrupt_ctl_if.scalarRd) ? interrupt_ctl_if.registers.S2V    : '0; 
-            nextRegisters.S2V                = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore[0]   : interrupt_ctl_if.registers.S2V;
+            interrupt_ctl_if.scalarLoad                            = (interrupt_ctl_if.scalarRd) ? registers[interrupt_ctl_if.scalarAddr >> 5].S2V    : '0; 
+            nextRegisters[interrupt_ctl_if.scalarAddr >> 5].S2V    = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : registers[interrupt_ctl_if.scalarAddr >> 5].S2V;
         end
         32'h00000010: 
         begin
-            interrupt_ctl_if.scalarLoad[3:0] = (interrupt_ctl_if.scalarRd) ? interrupt_ctl_if.registers.TID    : '0;  
-            nextRegisters.TID                = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore[3:0] : interrupt_ctl_if.registers.TID;
+            interrupt_ctl_if.scalarLoad                            = (interrupt_ctl_if.scalarRd) ? registers[interrupt_ctl_if.scalarAddr >> 5].TID    : '0;  
+            nextRegisters[interrupt_ctl_if.scalarAddr >> 5].TID    = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : registers[interrupt_ctl_if.scalarAddr >> 5].TID;
         end
         32'h00000014: 
         begin
-            interrupt_ctl_if.scalarLoad      = (interrupt_ctl_if.scalarRd) ? interrupt_ctl_if.registers.IRQ    : '0; 
-            nextRegisters.IRQ                = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : interrupt_ctl_if.registers.IRQ;
+            interrupt_ctl_if.scalarLoad                            = (interrupt_ctl_if.scalarRd) ? registers[interrupt_ctl_if.scalarAddr >> 5].IRQ    : '0; 
+            nextRegisters[interrupt_ctl_if.scalarAddr >> 5].IRQ    = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : registers[interrupt_ctl_if.scalarAddr >> 5].IRQ;
         end
         32'h00000018: 
         begin
-            interrupt_ctl_if.scalarLoad      = (interrupt_ctl_if.scalarRd) ? interrupt_ctl_if.registers.SP    : '0; 
-            nextRegisters.SP                 = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : interrupt_ctl_if.registers.SP;
+            interrupt_ctl_if.scalarLoad                            = (interrupt_ctl_if.scalarRd) ? registers[interrupt_ctl_if.scalarAddr >> 5].SP     : '0; 
+            nextRegisters[interrupt_ctl_if.scalarAddr >> 5].SP     = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : registers[interrupt_ctl_if.scalarAddr >> 5].SP;
+        end
+        32'h0000001c: 
+        begin
+            interrupt_ctl_if.scalarLoad                            = (interrupt_ctl_if.scalarRd) ? registers[interrupt_ctl_if.scalarAddr >> 5].SPACER : '0; 
+            nextRegisters[interrupt_ctl_if.scalarAddr >> 5].SPACER = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : registers[interrupt_ctl_if.scalarAddr >> 5].SPACER;
         end
         default:
         begin 
-            interrupt_ctl_if.scalarLoad[0]   = (interrupt_ctl_if.scalarRd) ? interrupt_ctl_if.registers.accel : '0;
-            nextRegisters.accel              = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore[0]  : interrupt_ctl_if.registers.accel;
+            interrupt_ctl_if.scalarLoad                            = (interrupt_ctl_if.scalarRd) ? registers[interrupt_ctl_if.scalarAddr >> 5].accel  : '0;
+            nextRegisters[interrupt_ctl_if.scalarAddr >> 5].accel  = (interrupt_ctl_if.scalarWr) ? interrupt_ctl_if.scalarStore      : registers[interrupt_ctl_if.scalarAddr >> 5].accel;
         end
         endcase
 
-        casez(interrupt_ctl_if.vectorAddr)
+        casez(interrupt_ctl_if.simtAddr % 32)
         32'h00000000: 
         begin 
-            interrupt_ctl_if.vectorLoad[0]   = (interrupt_ctl_if.vectorRd) ? interrupt_ctl_if.registers.accel : '0;
-            nextRegisters.accel              = (interrupt_ctl_if.vectorWr) ? interrupt_ctl_if.vectorStore[0]  : interrupt_ctl_if.registers.accel;
+            interrupt_ctl_if.simtLoad                              = (interrupt_ctl_if.simtRd)   ? registers[interrupt_ctl_if.simtAddr >> 5].accel    : '0;
+            nextRegisters[interrupt_ctl_if.simtAddr >> 5].accel    = (interrupt_ctl_if.simtWr)   ? interrupt_ctl_if.simtStore        : registers[interrupt_ctl_if.simtAddr >> 5].accel;
         end
         32'h00000004:
         begin
-            interrupt_ctl_if.vectorLoad      = (interrupt_ctl_if.vectorRd) ? interrupt_ctl_if.registers.IPC   : '0; 
-            nextRegisters.IPC                = (interrupt_ctl_if.vectorWr) ? interrupt_ctl_if.vectorStore     : interrupt_ctl_if.registers.IPC;
+            interrupt_ctl_if.simtLoad                              = (interrupt_ctl_if.simtRd)   ? registers[interrupt_ctl_if.simtAddr >> 5].IPC      : '0; 
+            nextRegisters[interrupt_ctl_if.simtAddr >> 5].IPC      = (interrupt_ctl_if.simtWr)   ? interrupt_ctl_if.simtStore        : registers[interrupt_ctl_if.simtAddr >> 5].IPC;
         end
         32'h00000008: 
         begin
-            interrupt_ctl_if.vectorLoad[0]   = (interrupt_ctl_if.vectorRd) ? interrupt_ctl_if.registers.error : '0; 
-            nextRegisters.error              = (interrupt_ctl_if.vectorWr) ? interrupt_ctl_if.vectorStore[0]  : interrupt_ctl_if.registers.error;
+            interrupt_ctl_if.simtLoad                              = (interrupt_ctl_if.simtRd)   ? registers[interrupt_ctl_if.simtAddr >> 5].error    : '0; 
+            nextRegisters[interrupt_ctl_if.simtAddr >> 5].error    = (interrupt_ctl_if.simtWr)   ? interrupt_ctl_if.simtStore        : registers[interrupt_ctl_if.simtAddr >> 5].error;
         end
         32'h0000000C: 
         begin 
-            interrupt_ctl_if.vectorLoad[0]   = (interrupt_ctl_if.vectorRd) ? interrupt_ctl_if.registers.S2V    : '0; 
-            nextRegisters.S2V                = (interrupt_ctl_if.vectorWr) ? interrupt_ctl_if.vectorStore[0]   : interrupt_ctl_if.registers.S2V;
+            interrupt_ctl_if.simtLoad                              = (interrupt_ctl_if.simtRd)   ? registers[interrupt_ctl_if.simtAddr >> 5].S2V      : '0; 
+            nextRegisters[interrupt_ctl_if.simtAddr >> 5].S2V      = (interrupt_ctl_if.simtWr)   ? interrupt_ctl_if.simtStore        : registers[interrupt_ctl_if.simtAddr >> 5].S2V;
         end
         32'h00000010: 
         begin
-            interrupt_ctl_if.vectorLoad[3:0] = (interrupt_ctl_if.vectorRd) ? interrupt_ctl_if.registers.TID    : '0;  
-            nextRegisters.TID                = (interrupt_ctl_if.vectorWr) ? interrupt_ctl_if.vectorStore[3:0] : interrupt_ctl_if.registers.TID;
+            interrupt_ctl_if.simtLoad                              = (interrupt_ctl_if.simtRd)   ? registers[interrupt_ctl_if.simtAddr >> 5].TID      : '0;  
+            nextRegisters[interrupt_ctl_if.simtAddr >> 5].TID      = (interrupt_ctl_if.simtWr)   ? interrupt_ctl_if.simtStore        : registers[interrupt_ctl_if.simtAddr >> 5].TID;
         end
         32'h00000014: 
         begin
-            interrupt_ctl_if.vectorLoad      = (interrupt_ctl_if.vectorRd) ? interrupt_ctl_if.registers.IRQ    : '0; 
-            nextRegisters.IRQ                = (interrupt_ctl_if.vectorWr) ? interrupt_ctl_if.vectorStore      : interrupt_ctl_if.registers.IRQ;
+            interrupt_ctl_if.simtLoad                              = (interrupt_ctl_if.simtRd)   ? registers[interrupt_ctl_if.simtAddr >> 5].IRQ      : '0; 
+            nextRegisters[interrupt_ctl_if.simtAddr >> 5].IRQ      = (interrupt_ctl_if.simtWr)   ? interrupt_ctl_if.simtStore        : registers[interrupt_ctl_if.simtAddr >> 5].IRQ;
         end
         32'h00000018: 
         begin
-            interrupt_ctl_if.vectorLoad      = (interrupt_ctl_if.vectorRd) ? interrupt_ctl_if.registers.SP     : '0; 
-            nextRegisters.SP                 = (interrupt_ctl_if.vectorWr) ? interrupt_ctl_if.vectorStore      : interrupt_ctl_if.registers.SP;
+            interrupt_ctl_if.simtLoad                              = (interrupt_ctl_if.simtRd)   ? registers[interrupt_ctl_if.simtAddr >> 5].SP       : '0; 
+            nextRegisters[interrupt_ctl_if.simtAddr >> 5].SP       = (interrupt_ctl_if.simtWr)   ? interrupt_ctl_if.simtStore        : registers[interrupt_ctl_if.simtAddr >> 5].SP;
+        end
+        32'h0000001c: 
+        begin
+            interrupt_ctl_if.simtLoad                              = (interrupt_ctl_if.simtRd)   ? registers[interrupt_ctl_if.simtAddr >> 5].SPACER   : '0; 
+            nextRegisters[interrupt_ctl_if.simtAddr >> 5].SPACER   = (interrupt_ctl_if.simtWr)   ? interrupt_ctl_if.simtStore        : registers[interrupt_ctl_if.simtAddr >> 5].SPACER;
         end
         default:
         begin
-            interrupt_ctl_if.vectorLoad[0]   = (interrupt_ctl_if.vectorRd) ? interrupt_ctl_if.registers.accel : '0;
-            nextRegisters.accel              = (interrupt_ctl_if.vectorWr) ? interrupt_ctl_if.vectorStore[0]  : interrupt_ctl_if.registers.accel;
+            interrupt_ctl_if.simtLoad                              = (interrupt_ctl_if.simtRd)   ? registers[interrupt_ctl_if.simtAddr >> 5].accel    : '0;
+            nextRegisters[interrupt_ctl_if.simtAddr >> 5].accel    = (interrupt_ctl_if.simtWr)   ? interrupt_ctl_if.simtStore        : registers[interrupt_ctl_if.simtAddr >> 5].accel;
         end
         endcase
 
@@ -191,8 +208,8 @@ module VX_interrupt_ctl //import VX_gpu_pkg::*;
         casez(currState)
         IDLE: 
         begin 
-            if(interrupt_ctl_if.registers.S2V) 
-                nextRegisters.error = 0; // clear error 
+            if(registers[0].S2V == 32'd1) 
+                nextRegisters[0].error = 0; // clear error 
         end
         WAIT: 
         begin 
@@ -200,16 +217,16 @@ module VX_interrupt_ctl //import VX_gpu_pkg::*;
             interrupt_ctl_if.controls.hwInt       = 1; // let vecCore know hw interrupt is happening
             if(interrupt_ctl_if.err)
             begin 
-                nextRegisters.error = 1; 
-                nextRegisters.S2V   = 0; // ack failed interrupt req from scalar
+                nextRegisters[0].error = 1; 
+                nextRegisters[0].S2V   = 0; // ack failed interrupt req from scalar
             end
         end
         PC_SWAP: 
         begin 
-            nextRegisters.IPC                     = interrupt_ctl_if.PC; // save thread's interrupted PC
+            nextRegisters[0].IPC                     = interrupt_ctl_if.PC; // save thread's interrupted PC
             interrupt_ctl_if.controls.hwInt       = 1; 
             interrupt_ctl_if.controls.maskThreads = 1;
-            interrupt_ctl_if.controls.swapPC      = 1; // force vector core's PC to take IRQ
+            interrupt_ctl_if.controls.swapPC      = 1; // force simt core's PC to take IRQ
         end
         WAIT_IRQ: 
         begin 
