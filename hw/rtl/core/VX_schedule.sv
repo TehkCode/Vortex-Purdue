@@ -302,6 +302,17 @@ module VX_schedule import VX_gpu_pkg::*; #(
         schedule_data[schedule_wid][(THREAD_CNT + `XLEN)-5:0]
     };
 
+    // Thread transfer to scalar core
+    `RESET_RELAY (thread_transfer_unit_reset, reset);
+
+    wire pause;
+    VX_thread_transfer_unit #( 
+    ) thread_transfer_unit(
+        .clk       (clk),
+        .reset     (thread_transfer_unit_reset),
+        .pause     (pause)
+    );
+
 `ifndef NDEBUG
     localparam GNW_WIDTH = `LOG2UP(`NUM_CLUSTERS * `NUM_CORES * `NUM_WARPS);
     reg [`UUID_WIDTH-1:0] instr_uuid;
