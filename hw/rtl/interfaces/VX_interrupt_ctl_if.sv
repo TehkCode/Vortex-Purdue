@@ -93,8 +93,8 @@ interface VX_interrupt_ctl_if;
 	modport ttu_master (
 			output state,
 			output ISR_PC,
-			output wid;
-			output tid;
+			output wid,
+			output tid,
 			input  pipeline_drained,
 			input  thread_found,
 			input  current_thread_mask,

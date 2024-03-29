@@ -94,6 +94,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
 
     //thread transfer
     wire pause_scheduling = '0;
+	wire [`NUM_WARPS-1:0] paused_warps = {`NUM_WARPS{pause_scheduling}};
 
     assign curr_barrier_mask = barrier_masks[warp_ctl_if.barrier.id];
     `POP_COUNT(active_barrier_count, curr_barrier_mask);
@@ -284,10 +285,15 @@ module VX_schedule import VX_gpu_pkg::*; #(
 
     // schedule the next ready warp
     //
-    // if scalar core requested a thread then we wait for the pipeline to
-    // drain so next warp not is scheduled (signaled by pause_scheduling coming
-    // from thread_transfer_unit)
-    wire [`NUM_WARPS-1:0] ready_warps = active_warps & ~(stalled_warps | barrier_stalls) & ~{`NUM_WARPS{pause_scheduling}};
+    // active warps - warps that were spawned by wspwan instr
+	// stalled warps - we stall every warp until it reaches decode/execute
+	// 				   stage just to ensure the current instruction didn't
+	// 				   kill it.
+	// barrier waprs - warps waiting for n other warps to finish. n is
+	// 				   determined by the barrier instr.
+	// paused warps  - warps paused by the thread transfer until the thread
+	// 				   transfer process completes.
+    wire [`NUM_WARPS-1:0] ready_warps = active_warps & ~(stalled_warps | barrier_stalls | paused_warps);
 
     VX_lzc #(
         .N       (`NUM_WARPS),
