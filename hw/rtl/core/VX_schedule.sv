@@ -92,6 +92,9 @@ module VX_schedule import VX_gpu_pkg::*; #(
     reg [`NC_WIDTH-1:0] gbar_req_size_m1;
 `endif
 
+    //thread transfer
+    wire pause_scheduling = '0;
+
     assign curr_barrier_mask = barrier_masks[warp_ctl_if.barrier.id];
     `POP_COUNT(active_barrier_count, curr_barrier_mask);
     `UNUSED_VAR (active_barrier_count)
@@ -280,8 +283,11 @@ module VX_schedule import VX_gpu_pkg::*; #(
     );
 
     // schedule the next ready warp
-
-    wire [`NUM_WARPS-1:0] ready_warps = active_warps & ~(stalled_warps | barrier_stalls);
+    //
+    // if scalar core requested a thread then we wait for the pipeline to
+    // drain so next warp not is scheduled (signaled by pause_scheduling coming
+    // from thread_transfer_unit)
+    wire [`NUM_WARPS-1:0] ready_warps = active_warps & ~(stalled_warps | barrier_stalls) & ~{`NUM_WARPS{pause_scheduling}};
 
     VX_lzc #(
         .N       (`NUM_WARPS),
@@ -303,15 +309,15 @@ module VX_schedule import VX_gpu_pkg::*; #(
     };
 
     // Thread transfer to scalar core
+	/*
     `RESET_RELAY (thread_transfer_unit_reset, reset);
 
-    wire pause;
     VX_thread_transfer_unit #( 
     ) thread_transfer_unit(
-        .clk       (clk),
-        .reset     (thread_transfer_unit_reset),
-        .pause     (pause)
-    );
+        .clk                  (clk),
+        .reset                (thread_transfer_unit_reset),
+        .pause_scheduling     (pause_scheduling)
+    );*/
 
 `ifndef NDEBUG
     localparam GNW_WIDTH = `LOG2UP(`NUM_CLUSTERS * `NUM_CORES * `NUM_WARPS);
