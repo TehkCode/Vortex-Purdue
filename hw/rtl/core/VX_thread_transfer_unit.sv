@@ -13,73 +13,181 @@
 
 
 
-
 // Developed by Purdue University's SoCET team based on Georgia Tech's work
+// March 2024
 // 
-// Thread Transfer Unit
-// Stalls the warp scheduler until the priority thread transfer is complete.
+// Thread Transfer Unit (TTU)
+// Controls scheduling to facilitate thread transfer to scalar core.
 //
-// This unit is part of the tightly coupled SIMT-Scalar core architecture.
-// Scalar core (SC) exists alongside a SIMT core. SC executes threads pulled
-// from the SIMT core. TTU is present inside SIMT core's scheduler and
-// controls the scheduler when interrupt from the SC is received.
+// TTU is part of the tightly coupled SIMT-Scalar core architecture.
+// In this arch, a scalar core (SC) exists alongside a SIMT core.
+// TTU is present inside SIMT core's scheduler and controls the
+// scheduler when interrupt from the SC is received. TTU acts as the 
+// backend for Interrupt Controller (IRQC).
 // 
-// TTU is controlled by the interrupt controller (IC) . As soon the
-// interruptcarrives, IC goes out of IDLE and TTU gets into action. TTU
-// pauses the next warp beinh scheduled and lets the pipeline drain out any
-// warps that are currenlty being executed. After the pipeline is empty, the
-// IRQ handler's PC is scheduled next. After the IRQ handler program is done
-// executing, the paused warps PC is inserted back and the paused warps are
-// executed again.
-
+// TTU acts based upon the state of IRQC. The major functions of TTU
+// are
+// 1. Stop warps/thread scheduling after interrupt is recieved.
+// 2. Ensures pipeline is drained/clean before transferring the thread.
+// 3. Runs interrupt service routine which transfers the thread context
+// 4. Updates the thread/warp masks to indicate the transferred thread
+//    is inactive.
 
 `include "VX_define.vh"
 
-module VX_thread_transfer_unit #(
-	parameter TEST_MODE = 0,
-	parameter PAUSE_CYCLES  = 1022,
-	parameter BIT_WIDTH = $clog2(PAUSE_CYCLES)
+module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
+	parameter THREAD_CNT = `NUM_THREADS
 ) (
 	input wire clk,
 	input wire reset,
 
 	// from interrupt controller
-	VX_interrupt_ctl.ttu_slave interrupt_ctl_if,
+	VX_interrupt_ctl_if.ttu_slave interrupt_ctl_if,
 
 	// from scheduler
-	input wire no_pending_instructions,
-	input wire [`NUM_WARPS-1:0] warp_ipdom_stack_empty,
-	input wire [`NUM_WARPS-1:0] barriered_warps,
+	input wire no_pending_instr,
+	input wire [`NUM_WARPS-1:0] ipdom_stack_empty,
+	input wire [`NUM_WARPS-1:0] barrier_stalls,
+	input wire [`NUM_WARPS-1:0] active_warps,
+	input wire [`NUM_WARPS-1:0][THREAD_CNT-1:0] thread_masks,
+	input wire [`XLEN-1:0]		warp_PC,
+	input wire [`XLEN-1:0]		jump_PC,
 	
 	// to scheduler
-	output pause_scheduling
+	output pause_scheduling,
+	output [`XLEN-1:0] load_PC,
+	output [THREAD_CNT-1:0] load_tmask,
+	output [`NUM_WARPS-1:0] load_wmask,
+	output ISR_running
 );
-
+	
+	// set interrupt_ctl_if signals
 	always@(*) begin
-		case(state)
-			IDLE: begin
-				pause_scheduling = '0;
+		case(interrupt_ctl_if.state)
+			IRQC_IDLE: begin
 				interrupt_ctl_if.pipeline_drained = '0;
 				interrupt_ctl_if.thread_found = '0;
-				interrupt_ctl_if.current_thread_mask = 'x;
+				interrupt_ctl_if.current_thread_mask = 'x; // set to don't care as it helps in synthesis and PD stages
 				interrupt_ctl_if.current_PC = 'x;
+				interrupt_ctl_if.current_active_warps = 'x;
 				interrupt_ctl_if.ISR_done = '0;
 			end
 
-			WAIT: begin
+			IRQC_WAIT: begin
+				// pipeline is drained only after no warps are barriered, ipdom stack
+				// is empty and (fetch, decode, issue, execute, commit) stages
+				// are empty
+				interrupt_ctl_if.pipeline_drained = no_pending_instr & ~(|barrier_stalls) & (ipdom_stack_empty[interrupt_ctl_if.wid]);
+				interrupt_ctl_if.thread_found = active_warps[interrupt_ctl_if.wid] & thread_masks[interrupt_ctl_if.wid][interrupt_ctl_if.tid];
+				interrupt_ctl_if.current_thread_mask = thread_masks[interrupt_ctl_if.wid];
+				interrupt_ctl_if.current_PC = warp_PC;
+				interrupt_ctl_if.current_active_warps = active_warps;
+				interrupt_ctl_if.ISR_done = '0;	
+			end
 
+			IRQC_PC_SWAP: begin
+				interrupt_ctl_if.pipeline_drained = '1;
+				interrupt_ctl_if.thread_found = '1;
+				interrupt_ctl_if.current_thread_mask = 'x; 
+				interrupt_ctl_if.current_PC = 'x;
+				interrupt_ctl_if.current_active_warps = 'x;
+				interrupt_ctl_if.ISR_done = '0;
+			end
+
+			IRQC_WAIT_ISR: begin
+				interrupt_ctl_if.pipeline_drained = '1;
+				interrupt_ctl_if.thread_found = '1;
+				interrupt_ctl_if.current_thread_mask = 'x; 
+				interrupt_ctl_if.current_PC = 'x;
+				interrupt_ctl_if.current_active_warps = 'x;
+				interrupt_ctl_if.ISR_done = (jump_PC == interrupt_ctl_if.load_PC);
+				// ISR is done when we encounter a jump instruction that jumps
+				// back to the start address of the ISR
+			end
+			
+			IRQC_REVERT_WARP: begin
+				interrupt_ctl_if.pipeline_drained = '1;
+				interrupt_ctl_if.thread_found = '1;
+				interrupt_ctl_if.current_thread_mask = 'x; 
+				interrupt_ctl_if.current_PC = 'x;
+				interrupt_ctl_if.current_active_warps = 'x;
+				interrupt_ctl_if.ISR_done = '1;
 			end
 
 			default: begin
-				pause_scheduling = '0;
 				interrupt_ctl_if.pipeline_drained = '0;
 				interrupt_ctl_if.thread_found = '0;
 				interrupt_ctl_if.current_thread_mask = 'x;
 				interrupt_ctl_if.current_PC = 'x;
+				interrupt_ctl_if.current_active_warps = 'x;
 				interrupt_ctl_if.ISR_done = '0;
 			end
 		endcase
+
 	end
+
+	// set scheduler control signals
+	always@(*) begin
+		case(interrupt_ctl_if.state)
+			IRQC_IDLE: begin
+				pause_scheduling = '0;
+				load_PC = 'x; // set to don't care as it helps in synthesis and PD stages
+				load_tmask = 'x;
+				load_wmask = 'x;
+				ISR_running = '0;
+			end
+
+			IRQC_WAIT: begin
+				pause_scheduling = ~(|barrier_stalls) & ipdom_stack_empty[interrupt_ctl_if.wid];
+				load_PC = 'x;
+				load_tmask = 'x;
+				load_wmask = 'x;
+				ISR_running = '0;
+			end
+
+			IRQC_PC_SWAP: begin
+				pause_scheduling = '1;
+				load_PC    = interrupt_ctl_if.load_PC;
+				load_tmask = (1'b1 << interrupt_ctl_if.tid);
+				load_wmask = (1'b1 << interrupt_ctl_if.wid);
+				ISR_running = '0;
+			end
+
+			IRQC_WAIT_ISR: begin
+				pause_scheduling = '0;
+				load_PC    = 'x;
+				load_tmask = 'x; 
+				load_wmask = 'x;
+				ISR_running = '1;
+			end	
+
+			IRQC_REVERT_WARP: begin
+				pause_scheduling = '0;
+				load_PC    = interrupt_ctl_if.load_PC;
+
+				// load back old thread mask except the thread that was
+				// transfered
+				load_tmask = interrupt_ctl_if.load_tmask & ~( `NUM_THREADS'b1 << interrupt_ctl_if.tid);
+
+				// load back the old aactive warps. if all threads in the warp
+				// are inactive then disable the warp
+				load_wmask = (|load_tmask) ? interrupt_ctl_if.load_wmask
+							 : interrupt_ctl_if.load_wmask & ~( `NUM_WARPS'b1 << interrupt_ctl_if.wid);
+
+				ISR_running = '0;
+			end	
+
+			default: begin
+				pause_scheduling = '0;
+				load_PC = 'x;
+				load_tmask = 'x;
+				load_wmask = 'x;
+				ISR_running = '1;
+			end
+		endcase
+
+	end
+
 /*
 reg [BIT_WIDTH-1:0] counter;
 	reg op;

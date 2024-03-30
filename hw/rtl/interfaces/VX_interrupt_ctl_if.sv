@@ -20,6 +20,8 @@ typedef struct packed {
 
 interface VX_interrupt_ctl_if;
 
+	import VX_gpu_pkg::hw_int_state_t;
+
     //data_t      registers;
     warp_ctls_t controls;
     logic        err; 
@@ -77,18 +79,19 @@ interface VX_interrupt_ctl_if;
     );
 
 	// Thread Transfer Unit
-	// define ENUM
-	logic [2:0] 		state; 					// current state of the IC -> change to enum later instead of logic
+	hw_int_state_t 		state; 					// current state of the IC
 	logic [`XLEN-1:0]	ISR_PC;					// PC to be substituted
 	logic [`NW_WIDTH-1:0]				wid;    // warp id of the thread to be transferred
 	logic [`NT_WIDTH-1:0]				tid;    // thread id (within the warp) to be transferred
 	logic 				pipeline_drained;		// to signify transition out of WAIT state
 	logic				thread_found;			// to signify whether thread found or out. qualified by (only valid if) pipeline_drained
-	logic [`NUM_THREADS-1:0]	current_thread_mask; // thread mask of the warp we are going to utilize for running ISR
-	logic [`XLEN-1:0]			current_PC;			 // the current PC of the warp/thread
+	logic [`NUM_THREADS-1:0]	current_thread_mask; 
+	logic [`XLEN-1:0]			current_PC;			 
+	logic [`NUM_WARPS-1:0]      current_active_warps; 
 	logic 						ISR_done;			 // execution of ISR is done
-	logic [`NUM_THREADS-1:0]	interrupted_thread_mask; // old thread mask of the warp we utilized for running ISR
-	logic [`XLEN-1:0]			interrupted_PC;			 // the old PC of the warp/thread
+	logic [`NUM_THREADS-1:0]	load_tmask; 
+	logic [`XLEN-1:0]			load_PC;			 
+	logic [`NUM_WARPS-1:0]		load_wmask;
 	
 	modport ttu_master (
 			output state,
@@ -99,9 +102,11 @@ interface VX_interrupt_ctl_if;
 			input  thread_found,
 			input  current_thread_mask,
 			input  current_PC,
+			input  current_active_warps,
 			input  ISR_done,
-			output interrupted_thread_mask,
-			output interrupted_PC
+			output load_tmask,
+			output load_PC,
+			output load_wmask
 	);
 
 	modport ttu_slave (
@@ -113,9 +118,11 @@ interface VX_interrupt_ctl_if;
 			output thread_found,
 			output current_thread_mask,
 			output current_PC,
+			output current_active_warps,
 			output ISR_done,
-			input  interrupted_thread_mask,
-			input  interrupted_PC
+			input  load_tmask,
+			input  load_PC,
+			input  load_wmask
 	);
 
 endinterface

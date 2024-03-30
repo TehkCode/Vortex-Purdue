@@ -13,7 +13,7 @@
 
 `include "VX_define.vh"
 
-module VX_schedule import VX_gpu_pkg::*; #(
+module VX_schedule_scalar import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS
 ) (    
@@ -91,10 +91,6 @@ module VX_schedule import VX_gpu_pkg::*; #(
     reg [`NB_WIDTH-1:0] gbar_req_id;
     reg [`NC_WIDTH-1:0] gbar_req_size_m1;
 `endif
-
-    //thread transfer
-    wire pause_scheduling = '0;
-	wire [`NUM_WARPS-1:0] paused_warps = {`NUM_WARPS{pause_scheduling}};
 
     assign curr_barrier_mask = barrier_masks[warp_ctl_if.barrier.id];
     `POP_COUNT(active_barrier_count, curr_barrier_mask);
@@ -284,16 +280,8 @@ module VX_schedule import VX_gpu_pkg::*; #(
     );
 
     // schedule the next ready warp
-    //
-    // active warps - warps that were spawned by wspwan instr
-	// stalled warps - we stall every warp until it reaches decode/execute
-	// 				   stage just to ensure the current instruction didn't
-	// 				   kill it.
-	// barrier waprs - warps waiting for n other warps to finish. n is
-	// 				   determined by the barrier instr.
-	// paused warps  - warps paused by the thread transfer until the thread
-	// 				   transfer process completes.
-    wire [`NUM_WARPS-1:0] ready_warps = active_warps & ~(stalled_warps | barrier_stalls | paused_warps);
+
+    wire [`NUM_WARPS-1:0] ready_warps = active_warps & ~(stalled_warps | barrier_stalls);
 
     VX_lzc #(
         .N       (`NUM_WARPS),
@@ -313,17 +301,6 @@ module VX_schedule import VX_gpu_pkg::*; #(
         schedule_data[schedule_wid][(THREAD_CNT + `XLEN)-1:(THREAD_CNT + `XLEN)-4], 
         schedule_data[schedule_wid][(THREAD_CNT + `XLEN)-5:0]
     };
-
-    // Thread transfer to scalar core
-	/*
-    `RESET_RELAY (thread_transfer_unit_reset, reset);
-
-    VX_thread_transfer_unit #( 
-    ) thread_transfer_unit(
-        .clk                  (clk),
-        .reset                (thread_transfer_unit_reset),
-        .pause_scheduling     (pause_scheduling)
-    );*/
 
 `ifndef NDEBUG
     localparam GNW_WIDTH = `LOG2UP(`NUM_CLUSTERS * `NUM_CORES * `NUM_WARPS);

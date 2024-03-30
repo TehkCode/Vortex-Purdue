@@ -137,7 +137,9 @@ module VX_core import VX_gpu_pkg::*; #(
 
     `SCOPE_IO_SWITCH (3)
 
-    VX_schedule #(
+generate
+if (THREAD_CNT == 1) begin
+    VX_schedule_scalar #(
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT)
     ) schedule (
@@ -159,6 +161,32 @@ module VX_core import VX_gpu_pkg::*; #(
 
         .busy           (busy)
     );
+end
+else begin
+    VX_schedule_simt #(
+        .CORE_ID (CORE_ID),
+        .THREAD_CNT(THREAD_CNT)
+    ) schedule (
+        .clk            (clk),
+        .reset          (schedule_reset),   
+
+        .base_dcrs      (base_dcrs),  
+
+        .warp_ctl_if    (warp_ctl_if),        
+        .branch_ctl_if  (branch_ctl_if),
+        .decode_sched_if(decode_sched_if),
+        .commit_sched_if(commit_sched_if),
+
+        .schedule_if    (schedule_if),
+    `ifdef GBAR_ENABLE
+        .gbar_bus_if    (gbar_bus_if),
+    `endif
+        .sched_csr_if   (sched_csr_if),        
+
+        .busy           (busy)
+    );
+end
+endgenerate
 
     VX_fetch #(
         .CORE_ID (CORE_ID),

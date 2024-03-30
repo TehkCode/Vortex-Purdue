@@ -58,6 +58,14 @@ package VX_gpu_pkg;
         logic [7:0]         mpm_class;
     } base_dcrs_t;
 
+    typedef enum logic [2:0] {
+        IRQC_IDLE, 
+        IRQC_WAIT, 
+        IRQC_PC_SWAP, 
+        IRQC_WAIT_ISR, 
+        IRQC_REVERT_WARP
+    } hw_int_state_t;
+
     /* verilator lint_off UNUSED */
 
     ////////////////////////// Icache Parameters //////////////////////////////
