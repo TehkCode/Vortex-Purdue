@@ -16,7 +16,7 @@
 module VX_schedule import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter WARP_CNT = 4
+    parameter WARP_CNT = `NUM_WARPS
 ) (    
     input wire              clk,
     input wire              reset,
