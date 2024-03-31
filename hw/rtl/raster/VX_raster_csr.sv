@@ -19,7 +19,8 @@ module VX_raster_csr import VX_raster_pkg::*; #(
     parameter CORE_ID   = 0,
     parameter NUM_LANES = 1,
     parameter THREAD_CNT = THREAD_CNT,
-    parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES)
+    parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES),
+    parameter WARP_CNT = `NUM_WARPS
 ) (
     input wire clk,
     input wire reset,
@@ -49,7 +50,7 @@ module VX_raster_csr import VX_raster_pkg::*; #(
     for (genvar i = 0; i < THREAD_CNT; ++i) begin
         VX_dp_ram #(
             .DATAW  ($bits(raster_csrs_t)),
-            .SIZE   (`NUM_WARPS),
+            .SIZE   (WARP_CNT),
             .LUTRAM (1)
         ) stamp_store (
             .clk   (clk),

@@ -20,7 +20,8 @@
 
 module vortex_afu import ccip_if_pkg::*; import local_mem_cfg_pkg::*; import VX_gpu_pkg::*; #(
     parameter NUM_LOCAL_MEM_BANKS = 2,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS
 ) (
     // global signals
     input wire clk,
@@ -100,7 +101,7 @@ module vortex_afu import ccip_if_pkg::*; import local_mem_cfg_pkg::*; import VX_
     wire [63:0] dev_caps = {16'b0,
                             8'(`SM_ENABLED ? `SMEM_LOG_SIZE : 0),
                             16'(`NUM_CORES * `NUM_CLUSTERS), 
-                            8'(`NUM_WARPS), 
+                            8'(WARP_CNT), 
                             8'(THREAD_CNT), 
                             8'(`IMPLEMENTATION_ID)};
 

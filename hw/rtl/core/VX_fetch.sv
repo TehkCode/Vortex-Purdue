@@ -15,7 +15,8 @@
 
 module VX_fetch import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS
 ) (
     `SCOPE_IO_DECL
 
@@ -56,7 +57,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
 
     VX_dp_ram #(
         .DATAW  (`XLEN + THREAD_CNT),
-        .SIZE   (`NUM_WARPS),
+        .SIZE   (WARP_CNT),
         .LUTRAM (1)
     ) tag_store (
         .clk   (clk),  

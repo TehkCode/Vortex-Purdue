@@ -16,7 +16,8 @@
 module VX_wctl_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter NUM_LANES = 1,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS
 ) (
     input wire              clk,
     input wire              reset,
@@ -119,8 +120,8 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
 
     // wspawn
 
-    wire [`NUM_WARPS-1:0] wspawn_wmask;
-    for (genvar i = 0; i < `NUM_WARPS; ++i) begin
+    wire [WARP_CNT-1:0] wspawn_wmask;
+    for (genvar i = 0; i < WARP_CNT; ++i) begin
         assign wspawn_wmask[i] = (i < rs1_data[`NW_BITS:0]) && (i != execute_if.data.wid);
     end
     assign wspawn.valid = is_wspawn;
