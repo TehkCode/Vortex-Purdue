@@ -276,7 +276,8 @@ module VX_schedule_scalar import VX_gpu_pkg::*; #(
         .join_is_else (join_is_else),
         .join_wid   (join_wid), 
         .join_tmask (join_tmask),
-        .join_pc    (join_pc)
+        .join_pc    (join_pc),
+		`UNUSED_PIN (ipdom_empty)
     );
 
     // schedule the next ready warp

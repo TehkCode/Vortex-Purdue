@@ -240,6 +240,79 @@ inline void vx_fence() {
     asm volatile ("fence iorw, iorw");
 }
 
+// Interrupt Service Routine (ISR) for thread's context switching
+// ISR pushes registers x0-x31 (except x0 and x2) to stack
+// ISR writes the Stack Pointer a memory location
+// ISR exits by looping back to the start address of the ISR
+// The hardware knows that a jump instr to the start signifies the end
+inline void vx_simt_to_scalar_isr() {
+    asm volatile ("isr_start:\n\t"       // Push 30 registers to the stack
+		    "sw x1, 0(sp)\n\t"   // x0 skipped as its tied to 0
+		    "addi sp, sp, -4\n\t"
+		    "sw x3, 0(sp)\n\t"   // x2 skipped as its the sp
+		    "addi sp, sp, -4\n\t"
+		    "sw x4, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x5, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x6, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x7, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x8, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x9, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x10, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x11, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x12, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x13, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x14, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x15, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x16, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x17, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x18, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x19, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x20, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x21, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x22, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x23, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x24, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x25, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x26, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x27, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x28, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x29, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x30, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"
+		    "sw x31, 0(sp)\n\t"
+		    "addi sp, sp, -4\n\t"   // storing 30 regsiters done
+		    "ori x1, x0, 0x8\n\t"  // now lets store the sp to an address location
+		    "sw sp, 0(x1)\n\t"
+		    "jal x0, isr_start"    // end the ISR execution
+		    );
+}
+
 #ifdef __cplusplus
 }
 #endif

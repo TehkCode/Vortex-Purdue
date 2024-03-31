@@ -137,8 +137,8 @@ module VX_core import VX_gpu_pkg::*; #(
 
     `SCOPE_IO_SWITCH (3)
 
-generate
-if (THREAD_CNT == 1) begin
+generate 
+if (THREAD_CNT == 1) begin : schedule_scalar
     VX_schedule_scalar #(
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT)
@@ -162,7 +162,7 @@ if (THREAD_CNT == 1) begin
         .busy           (busy)
     );
 end
-else begin
+else begin : schedule_simt
     VX_schedule_simt #(
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT)

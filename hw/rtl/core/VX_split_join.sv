@@ -28,7 +28,8 @@ module VX_split_join import VX_gpu_pkg::*; #(
     output wire                     join_is_else,
     output wire [`NW_WIDTH-1:0]     join_wid,
     output wire [THREAD_CNT-1:0]  join_tmask,
-    output wire [`XLEN-1:0]         join_pc
+    output wire [`XLEN-1:0]         join_pc,
+	output wire	[`NUM_WARPS-1:0]    ipdom_empty
 );
     `UNUSED_PARAM (CORE_ID)
     
@@ -57,7 +58,7 @@ module VX_split_join import VX_gpu_pkg::*; #(
             .q1    (ipdom_q1),
             .d     (ipdom_data[i]),
             .d_set (ipdom_set[i]),
-            `UNUSED_PIN (empty),
+            .empty (ipdom_empty[i]),
             `UNUSED_PIN (full)
         );
     end

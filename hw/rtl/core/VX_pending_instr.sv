@@ -54,7 +54,7 @@ module VX_pending_instr #(
         wire [COUNTW-1:0] decr_cnt_n;
         `POP_COUNT(decr_cnt_n, decr_mask[i]);
         
-        wire [CTR_WIDTH-1:0] pending_instrs_n = pending_instrs[i] + CTR_WIDTH'(incr_cnt[i]) - CTR_WIDTH'(decr_cnt[i]);
+        wire [CTR_WIDTH-1:0] pending_instrs_n = pending_instrs[i] + CTR_WIDTH'(incr_cnt_n[i]) - CTR_WIDTH'(decr_cnt_n);
 
         always @(posedge clk) begin
             if (reset) begin

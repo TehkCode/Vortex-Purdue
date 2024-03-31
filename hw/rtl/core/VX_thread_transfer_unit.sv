@@ -38,8 +38,6 @@
 module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 	parameter THREAD_CNT = `NUM_THREADS
 ) (
-	input wire clk,
-	input wire reset,
 
 	// from interrupt controller
 	VX_interrupt_ctl_if.ttu_slave interrupt_ctl_if,
@@ -50,17 +48,42 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 	input wire [`NUM_WARPS-1:0] barrier_stalls,
 	input wire [`NUM_WARPS-1:0] active_warps,
 	input wire [`NUM_WARPS-1:0][THREAD_CNT-1:0] thread_masks,
-	input wire [`XLEN-1:0]		warp_PC,
-	input wire [`XLEN-1:0]		jump_PC,
+	input wire [`NUM_WARPS-1:0][`XLEN-1:0] 		warp_pcs,
+    input wire [`NUM_ALU_BLOCKS-1:0]                  branch_valid,
+	input wire [`NUM_ALU_BLOCKS-1:0][`NW_WIDTH-1:0]   branch_wid,
+	input wire [`NUM_ALU_BLOCKS-1:0]                  branch_taken,
+	input wire [`NUM_ALU_BLOCKS-1:0][`XLEN-1:0]       branch_dest,
 	
 	// to scheduler
-	output pause_scheduling,
+	output [`NUM_WARPS-1:0] paused_warps,
 	output [`XLEN-1:0] load_PC,
 	output [THREAD_CNT-1:0] load_tmask,
 	output [`NUM_WARPS-1:0] load_wmask,
-	output ISR_running
+	output [`NW_WIDTH-1:0] load_wid,
+	output swap_schedule_data
 );
+
+	reg pause_scheduling;
+	reg jump_valid;
+	reg [`XLEN-1:0] jump_PC;
+
+	// detect a jump to the first instruction of the ISR
+	always@(*) begin
+
+		jump_valid = '0;
+		jump_PC    = 'x;
+
+	    for (integer i = 0; i < `NUM_ALU_BLOCKS; ++i) begin
+            if (branch_valid[i] && branch_taken[i]) begin
+				if ((branch_wid[i] == interrupt_ctl_if.wid) && (branch_dest[i] == interrupt_ctl_if.load_PC)) begin
+            	    jump_PC = branch_dest[i];
+					jump_valid = '1;
+                end
+            end
+        end //for
 	
+	end //always
+
 	// set interrupt_ctl_if signals
 	always@(*) begin
 		case(interrupt_ctl_if.state)
@@ -80,7 +103,7 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				interrupt_ctl_if.pipeline_drained = no_pending_instr & ~(|barrier_stalls) & (ipdom_stack_empty[interrupt_ctl_if.wid]);
 				interrupt_ctl_if.thread_found = active_warps[interrupt_ctl_if.wid] & thread_masks[interrupt_ctl_if.wid][interrupt_ctl_if.tid];
 				interrupt_ctl_if.current_thread_mask = thread_masks[interrupt_ctl_if.wid];
-				interrupt_ctl_if.current_PC = warp_PC;
+				interrupt_ctl_if.current_PC = warp_pcs[interrupt_ctl_if.wid];
 				interrupt_ctl_if.current_active_warps = active_warps;
 				interrupt_ctl_if.ISR_done = '0;	
 			end
@@ -100,7 +123,7 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				interrupt_ctl_if.current_thread_mask = 'x; 
 				interrupt_ctl_if.current_PC = 'x;
 				interrupt_ctl_if.current_active_warps = 'x;
-				interrupt_ctl_if.ISR_done = (jump_PC == interrupt_ctl_if.load_PC);
+				interrupt_ctl_if.ISR_done = jump_valid;
 				// ISR is done when we encounter a jump instruction that jumps
 				// back to the start address of the ISR
 			end
@@ -134,7 +157,8 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				load_PC = 'x; // set to don't care as it helps in synthesis and PD stages
 				load_tmask = 'x;
 				load_wmask = 'x;
-				ISR_running = '0;
+				load_wid   = 'x;
+				swap_schedule_data   = '0;
 			end
 
 			IRQC_WAIT: begin
@@ -142,7 +166,8 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				load_PC = 'x;
 				load_tmask = 'x;
 				load_wmask = 'x;
-				ISR_running = '0;
+				load_wid   = 'x;
+				swap_schedule_data   = '0;
 			end
 
 			IRQC_PC_SWAP: begin
@@ -150,7 +175,8 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				load_PC    = interrupt_ctl_if.load_PC;
 				load_tmask = (1'b1 << interrupt_ctl_if.tid);
 				load_wmask = (1'b1 << interrupt_ctl_if.wid);
-				ISR_running = '0;
+				load_wid   = interrupt_ctl_if.wid;
+				swap_schedule_data   = '1;
 			end
 
 			IRQC_WAIT_ISR: begin
@@ -158,7 +184,8 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				load_PC    = 'x;
 				load_tmask = 'x; 
 				load_wmask = 'x;
-				ISR_running = '1;
+				load_wid   = 'x;
+				swap_schedule_data   = '0;
 			end	
 
 			IRQC_REVERT_WARP: begin
@@ -174,7 +201,8 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				load_wmask = (|load_tmask) ? interrupt_ctl_if.load_wmask
 							 : interrupt_ctl_if.load_wmask & ~( `NUM_WARPS'b1 << interrupt_ctl_if.wid);
 
-				ISR_running = '0;
+				load_wid   = interrupt_ctl_if.wid;
+				swap_schedule_data   = '1;
 			end	
 
 			default: begin
@@ -182,47 +210,13 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				load_PC = 'x;
 				load_tmask = 'x;
 				load_wmask = 'x;
-				ISR_running = '1;
+				load_wid   = 'x;
+				swap_schedule_data   = '0;
 			end
 		endcase
 
 	end
 
-/*
-reg [BIT_WIDTH-1:0] counter;
-	reg op;
-	reg [1:0] c;
+	assign paused_warps = {`NUM_WARPS{pause_scheduling}};
 
-	always @(posedge clk) begin
-		if (reset) begin
-			op <= 1;
-		end
-		else begin
-          op <= (&c) ? op : ( counter == ({BIT_WIDTH{1'b1}}) ) ? ~op : op;
-		end
-	end
-
-	always @(posedge clk) begin
-		if (reset) begin
-			counter <= 0;
-		end
-		else begin
-			counter <= counter + 1;
-		end
-	end
-
-  always @(posedge clk) begin
-		if (reset) begin
-			c <= 0;
-		end
-        else begin
-			if (&c)
-				c <= c;
-			else
-              c <= c + (op & (&counter) ? 1 : 0);
-		end
-	end
-
-	assign pause_scheduling = ~(&c) ? op : 0;
-	*/
 endmodule

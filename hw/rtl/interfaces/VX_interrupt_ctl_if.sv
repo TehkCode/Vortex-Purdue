@@ -80,7 +80,6 @@ interface VX_interrupt_ctl_if;
 
 	// Thread Transfer Unit
 	hw_int_state_t 		state; 					// current state of the IC
-	logic [`XLEN-1:0]	ISR_PC;					// PC to be substituted
 	logic [`NW_WIDTH-1:0]				wid;    // warp id of the thread to be transferred
 	logic [`NT_WIDTH-1:0]				tid;    // thread id (within the warp) to be transferred
 	logic 				pipeline_drained;		// to signify transition out of WAIT state
@@ -95,7 +94,6 @@ interface VX_interrupt_ctl_if;
 	
 	modport ttu_master (
 			output state,
-			output ISR_PC,
 			output wid,
 			output tid,
 			input  pipeline_drained,
@@ -111,7 +109,6 @@ interface VX_interrupt_ctl_if;
 
 	modport ttu_slave (
 			input  state,
-			input  ISR_PC,
 			input  wid,
 			input  tid,
 			output pipeline_drained,

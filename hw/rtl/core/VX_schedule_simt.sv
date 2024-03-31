@@ -99,17 +99,13 @@ module VX_schedule_simt import VX_gpu_pkg::*; #(
     //thread transfer
 	VX_interrupt_ctl_if interrupt_ctl_if();
 	wire [`NUM_WARPS-1:0] ipdom_stack_empty;
-	wire [`XLEN-1:0]		warp_PC;
-	wire [`XLEN-1:0]		jump_PC;
-	wire pause_scheduling;
 	wire [`XLEN-1:0] load_PC;
 	wire [THREAD_CNT-1:0] load_tmask;
 	wire [`NUM_WARPS-1:0] load_wmask;
-	wire ISR_running;
+	wire [`NW_WIDTH-1:0] load_wid;
+	wire swap_schedule_data;
 	wire [`NUM_WARPS-1:0] paused_warps;
-
-	assign paused_warps = {`NUM_WARPS{pause_scheduling}};
-
+	
     always @(*) begin
         active_warps_n  = active_warps;
         stalled_warps_n = stalled_warps;
@@ -208,6 +204,14 @@ module VX_schedule_simt import VX_gpu_pkg::*; #(
         if (schedule_if_fire) begin
             warp_pcs_n[schedule_if.data.wid] = schedule_if.data.PC + 4;
         end
+
+		// load/unload ISR for thread transfer
+		if (swap_schedule_data) begin
+			warp_pcs_n[load_wid]     = load_PC;
+			active_warps_n 			 = load_wmask;
+			thread_masks_n[load_wid] = load_tmask;
+		end
+
     end
 
     `UNUSED_VAR (base_dcrs)
@@ -290,7 +294,8 @@ module VX_schedule_simt import VX_gpu_pkg::*; #(
         .join_is_else (join_is_else),
         .join_wid   (join_wid), 
         .join_tmask (join_tmask),
-        .join_pc    (join_pc)
+        .join_pc    (join_pc),
+		.ipdom_empty(ipdom_stack_empty)
     );
 
     // schedule the next ready warp
@@ -376,15 +381,93 @@ module VX_schedule_simt import VX_gpu_pkg::*; #(
     `BUFFER_BUSY (busy, (active_warps != 0 || ~no_pending_instr), 1);
 
     // thread transfer to scalar core
-    `RESET_RELAY (thread_transfer_unit_reset, reset);
-
     VX_thread_transfer_unit #(
 		.THREAD_CNT (THREAD_CNT)
     ) thread_transfer_unit (
-        .clk                  (clk),
-        .reset                (thread_transfer_unit_reset),
 		.*
 	);
+	/****************************/
+	//dummy test module
+	/*hw_int_state_t ss, ns; //TODO*****************remove
+	reg	done;
+
+	assign interrupt_ctl_if.state = ss;
+
+	always@ (posedge clk) begin
+			if (reset) begin
+					ss <= IRQC_IDLE;
+					done <= 0;
+			end
+			else begin
+					ss <= ns;
+					done <= done ? done : (ss == IRQC_REVERT_WARP);
+			end
+	end
+
+	always@(*) begin
+		case(ss)
+			IRQC_IDLE: begin
+				if (done)
+					ns = IRQC_IDLE;
+			   	else
+					ns = schedule_if_fire & (schedule_if.data.PC == 32'h80000018) ? IRQC_WAIT : IRQC_IDLE;
+			end
+			IRQC_WAIT: begin
+				if (interrupt_ctl_if.pipeline_drained && interrupt_ctl_if.thread_found)
+					ns = IRQC_PC_SWAP;
+				else
+					ns = IRQC_WAIT;
+			end
+			IRQC_PC_SWAP:
+				ns = IRQC_WAIT_ISR;
+			IRQC_WAIT_ISR: begin
+				if (interrupt_ctl_if.ISR_done)
+					ns = IRQC_REVERT_WARP;
+				else
+					ns = IRQC_WAIT_ISR	;
+			end
+			IRQC_REVERT_WARP:
+				ns = IRQC_IDLE;
+			default:
+				ns = ss;
+		endcase
+	end
+
+	always@(*) begin
+			interrupt_ctl_if.wid = 0;
+			interrupt_ctl_if.tid = 0;
+			interrupt_ctl_if.load_PC = 32'h8000032c;
+			interrupt_ctl_if.load_tmask = 4'b1111;
+			interrupt_ctl_if.load_wmask = 4'b1111;
+			case(ss)
+				IRQC_IDLE: begin
+					interrupt_ctl_if.wid = 0;
+					interrupt_ctl_if.tid = 0;
+				end
+				IRQC_WAIT: begin
+					interrupt_ctl_if.wid = 0;
+					interrupt_ctl_if.tid = 0;
+				end
+				IRQC_PC_SWAP: begin
+					interrupt_ctl_if.load_PC = 32'h80000000;
+				end
+				IRQC_REVERT_WARP: begin
+					interrupt_ctl_if.load_PC = 32'h8000032c;
+					interrupt_ctl_if.load_tmask = 4'b1111;
+					interrupt_ctl_if.load_wmask = 4'b1111;
+				end
+				default: begin
+					interrupt_ctl_if.wid = 0;
+					interrupt_ctl_if.tid = 0;
+					interrupt_ctl_if.load_PC = 32'h8000032c;
+					interrupt_ctl_if.load_tmask = 4'b1111;
+					interrupt_ctl_if.load_wmask = 4'b1111;
+				end
+			endcase
+	end
+//`UNTIME_ASSERT( !(done), ("%t: *** testing assertion for TTU", $time));
+*/
+	/****************************/
 
     // export CSRs
     assign sched_csr_if.cycles = cycles;
