@@ -27,6 +27,8 @@ module VX_execute import VX_gpu_pkg::*; #(
     // Dcache interface
     VX_mem_bus_if.master    dcache_bus_if [DCACHE_NUM_REQS],
 
+    VX_mem_bus_if.master    status_regs_bus_if[DCACHE_NUM_REQS],
+
     // commit interface
     VX_commit_csr_if.slave  commit_csr_if,
 
@@ -107,12 +109,13 @@ module VX_execute import VX_gpu_pkg::*; #(
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT)
     ) lsu_unit (
-        `SCOPE_IO_BIND  (0)
-        .clk            (clk),
-        .reset          (lsu_reset),
-        .cache_bus_if   (dcache_bus_if),
-        .dispatch_if    (lsu_dispatch_if),
-        .commit_if      (lsu_commit_if)
+        `SCOPE_IO_BIND      (0)
+        .clk                (clk),
+        .reset              (lsu_reset),
+        .cache_bus_if       (dcache_bus_if),
+        .status_regs_bus_if (status_regs_bus_if),
+        .dispatch_if        (lsu_dispatch_if),
+        .commit_if          (lsu_commit_if)
     );
 
 `ifdef EXT_F_ENABLE

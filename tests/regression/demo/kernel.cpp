@@ -6,24 +6,19 @@
 #include <stdlib.h>
 
 void kernel_body(int task_id, kernel_arg_t* __UNIFORM__ arg) {
-    auto src0_ptr = reinterpret_cast<TYPE*>(arg->src0_addr);
-    auto src1_ptr = reinterpret_cast<TYPE*>(arg->src1_addr);
-    auto dst_ptr = reinterpret_cast<TYPE*>(arg->dst_addr);
-    
-    uint32_t count = arg->task_size;
-    uint32_t offset = task_id * count;
-    int* ptr = (int*) malloc(64);        // malloc here
-    for(int i = 0; i < 64/4; i++){
-        ptr[i] = i;
-    }
-    for(int i = 0; i < 32/4; i++){
-      ptr[i] += 3;
-      vx_printf("%d\n", ptr[i]);
-    }
-    free(ptr);
-    for (uint32_t i = 0; i < count; ++i) {
-        dst_ptr[offset+i] = src0_ptr[offset+i] + src1_ptr[offset+i];
-    }
+	auto src0_ptr = reinterpret_cast<TYPE*>(arg->src0_addr);
+	auto src1_ptr = reinterpret_cast<TYPE*>(arg->src1_addr);
+	auto dst_ptr = reinterpret_cast<TYPE*>(arg->dst_addr);
+
+	uint32_t count = arg->task_size;
+	uint32_t offset = task_id * count;
+
+	// int *p = (int*)0x10000;
+	// int temp = *p;
+
+	for (uint32_t i = 0; i < count; ++i) {
+		dst_ptr[offset+i] = src0_ptr[offset+i] + src1_ptr[offset+i];
+	}
 
 }
 

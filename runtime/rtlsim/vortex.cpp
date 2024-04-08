@@ -41,7 +41,7 @@ public:
     vx_device() 
         : ram_(RAM_PAGE_SIZE)
         , global_mem_(
-            ALLOC_BASE_ADDR,
+            ALLOC_BASE_ADDR + 1024, // EXPERIMENTAL
             ALLOC_MAX_ADDR - ALLOC_BASE_ADDR,
             RAM_PAGE_SIZE,
             CACHE_BLOCK_SIZE)

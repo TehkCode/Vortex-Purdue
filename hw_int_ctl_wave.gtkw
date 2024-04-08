@@ -1,0 +1,155 @@
+[*]
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Sun Apr  7 22:38:23 2024
+[*]
+[dumpfile] "/home/achitsaz/Vortex-Purdue/trace.vcd"
+[dumpfile_mtime] "Sun Apr  7 22:22:27 2024"
+[dumpfile_size] 4906784183
+[savefile] "/home/achitsaz/Vortex-Purdue/hw_int_ctl_wave.gtkw"
+[timestart] 457435
+[size] 1920 1009
+[pos] -87 -87
+*-4.000000 457463 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.Vortex.
+[treeopen] TOP.Vortex.genblk5[0].
+[treeopen] TOP.Vortex.genblk5[0].cluster.
+[treeopen] TOP.Vortex.genblk5[0].cluster.interrupt_controller.
+[treeopen] TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].
+[treeopen] TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].
+[treeopen] TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].
+[treeopen] TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].
+[sst_width] 347
+[signals_width] 244
+[sst_expanded] 1
+[sst_vpaned_height] 301
+@28
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.clk
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.reset
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.triggerBus[7:0]
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.finBus[7:0]
+@24
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.counter[1:0]
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.nextCounter[1:0]
+@200
+-statusBus0
+@28
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].req_ready
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].req_valid
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].rsp_ready
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].rsp_valid
+@200
+-statusBus0REQ
+@22
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].req_data.addr[29:0]
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].req_data.byteen[3:0]
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].req_data.data[31:0]
+@28
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].req_data.rw
+@22
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].req_data.tag[45:0]
+@200
+-statusBus0RSP
+@22
+[color] 1
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].rsp_data.data[31:0]
+[color] 1
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[0].rsp_data.tag[45:0]
+@200
+-statusBus1
+@28
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].req_ready
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].req_valid
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].rsp_ready
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].rsp_valid
+@200
+-statusBus1REQ
+@22
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].req_data.addr[29:0]
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].req_data.byteen[3:0]
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].req_data.data[31:0]
+@28
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].req_data.rw
+@22
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].req_data.tag[45:0]
+@200
+-statusBus1RSP
+@22
+[color] 1
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].rsp_data.data[31:0]
+@800022
+[color] 1
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[1].rsp_data.tag[45:0]
+@1001200
+-group_end
+@200
+-statusBus2
+@28
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].req_ready
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].req_valid
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].rsp_ready
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].rsp_valid
+@200
+-statusBus2REQ
+@22
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].req_data.addr[29:0]
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].req_data.byteen[3:0]
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].req_data.data[31:0]
+@28
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].req_data.rw
+@22
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].req_data.tag[45:0]
+@200
+-statusBus2RSP
+@22
+[color] 1
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].rsp_data.data[31:0]
+[color] 1
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].rsp_data.tag[45:0]
+@200
+-statusBus3
+@28
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].req_ready
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].req_valid
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].rsp_ready
+@29
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].rsp_valid
+@200
+-statusBus3REQ
+@22
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].req_data.addr[29:0]
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].req_data.byteen[3:0]
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].req_data.data[31:0]
+@28
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].req_data.rw
+@22
+[color] 3
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].req_data.tag[45:0]
+@200
+-statusBus3RSP
+@22
+[color] 1
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].rsp_data.data[31:0]
+[color] 1
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].rsp_data.tag[45:0]
+[pattern_trace] 1
+[pattern_trace] 0
