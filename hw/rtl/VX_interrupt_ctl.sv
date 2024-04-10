@@ -35,7 +35,7 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     hw_int_state_t nextState, currState; 
 
     logic [1:0] counter, nextCounter; 
-    logic [7:0] triggerBus, nextTriggerBus;
+    logic [7:0] triggerBus, nextTriggerBus, grantBus;
     logic [7:0] finBus;
 
     logic [7:0] rdWr;
@@ -98,23 +98,23 @@ VX_mem_bus_if #(
             begin 
                 next_status_regs_bus_if[i].req_ready = 0;
             end
-            if(counter == 2)
+            if((counter == 2))
             begin 
-                if(triggerBus[i]) // only those who triggered read req on bus should get rsp
+                if(triggerBus[i] & grantBus[i]) // only those who triggered read req on bus should get rsp
                 begin 
                     next_status_regs_bus_if[i].rsp_valid = 1; 
                     next_status_regs_bus_if[i].rsp_data.data = 32'hb33ff00d;
                 end
-                nextTriggerBus[i] = 0;
             end
             if(counter == 3)
             begin 
-                if(status_regs_bus_if[i].rsp_ready) // you're done, deassert rsp
+                if(status_regs_bus_if[i].rsp_ready & grantBus[i]) // you're done, deassert rsp
                 begin
                     next_status_regs_bus_if[i].rsp_valid     = 0; 
                     next_status_regs_bus_if[i].rsp_data.data = '0;
                     next_status_regs_bus_if[i].rsp_data.tag  = '0;
                     finBus[i]                                = 1;
+                    nextTriggerBus[i]                        = 0;
                 end
             end
             
@@ -123,10 +123,28 @@ VX_mem_bus_if #(
 
     always @(*)
     begin 
+        grantBus = '0;
+        casez(triggerBus) // priority encoder
+            8'b???????1: grantBus[0] = 1;
+            8'b??????10: grantBus[1] = 1;
+            8'b?????100: grantBus[2] = 1;
+            8'b????1000: grantBus[3] = 1;
+            8'b???10000: grantBus[4] = 1;
+            8'b??100000: grantBus[5] = 1;
+            8'b?1000000: grantBus[6] = 1;
+            8'b10000000: grantBus[7] = 1;
+            default:     grantBus    = '0;
+        endcase
+    end
+
+    always @(*)
+    begin 
         nextCounter = counter;
-         if((counter == 3) && (|finBus))
+         if((counter == 3) && (|finBus) && (|nextTriggerBus))
+            nextCounter = 1; // still more requests to handle
+        else if((counter == 3) && (|finBus))
             nextCounter = 0;
-        else if(|triggerBus)
+        else if((|triggerBus) && counter != 3)
             nextCounter = counter + 1;
     end
 
@@ -140,12 +158,14 @@ VX_mem_bus_if #(
             registers                   <= '{default:256'd0};
             currState                   <= IDLE;
             counter                     <= '0;
+            newCount                    <= '0;
         end
         else 
         begin 
             registers                  <= nextRegisters;
             currState                  <= nextState;
             counter                    <= nextCounter;
+            newCount                   <= nextNewCount;
         end
     end
 

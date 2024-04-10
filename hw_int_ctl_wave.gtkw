@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
-[*] Sun Apr  7 22:38:23 2024
+[*] Wed Apr 10 03:34:06 2024
 [*]
 [dumpfile] "/home/achitsaz/Vortex-Purdue/trace.vcd"
-[dumpfile_mtime] "Sun Apr  7 22:22:27 2024"
-[dumpfile_size] 4906784183
+[dumpfile_mtime] "Wed Apr 10 03:31:57 2024"
+[dumpfile_size] 4599099537
 [savefile] "/home/achitsaz/Vortex-Purdue/hw_int_ctl_wave.gtkw"
-[timestart] 457435
+[timestart] 444340
 [size] 1920 1009
-[pos] -87 -87
-*-4.000000 457463 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -139 -139
+*-12.000000 457463 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TOP.
 [treeopen] TOP.Vortex.
 [treeopen] TOP.Vortex.genblk5[0].
@@ -26,10 +26,19 @@
 @28
 TOP.Vortex.genblk5[0].cluster.interrupt_controller.clk
 TOP.Vortex.genblk5[0].cluster.interrupt_controller.reset
+@22
+[color] 6
+TOP.Vortex.genblk5[0].cluster.interrupt_controller.grantBus[7:0]
+@28
+[color] 6
 TOP.Vortex.genblk5[0].cluster.interrupt_controller.triggerBus[7:0]
+[color] 6
 TOP.Vortex.genblk5[0].cluster.interrupt_controller.finBus[7:0]
 @24
+[color] 6
 TOP.Vortex.genblk5[0].cluster.interrupt_controller.counter[1:0]
+@25
+[color] 6
 TOP.Vortex.genblk5[0].cluster.interrupt_controller.nextCounter[1:0]
 @200
 -statusBus0
@@ -127,7 +136,6 @@ TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[2].rsp_dat
 TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].req_ready
 TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].req_valid
 TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].rsp_ready
-@29
 TOP.Vortex.genblk5[0].cluster.interrupt_controller.status_regs_bus_if[3].rsp_valid
 @200
 -statusBus3REQ
