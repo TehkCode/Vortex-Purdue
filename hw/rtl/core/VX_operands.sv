@@ -20,6 +20,7 @@ module VX_operands import VX_gpu_pkg::*; #(
 ) (
     input wire              clk,
     input wire              reset,
+	input wire				branch_mispredict_flush,
 
     VX_writeback_if.slave   writeback_if [`ISSUE_WIDTH],
     VX_ibuffer_if.slave     scoreboard_if [`ISSUE_WIDTH],
@@ -171,7 +172,7 @@ module VX_operands import VX_gpu_pkg::*; #(
         end
 
         always @(posedge clk)  begin
-            if (reset) begin
+            if (reset | branch_mispredict_flush) begin
                 state       <= STATE_IDLE;
                 gpr_rd_rid  <= '0;
                 gpr_rd_wis  <= '0;
@@ -239,7 +240,7 @@ module VX_operands import VX_gpu_pkg::*; #(
             .DATAW (DATAW)
         ) stg_buf (
             .clk      (clk),
-            .reset    (stg_buf_reset),
+            .reset    (stg_buf_reset | branch_mispredict_flush),
             .valid_in (scoreboard_if[i].valid),
             .ready_in (scoreboard_if[i].ready),
             .data_in  ({
@@ -290,7 +291,7 @@ module VX_operands import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) out_buf (
             .clk       (clk),
-            .reset     (out_buf_reset),
+            .reset     (out_buf_reset | branch_mispredict_flush),
             .valid_in  (valid_stg),
             .ready_in  (ready_stg),
             .data_in   (staging_if.data),

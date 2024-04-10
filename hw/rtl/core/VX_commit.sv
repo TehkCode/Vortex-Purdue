@@ -32,12 +32,14 @@ module VX_commit import VX_gpu_pkg::*; #(
     VX_writeback_if.master  writeback_if  [`ISSUE_WIDTH],
     VX_commit_csr_if.master commit_csr_if,
     VX_commit_sched_if.master commit_sched_if,
+	output commit_if_valid, // to let issue stage know that a instruction is out of execute stage
+	output commit_if_ready,
 
     // simulation helper signals
     output wire [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam DATAW = `UUID_WIDTH + `NW_WIDTH + THREAD_CNT + `XLEN + 1 + `NR_BITS + THREAD_CNT * `XLEN + 1 + 1 + 1;
+    localparam DATAW = `UUID_WIDTH + `NW_WIDTH + THREAD_CNT + `XLEN + 1 + `NR_BITS + THREAD_CNT * `XLEN + 1 + 1 + 1 + 1;
     localparam COMMIT_SIZEW = `CLOG2(THREAD_CNT + 1);
     localparam COMMIT_ALL_SIZEW = COMMIT_SIZEW + `ISSUE_WIDTH - 1;
 
@@ -49,6 +51,7 @@ module VX_commit import VX_gpu_pkg::*; #(
     wire [`ISSUE_WIDTH-1:0][`NW_WIDTH-1:0] commit_wid;
     wire [`ISSUE_WIDTH-1:0][THREAD_CNT-1:0] commit_tmask;
     wire [`ISSUE_WIDTH-1:0] commit_eop;
+    wire [`ISSUE_WIDTH-1:0] commit_halt;
 
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
 
@@ -96,6 +99,7 @@ module VX_commit import VX_gpu_pkg::*; #(
         assign commit_tmask[i] = {THREAD_CNT{commit_fire[i]}} & commit_if[i].data.tmask;
         assign commit_wid[i]   = commit_if[i].data.wid;
         assign commit_eop[i]   = commit_if[i].data.eop;
+        assign commit_halt[i]  = commit_if[i].data.halt;
     end
 
     // CSRs update
@@ -161,14 +165,14 @@ module VX_commit import VX_gpu_pkg::*; #(
     // Committed instructions
 
     VX_pipe_register #(
-        .DATAW  (`ISSUE_WIDTH * (1 + `NW_WIDTH)),
+        .DATAW  (`ISSUE_WIDTH * (1 + 1 + `NW_WIDTH)),
         .RESETW (`ISSUE_WIDTH)
     ) committed_pipe_reg (
         .clk      (clk),
         .reset    (reset),
         .enable   (1'b1),
-        .data_in  ({(commit_fire & commit_eop), commit_wid}),
-        .data_out ({commit_sched_if.committed, commit_sched_if.committed_wid})
+        .data_in  ({(commit_fire & commit_eop), commit_wid, commit_halt}),
+        .data_out ({commit_sched_if.committed, commit_sched_if.committed_wid, commit_sched_if.halt})
     );
 
     // Writeback
@@ -185,6 +189,10 @@ module VX_commit import VX_gpu_pkg::*; #(
         assign writeback_if[i].data.eop = commit_if[i].data.eop;
         assign commit_if[i].ready = 1'b1;
     end
+
+	// To issue.dispatch
+	assign commit_if_valid = commit_if[0].valid;
+	assign commit_if_ready = commit_if[0].ready;
     
     // simulation helper signal to get RISC-V tests Pass/Fail status
     reg [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value_r;

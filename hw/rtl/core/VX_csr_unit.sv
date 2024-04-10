@@ -79,8 +79,15 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
     assign sched_csr_if.alm_empty_wid = execute_if.data.wid;
     wire no_pending_instr = sched_csr_if.alm_empty;
     
-    wire csr_req_valid = execute_if.valid && no_pending_instr;
-    assign execute_if.ready = csr_req_ready && no_pending_instr;
+	// CAUTION (5th Apr 2024) : Earlier, the criteria to access CSR registers was that the
+	// pipeline should be empty. Now that we are converting a SIMT to scalar
+	// pipeline, we are getting rid of this condition. Hopefully this doesn't
+	// cause any problems
+	// Earlier, csr_req_valid and execute_if.ready were as follows
+	// csr_req_valid = execute_if.valid & no_pending_instr;
+	// execute_if.ready = csr_req_ready & no_pending_instr;
+    wire csr_req_valid = execute_if.valid;
+    assign execute_if.ready = csr_req_ready;
 
     wire [`VX_CSR_ADDR_BITS-1:0] csr_addr = execute_if.data.imm[`VX_CSR_ADDR_BITS-1:0];
     wire [`NRI_BITS-1:0] csr_imm = execute_if.data.imm[`VX_CSR_ADDR_BITS +: `NRI_BITS];

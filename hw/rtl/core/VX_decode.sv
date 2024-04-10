@@ -34,6 +34,7 @@ module VX_decode  #(
 ) (
     input wire              clk,
     input wire              reset,
+    input wire              branch_mispredict_flush,
 
     // inputs
     VX_fetch_if.slave       fetch_if,
@@ -552,7 +553,7 @@ module VX_decode  #(
         .SIZE  (0)
     ) req_buf (
         .clk       (clk),
-        .reset     (reset),
+        .reset     (reset | branch_mispredict_flush),
         .valid_in  (fetch_if.valid),
         .ready_in  (fetch_if.ready),
         .data_in   ({fetch_if.data.uuid, fetch_if.data.wid, fetch_if.data.tmask, fetch_if.data.PC, ex_type, op_type, op_mod, use_PC, imm, use_imm, wb, rd_r, rs1_r, rs2_r, rs3_r}),

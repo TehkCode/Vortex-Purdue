@@ -245,6 +245,7 @@ module VX_fpu_unit import VX_fpu_pkg::*; #(
             .ready_out (commit_block_if[block_idx].ready)
         );
         assign commit_block_if[block_idx].data.wb = 1'b1;
+        assign commit_block_if[block_idx].data.halt = 1'b0;
     end
 
     `RESET_RELAY (commit_reset, reset);

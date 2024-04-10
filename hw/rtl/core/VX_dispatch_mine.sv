@@ -19,7 +19,6 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 ) (
     input wire              clk,
     input wire              reset,
-	input wire 				branch_mispredict_flush,
 
 `ifdef PERF_ENABLE
     output wire [`PERF_CTR_BITS-1:0] perf_stalls [`NUM_EX_UNITS],
@@ -82,7 +81,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 	assign exiting_execute_stage = commit_if_valid & commit_if_ready;
   
 	always@(posedge clk) begin
-    	if (reset | branch_mispredict_flush)
+    	if (reset)
 	    	empty <= 1;
 	    else
     		empty <= exiting_execute_stage ? !entering_execute_stage : (empty & !entering_execute_stage);
@@ -108,7 +107,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) alu_buffer (
             .clk        (clk),
-            .reset      (alu_reset | branch_mispredict_flush),
+            .reset      (alu_reset),
             .valid_in   (alu_operands_if[i].valid),
             .ready_in   (alu_operands_if[i].ready),
             .data_in    (`TO_DISPATCH_DATA(alu_operands_if[i].data, last_active_tid[i])),
@@ -134,7 +133,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) lsu_buffer (
             .clk        (clk),
-            .reset      (lsu_reset | branch_mispredict_flush),
+            .reset      (lsu_reset),
             .valid_in   (lsu_operands_if[i].valid),
             .ready_in   (lsu_operands_if[i].ready),
             .data_in    (`TO_DISPATCH_DATA(lsu_operands_if[i].data, last_active_tid[i])),           
@@ -162,7 +161,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) fpu_buffer (
             .clk        (clk),
-            .reset      (fpu_reset | branch_mispredict_flush),
+            .reset      (fpu_reset),
             .valid_in   (fpu_operands_if[i].valid),
             .ready_in   (fpu_operands_if[i].ready),
             .data_in    (`TO_DISPATCH_DATA(fpu_operands_if[i].data, last_active_tid[i])),           
@@ -189,7 +188,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) sfu_buffer (
             .clk        (clk),
-            .reset      (sfu_reset | branch_mispredict_flush),
+            .reset      (sfu_reset),
             .valid_in   (sfu_operands_if[i].valid),
             .ready_in   (sfu_operands_if[i].ready),
             .data_in    (`TO_DISPATCH_DATA(sfu_operands_if[i].data, last_active_tid[i])),           

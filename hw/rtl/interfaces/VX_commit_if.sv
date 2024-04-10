@@ -30,6 +30,7 @@ interface VX_commit_if #(
         logic [PID_WIDTH-1:0]       pid;
         logic                       sop;
         logic                       eop;
+        logic                       halt;
     } data_t;
 
     logic  valid;

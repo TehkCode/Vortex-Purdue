@@ -78,6 +78,9 @@ module VX_execute import VX_gpu_pkg::*; #(
     VX_commit_if.master     sfu_commit_if [`ISSUE_WIDTH],
     VX_warp_ctl_if.master   warp_ctl_if,
 
+    // flush mispredicts
+    output branch_mispredict_flush,
+
     // simulation helper signals
     output wire             sim_ebreak
 );
@@ -179,6 +182,11 @@ module VX_execute import VX_gpu_pkg::*; #(
         .warp_ctl_if    (warp_ctl_if),
         .commit_if      (sfu_commit_if)
     );
+
+    // flush operation
+    // flush only when branch taken or thread mask is set to 0
+    assign branch_mispredict_flush = (branch_ctl_if[0].valid & branch_ctl_if[0].taken) 
+				   | (warp_ctl_if.valid & warp_ctl_if.tmc.valid & !(|warp_ctl_if.tmc.tmask));
 
     // simulation helper signal to get RISC-V tests Pass/Fail status
     assign sim_ebreak = alu_dispatch_if[0].valid && alu_dispatch_if[0].ready 
