@@ -92,6 +92,7 @@ module VX_raster_agent #(
     end
 
     assign commit_if.data.wb  = 1'b1;    
+	assign commit_if.data.halt = 1'b0;
 
 `ifdef DBG_TRACE_RASTER
     always @(posedge clk) begin

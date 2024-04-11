@@ -29,7 +29,7 @@ module VX_ibuffer import VX_gpu_pkg::*; #(
 );
     `UNUSED_PARAM (CORE_ID)
     localparam ISW_WIDTH  = `LOG2UP(`ISSUE_WIDTH);
-    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4);
+    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4) + 1;
     
     wire [`ISSUE_WIDTH-1:0] ibuf_ready_in;
 
@@ -63,7 +63,8 @@ module VX_ibuffer import VX_gpu_pkg::*; #(
                 decode_if.data.rd, 
                 decode_if.data.rs1, 
                 decode_if.data.rs2, 
-                decode_if.data.rs3}),
+                decode_if.data.rs3,
+                decode_if.data.is_branch }),
             .data_out(ibuffer_if[i].data),
             .valid_out (ibuffer_if[i].valid),
             .ready_out(ibuffer_if[i].ready)

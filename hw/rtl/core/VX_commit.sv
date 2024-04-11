@@ -190,6 +190,17 @@ module VX_commit import VX_gpu_pkg::*; #(
         assign commit_if[i].ready = 1'b1;
     end
 
+	/**********delete later***************/
+	/*reg [4:0] c;
+	always @(posedge clk) begin
+		if (reset)
+			c <= 0;
+		else
+			c <= c!=0 ? c+1 : 5'(sfu_commit_if[0].valid && sfu_commit_if[0].ready && (sfu_commit_if[0].data.PC == 32'h8000020c));
+	end
+
+	`RUNTIME_ASSERT( c!=6, ("******************caught you***********************"))*/
+
 	// To issue.dispatch
 	assign commit_if_valid = commit_if[0].valid;
 	assign commit_if_ready = commit_if[0].ready;

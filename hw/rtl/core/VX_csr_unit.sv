@@ -292,4 +292,6 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
         assign commit_if.data.data[i] = `XLEN'(csr_commit_data[i]);
     end
 
+	assign commit_if.data.halt = 1'b0;
+
 endmodule

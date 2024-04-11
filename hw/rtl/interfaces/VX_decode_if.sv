@@ -31,6 +31,7 @@ interface VX_decode_if #(parameter THREAD_CNT = `NUM_THREADS)();
         logic [`NR_BITS-1:0]        rs1;
         logic [`NR_BITS-1:0]        rs2;
         logic [`NR_BITS-1:0]        rs3;
+        logic                       is_branch;
     } data_t;
 
     logic  valid;

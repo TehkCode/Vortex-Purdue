@@ -31,6 +31,7 @@ interface VX_ibuffer_if import VX_gpu_pkg::*; #(parameter THREAD_CNT = `NUM_THRE
         logic [`NR_BITS-1:0]        rs1;
         logic [`NR_BITS-1:0]        rs2;
         logic [`NR_BITS-1:0]        rs3;
+        logic                       is_branch;
     } data_t;
 
     logic  valid;

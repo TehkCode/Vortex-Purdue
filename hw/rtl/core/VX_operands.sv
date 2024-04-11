@@ -20,14 +20,14 @@ module VX_operands import VX_gpu_pkg::*; #(
 ) (
     input wire              clk,
     input wire              reset,
-	input wire				branch_mispredict_flush,
+    input wire				branch_mispredict_flush,
 
     VX_writeback_if.slave   writeback_if [`ISSUE_WIDTH],
     VX_ibuffer_if.slave     scoreboard_if [`ISSUE_WIDTH],
     VX_operands_if.master   operands_if [`ISSUE_WIDTH]
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + `NR_BITS;
+    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + `NR_BITS + 1;
 
     localparam STATE_IDLE   = 2'd0;
     localparam STATE_FETCH1 = 2'd1;
@@ -255,7 +255,8 @@ module VX_operands import VX_gpu_pkg::*; #(
                 scoreboard_if[i].data.use_PC,
                 scoreboard_if[i].data.use_imm,
                 scoreboard_if[i].data.imm,
-                scoreboard_if[i].data.rd}),
+                scoreboard_if[i].data.rd,
+                scoreboard_if[i].data.is_branch}),
             .data_out ({
                 staging_if.data.uuid,
                 staging_if.data.wis,
@@ -268,7 +269,8 @@ module VX_operands import VX_gpu_pkg::*; #(
                 staging_if.data.use_PC,
                 staging_if.data.use_imm,
                 staging_if.data.imm,
-                staging_if.data.rd}),                                               
+                staging_if.data.rd,
+                staging_if.data.is_branch}),                                               
             .valid_out (staging_if.valid),
             .ready_out (staging_if.ready)
         );

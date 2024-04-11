@@ -19,15 +19,15 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 ) (
     input wire              clk,
     input wire              reset,
-	input wire 				branch_mispredict_flush,
+    input wire 				branch_mispredict_flush,
 
 `ifdef PERF_ENABLE
     output wire [`PERF_CTR_BITS-1:0] perf_stalls [`NUM_EX_UNITS],
 `endif
     // inputs
     VX_operands_if.slave    operands_if [`ISSUE_WIDTH],
-	input commit_if_valid, //to check if a previous reached commmit stage
-	input commit_if_ready,
+    input commit_if_valid, //to check if a previous reached commmit stage
+    input commit_if_ready,
 
     // outputs
     VX_dispatch_if.master   alu_dispatch_if [`ISSUE_WIDTH],
@@ -61,22 +61,44 @@ module VX_dispatch import VX_gpu_pkg::*; #(
         );
     end
 	
-	// Serialize instructions being sent to execute stage
+	// Stall instructions being sent to execute stage
 	//
-	// This logic ensures no instruction enters a functional units buffer
-	// (alu_buffer, fpu_buffer, lsu_buffer, sfu_buffer) until an existing
-	// has come of the execute stage.
-	// Earlier, for example, if ADD (handled by ALU) and SW (handled by LSU) were sent one
-	// after the other, it was possible they both are present in the execute
-	// stage simultaneously as they use different functional unit. It was also
-	// possible, previously, that the instructions would come out of the execute
-	// unit in a different order than what they entered in. Now, with the
-	// below logic inplace, it is prevented.
+    // When there is a branch or jump instruction being sent to the execute
+    // stage, we want to ensure it executes alone. This helps simplify flush
+    // mechanism incase of a mispredict.
 
-	reg empty;
+    wire fu_buffer_ready[`ISSUE_WIDTH-1:0];
+    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+        VX_execution_staller #(
+        ) execution_staller (
+            .clk(clk),
+            .reset(reset),
+            .branch_mispredict_flush(branch_mispredict_flush),
+
+            // data to/from register file output buffer (operand rsp buf)
+            .valid_in(operands_if[i].valid),
+            .ready_in(operands_if[i].ready),
+
+            // keep track of number of instructions currently in execute stage
+            .decr(commit_if_valid & commit_if_ready),
+            .incr(  (alu_operands_if[i].ready && alu_operands_if[i].valid && (operands_if[i].data.ex_type == `EX_ALU)) 
+                 || (lsu_operands_if[i].ready && lsu_operands_if[i].valid && (operands_if[i].data.ex_type == `EX_LSU))
+                 `ifdef EXT_F_ENABLE
+                 || (fpu_operands_if[i].ready && fpu_operands_if[i].valid && (operands_if[i].data.ex_type == `EX_FPU))
+                 `endif
+                 || (sfu_operands_if[i].ready && sfu_operands_if[i].valid && (operands_if[i].data.ex_type == `EX_SFU)) ),
+
+            // other inputs
+            .fu_buffer_ready(fu_buffer_ready[i]),
+            .is_branch(operands_if[i].data.is_branch)
+        );
+    end
+
+
+	/*reg empty;
  	wire entering_execute_stage, exiting_execute_stage;
 	wire execute_stage_empty, execute_stage_ready;
-	wire fu_buffer_ready[`ISSUE_WIDTH-1:0];
+	
 
 	assign entering_execute_stage = operands_if[0].valid & operands_if[0].ready;
 	assign exiting_execute_stage = commit_if_valid & commit_if_ready;
@@ -90,7 +112,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
   
 	assign execute_stage_ready = fu_buffer_ready[0] & (empty | (commit_if_valid & commit_if_ready));
 	assign execute_stage_empty = empty;
-	assign operands_if[0].ready = execute_stage_ready;
+	assign operands_if[0].ready = execute_stage_ready;*/
  
     // ALU dispatch    
 
