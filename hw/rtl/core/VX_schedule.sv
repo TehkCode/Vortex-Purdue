@@ -19,6 +19,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
 ) (    
     input wire              clk,
     input wire              reset,
+	input wire [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
 
     // configuration
     input base_dcrs_t       base_dcrs,
@@ -28,7 +29,6 @@ module VX_schedule import VX_gpu_pkg::*; #(
     VX_branch_ctl_if.slave  branch_ctl_if [`NUM_ALU_BLOCKS],
     VX_decode_sched_if.slave decode_sched_if,
     VX_commit_sched_if.slave commit_sched_if,
-	input branch_mispredict_flush,
 
     // outputs
     VX_schedule_if.master   schedule_if,
@@ -192,8 +192,8 @@ module VX_schedule import VX_gpu_pkg::*; #(
         end
 
         // stall the warp until decode stage
-		// Update: DO NOT stall the warp. Now we have not taken branch
-		// predictor we do not need to stall.
+        // Update: DO NOT stall the warp. Now we have not taken branch
+        // predictor we do not need to stall.
         if (schedule_fire) begin
             stalled_warps_n[schedule_wid] = 0;
         end
@@ -325,7 +325,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
         .DATAW (THREAD_CNT + `XLEN + `NW_WIDTH)
     ) out_buf (
         .clk       (clk),
-        .reset     (reset | branch_mispredict_flush),
+        .reset     (reset | (|branch_mispredict_flush) ),
         .valid_in  (schedule_valid),
         .ready_in  (schedule_ready),
         .data_in   ({schedule_tmask, schedule_pc, schedule_wid}),

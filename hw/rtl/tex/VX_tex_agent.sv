@@ -149,7 +149,7 @@ module VX_tex_agent import VX_tex_pkg::*; #(
     end
 
     assign commit_if.data.wb = 1'b1;
-	assign commit_if.data.halt=1'b0;
+    assign commit_if.data.halt=1'b0;
 
 `ifdef DBG_TRACE_TEX
     always @(posedge clk) begin

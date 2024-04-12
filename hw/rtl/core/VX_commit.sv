@@ -32,8 +32,8 @@ module VX_commit import VX_gpu_pkg::*; #(
     VX_writeback_if.master  writeback_if  [`ISSUE_WIDTH],
     VX_commit_csr_if.master commit_csr_if,
     VX_commit_sched_if.master commit_sched_if,
-	output commit_if_valid, // to let issue stage know that a instruction is out of execute stage
-	output commit_if_ready,
+    output [`ISSUE_WIDTH-1:0] commit_if_valid, // to let issue stage know that a instruction is out of execute stage
+    output [`ISSUE_WIDTH-1:0] commit_if_ready,
 
     // simulation helper signals
     output wire [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value
@@ -190,20 +190,11 @@ module VX_commit import VX_gpu_pkg::*; #(
         assign commit_if[i].ready = 1'b1;
     end
 
-	/**********delete later***************/
-	/*reg [4:0] c;
-	always @(posedge clk) begin
-		if (reset)
-			c <= 0;
-		else
-			c <= c!=0 ? c+1 : 5'(sfu_commit_if[0].valid && sfu_commit_if[0].ready && (sfu_commit_if[0].data.PC == 32'h8000020c));
-	end
-
-	`RUNTIME_ASSERT( c!=6, ("******************caught you***********************"))*/
-
 	// To issue.dispatch
-	assign commit_if_valid = commit_if[0].valid;
-	assign commit_if_ready = commit_if[0].ready;
+    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+        assign commit_if_valid[i] = commit_if[i].valid;
+        assign commit_if_ready[i] = commit_if[i].ready;
+    end
     
     // simulation helper signal to get RISC-V tests Pass/Fail status
     reg [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value_r;

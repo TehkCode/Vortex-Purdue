@@ -22,7 +22,7 @@ module VX_ibuffer import VX_gpu_pkg::*; #(
 
     // inputs
     VX_decode_if.slave  decode_if,
-    input wire branch_mispredict_flush,
+    input wire [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
 
     // outputs
     VX_ibuffer_if.master ibuffer_if [`ISSUE_WIDTH]
@@ -45,7 +45,7 @@ module VX_ibuffer import VX_gpu_pkg::*; #(
             .OUT_REG (1)
         ) instr_buf (
             .clk      (clk),
-            .reset    (reset | branch_mispredict_flush),
+            .reset    (reset | (|branch_mispredict_flush) ),
             .valid_in (decode_if.valid && decode_isw == i),
             .ready_in (ibuf_ready_in[i]),
             .data_in  ({

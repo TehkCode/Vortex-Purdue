@@ -112,7 +112,7 @@ module VX_rop_agent import VX_rop_pkg::*; #(
     assign commit_if.data.data = '0;
     assign commit_if.data.rd   = '0;
     assign commit_if.data.wb   = 0;
-	assign commit_if.data.halt = 1'b0;
+    assign commit_if.data.halt = 1'b0;
 
 `ifdef DBG_TRACE_ROP
     always @(posedge clk) begin

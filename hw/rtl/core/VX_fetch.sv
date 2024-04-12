@@ -27,7 +27,9 @@ module VX_fetch import VX_gpu_pkg::*; #(
     
     // inputs
     VX_schedule_if.slave    schedule_if,
-	input branch_mispredict_flush,
+
+    // flush mechanism
+	input [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
 
     // outputs
     VX_fetch_if.master      fetch_if
@@ -55,11 +57,12 @@ module VX_fetch import VX_gpu_pkg::*; #(
     wire [`XLEN-1:0] rsp_PC;
     wire [THREAD_CNT-1:0] rsp_tmask;
 
-	localparam IBUF_SIZE_WIDTH = `CLOG2(`IBUF_SIZE+1);
-	wire icache_response_squashed_successfully;	
-	reg squashing_in_progress;
-	reg [IBUF_SIZE_WIDTH:0] sent_icache_requests;
-	wire [IBUF_SIZE_WIDTH:0] sent_icache_requests_n;
+    // buffer to store the PC and thread mask until the response is received from the icache
+    localparam IBUF_SIZE_WIDTH = `CLOG2(`IBUF_SIZE+1);
+    wire icache_response_squashed_successfully;	
+    reg squashing_in_progress;
+    reg [IBUF_SIZE_WIDTH:0] sent_icache_requests;
+    wire [IBUF_SIZE_WIDTH:0] sent_icache_requests_n;
 
     VX_fifo_queue #(
         .DATAW  (`XLEN + THREAD_CNT),
@@ -67,7 +70,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
         .LUTRAM (1)
     ) tag_store (
         .clk   (clk),  
-        .reset (reset | branch_mispredict_flush),
+        .reset (reset | (|branch_mispredict_flush)),
         .push  (icache_bus_if.req_valid & icache_bus_if.req_ready),        
         .pop   (icache_bus_if.rsp_valid & !squashing_in_progress), //only pop when response received which is not squashed
         `UNUSED_PIN (empty),
@@ -80,6 +83,24 @@ module VX_fetch import VX_gpu_pkg::*; #(
     );
 
     // to raise assertion errors for out of order responses
+    //
+    // Note: I suspect that the icache returns out of order. This would cause
+    // a problem when we are operating in 1Warp 1Thread config. We have seen
+    // icache do out of order responses for instructions of different warps 
+    // but I am yet to see a out of order response for instructions within
+    // a single warp. I believe 99% that the icache does not do out of order
+    // response/returns for instructions within a single warp. Cause if it did
+    // then the program order would get messed up and there is no
+    // mechanism in this pipeline that does reordering of the
+    // returned instructions. But I have not been able to confirm it so
+    // as a fail safe I have a put a tracker mechanism with assertion that
+    // will fail if there is a out of order response from icache within
+    // a single warp. It is PITA to debug if the program order gets messed so
+    // assertion is a better solution.
+    //
+    // TODO : remove the ooo_tracking fifo before synthesis/tapeout to save
+    // area/power
+
     wire [(`UUID_WIDTH+`NW_WIDTH)-1:0] tmp;
     VX_fifo_queue #(
         .DATAW  (`UUID_WIDTH+`NW_WIDTH),
@@ -98,7 +119,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
         .data_in (icache_bus_if.req_data.tag),
         .data_out (tmp)
     );
-	`RUNTIME_ASSERT(!(icache_bus_if.rsp_valid & (tmp != icache_bus_if.rsp_data.tag)), ("OOO ICache Return") )
+	`RUNTIME_ASSERT(!(icache_bus_if.rsp_valid & (tmp != icache_bus_if.rsp_data.tag)), ("Possibly a OOO ICache Return???? Not sure. Please check icache responses") )
 
 
     // Ensure that the ibuffer doesn't fill up.
@@ -110,11 +131,11 @@ module VX_fetch import VX_gpu_pkg::*; #(
             .SIZE (`IBUF_SIZE)
         ) pending_reads (
             .clk   (clk),
-            .reset (reset | branch_mispredict_flush),
+            .reset (reset | (|branch_mispredict_flush) ),
             .incr  (icache_req_fire && schedule_isw == i),
             .decr  (fetch_if.ibuf_pop[i]),
             .full  (pending_ibuf_full[i]),
-           	`UNUSED_PIN (size),
+            `UNUSED_PIN (size),
             `UNUSED_PIN (empty)
         );
     end
@@ -130,8 +151,8 @@ module VX_fetch import VX_gpu_pkg::*; #(
     assign icache_req_tag   = {schedule_if.data.uuid, req_tag};
     assign schedule_if.ready = icache_req_ready && ibuf_ready;
 
-	wire req_buf_out_valid, req_buf_out_ready;
-	assign req_buf_out_ready = icache_bus_if.req_ready & !squashing_in_progress;
+    wire req_buf_out_valid, req_buf_out_ready;
+    assign req_buf_out_ready = icache_bus_if.req_ready & !squashing_in_progress;
 
     VX_elastic_buffer #(
         .DATAW   (ICACHE_ADDR_WIDTH + ICACHE_TAG_WIDTH),
@@ -139,7 +160,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
         .OUT_REG (1) // external bus should be registered
     ) req_buf (
         .clk       (clk),
-        .reset     (reset | branch_mispredict_flush),
+        .reset     (reset | (|branch_mispredict_flush)),
         .valid_in  (icache_req_valid),
         .ready_in  (icache_req_ready),
         .data_in   ({icache_req_addr, icache_req_tag}),
@@ -148,7 +169,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
         .ready_out (req_buf_out_ready)
     );
 
-	assign icache_bus_if.req_valid       = req_buf_out_valid & !squashing_in_progress;
+    assign icache_bus_if.req_valid       = req_buf_out_valid & !squashing_in_progress;
     assign icache_bus_if.req_data.rw     = 0;
     assign icache_bus_if.req_data.byteen = 4'b1111;
     assign icache_bus_if.req_data.data   = '0;    
@@ -163,35 +184,37 @@ module VX_fetch import VX_gpu_pkg::*; #(
     assign fetch_if.data.uuid  = rsp_uuid;
     assign icache_bus_if.rsp_ready = fetch_if.ready;
 
-	// Squash Icache responses
-	//
-	// Below logic squashes icache responses. This is required when there have
-	// been mispredicts in pipeline and we need to flush speculatively
-	// scheduled instructions. When we flush pipeline, it is possible that
-	// a fetch request is already sent to icache which was not required. Since
-	// there is no way to stop a fetch once sent to Icache, we just squash the
-	// response once it comes back from Icache.
+    // Squash Icache responses
+    //
+    // Below logic squashes icache responses. This is required when there has
+    // been a mispredict in the pipeline and we need to flush speculatively
+    // scheduled instructions. When we flush pipeline, it is possible that
+    // a fetch request was already sent to the icache which was not required. Since
+    // there is no way to stop a fetch once sent to Icache, we just squash the
+    // response once it comes back from Icache.
 		
-	assign icache_response_squashed_successfully = icache_bus_if.rsp_valid & squashing_in_progress;
-	assign sent_icache_requests_n = sent_icache_requests + IBUF_SIZE_WIDTH'(icache_bus_if.req_valid && icache_bus_if.req_ready) - IBUF_SIZE_WIDTH'(icache_bus_if.rsp_valid);
+    assign icache_response_squashed_successfully = icache_bus_if.rsp_valid & squashing_in_progress;
+    assign sent_icache_requests_n = sent_icache_requests + IBUF_SIZE_WIDTH'(icache_bus_if.req_valid && icache_bus_if.req_ready) - IBUF_SIZE_WIDTH'(icache_bus_if.rsp_valid);
 	
-	always@ (posedge clk) begin
-		if (reset) begin
-			squashing_in_progress <= 0;
-		end
-		else begin
-			// If squashing in progress then continue till pending reads become zero
-			// else keep waiting for flush signal to start squashing
-			squashing_in_progress <= squashing_in_progress ? (sent_icache_requests != 0) : branch_mispredict_flush;
-		end
-	end
+    always@ (posedge clk) begin
+        if (reset) begin
+            squashing_in_progress <= 0;
+        end
+        else begin
+            // If squashing in progress then continue till pending reads become zero
+            // else keep waiting for flush signal to start squashing
+            squashing_in_progress <= squashing_in_progress ? (sent_icache_requests != 0) : (|branch_mispredict_flush);
+        end
+    end
 
-	always@(posedge clk) begin
-		if (reset)
-			sent_icache_requests <= 0;
-		else
-			sent_icache_requests <= sent_icache_requests_n;
-	end
+    // track the number of icache requests in progress (i.e. the number of 
+    // instructions requested but not received)
+    always@(posedge clk) begin
+        if (reset)
+            sent_icache_requests <= 0;
+        else
+            sent_icache_requests <= sent_icache_requests_n;
+    end
 
 `ifdef DBG_SCOPE_FETCH
     if (CORE_ID == 0) begin

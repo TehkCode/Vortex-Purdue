@@ -27,8 +27,9 @@ module VX_issue #(
     VX_pipeline_perf_if.issue perf_issue_if,
 `endif
 
-	input commit_if_valid,
-	input commit_if_ready,
+    input [`ISSUE_WIDTH-1:0]commit_if_valid,
+    input [`ISSUE_WIDTH-1:0]commit_if_ready,
+    input [`ISSUE_WIDTH-1:0]branch_mispredict_flush,
 
     VX_decode_if.slave      decode_if,
     VX_writeback_if.slave   writeback_if [`ISSUE_WIDTH],
@@ -38,8 +39,7 @@ module VX_issue #(
 `ifdef EXT_F_ENABLE
     VX_dispatch_if.master   fpu_dispatch_if [`ISSUE_WIDTH],
 `endif
-    VX_dispatch_if.master   sfu_dispatch_if [`ISSUE_WIDTH],
-	input branch_mispredict_flush
+    VX_dispatch_if.master   sfu_dispatch_if [`ISSUE_WIDTH]
 );
     VX_ibuffer_if#(.THREAD_CNT (THREAD_CNT))  ibuffer_if [`ISSUE_WIDTH]();
     VX_ibuffer_if#(.THREAD_CNT (THREAD_CNT))  scoreboard_if [`ISSUE_WIDTH]();
@@ -96,8 +96,8 @@ module VX_issue #(
         .perf_stalls    (perf_issue_if.dsp_stalls),
     `endif
         .operands_if    (operands_if),
-		.commit_if_valid(commit_if_valid),
-		.commit_if_ready(commit_if_ready),
+        .commit_if_valid(commit_if_valid),
+        .commit_if_ready(commit_if_ready),
         .alu_dispatch_if(alu_dispatch_if),
         .lsu_dispatch_if(lsu_dispatch_if),
     `ifdef EXT_F_ENABLE
