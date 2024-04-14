@@ -16,7 +16,8 @@
 module VX_lsu_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (    
     `SCOPE_IO_DECL
 
@@ -36,7 +37,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     localparam NUM_LANES    = `MIN(`NUM_LSU_LANES,THREAD_CNT);//; //
     localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
-    localparam RSP_ARB_DATAW= `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
+    localparam RSP_ARB_DATAW= `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
     localparam LSUQ_SIZEW   = `LOG2UP(`LSUQ_SIZE);
     localparam MEM_ASHIFT   = `CLOG2(`MEM_BLOCK_SIZE);    
     localparam MEM_ADDRW    = `XLEN - MEM_ASHIFT;
@@ -86,7 +87,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
 `endif
 
     // tag = uuid + addr_type + wid + PC + tmask + rd + op_type + align + is_dup + pid + pkt_addr 
-    localparam TAG_WIDTH = `UUID_WIDTH + (NUM_LANES * `CACHE_ADDR_TYPE_BITS) + `NW_WIDTH + `XLEN + NUM_LANES + `NR_BITS + `INST_LSU_BITS + (NUM_LANES * (REQ_ASHIFT)) + `LSU_DUP_ENABLED + PID_WIDTH + LSUQ_SIZEW;
+    localparam TAG_WIDTH = `UUID_WIDTH + (NUM_LANES * `CACHE_ADDR_TYPE_BITS) + WARP_CNT_WIDTH + `XLEN + NUM_LANES + `NR_BITS + `INST_LSU_BITS + (NUM_LANES * (REQ_ASHIFT)) + `LSU_DUP_ENABLED + PID_WIDTH + LSUQ_SIZEW;
 
     `STATIC_ASSERT(0 == (`IO_BASE_ADDR % `MEM_BLOCK_SIZE), ("invalid parameter"))
 
@@ -463,7 +464,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     
     wire [`UUID_WIDTH-1:0] rsp_uuid;
     wire [NUM_LANES-1:0][`CACHE_ADDR_TYPE_BITS-1:0] rsp_addr_type;
-    wire [`NW_WIDTH-1:0] rsp_wid;
+    wire [WARP_CNT_WIDTH-1:0] rsp_wid;
     wire [NUM_LANES-1:0] rsp_tmask_uq;
     wire [`XLEN-1:0] rsp_pc;
     wire [`NR_BITS-1:0] rsp_rd;
@@ -533,7 +534,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     // load commit
 
     VX_elastic_buffer #(
-        .DATAW (`UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + (NUM_LANES * `XLEN) + PID_WIDTH + 1 + 1),
+        .DATAW (`UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + (NUM_LANES * `XLEN) + PID_WIDTH + 1 + 1),
         .SIZE  (2)
     ) ld_rsp_buf (
         .clk       (clk),
@@ -551,7 +552,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     // store commit
 
     VX_elastic_buffer #(
-        .DATAW (`UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + PID_WIDTH + 1 + 1),
+        .DATAW (`UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + PID_WIDTH + 1 + 1),
         .SIZE  (2)
     ) st_rsp_buf (
         .clk       (clk),

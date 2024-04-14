@@ -16,7 +16,8 @@
 module VX_commit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input wire              clk,
     input wire              reset,

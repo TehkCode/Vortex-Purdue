@@ -13,10 +13,10 @@
 
 `include "VX_define.vh"
 
-interface VX_branch_ctl_if ();
+interface VX_branch_ctl_if #(parameter WARP_CNT_WIDTH = `NW_WIDTH)();
 
     wire                    valid;    
-    wire [`NW_WIDTH-1:0]    wid;    
+    wire [WARP_CNT_WIDTH-1:0]    wid;    
     wire                    taken;
     wire [`XLEN-1:0]        dest;
 

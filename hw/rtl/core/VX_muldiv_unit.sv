@@ -16,7 +16,8 @@
 module VX_muldiv_unit #(
     parameter CORE_ID   = 0,
     parameter NUM_LANES = 1,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input wire          clk,
     input wire          reset,
@@ -30,7 +31,7 @@ module VX_muldiv_unit #(
     `UNUSED_PARAM (CORE_ID)
     localparam PID_BITS  = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH = `UP(PID_BITS);
-    localparam TAGW = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + PID_WIDTH + 1 + 1;
+    localparam TAGW = `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + PID_WIDTH + 1 + 1;
 
     `UNUSED_VAR (execute_if.data.rs3_data)
 
@@ -46,7 +47,7 @@ module VX_muldiv_unit #(
 
     wire [NUM_LANES-1:0][`XLEN-1:0] mul_result_out;
     wire [`UUID_WIDTH-1:0] mul_uuid_out;
-    wire [`NW_WIDTH-1:0] mul_wid_out;
+    wire [WARP_CNT_WIDTH-1:0] mul_wid_out;
     wire [NUM_LANES-1:0] mul_tmask_out;
     wire [`XLEN-1:0] mul_PC_out;
     wire [`NR_BITS-1:0] mul_rd_out;
@@ -202,7 +203,7 @@ module VX_muldiv_unit #(
 
     wire [NUM_LANES-1:0][`XLEN-1:0] div_result_out;
     wire [`UUID_WIDTH-1:0] div_uuid_out;
-    wire [`NW_WIDTH-1:0] div_wid_out;
+    wire [WARP_CNT_WIDTH-1:0] div_wid_out;
     wire [NUM_LANES-1:0] div_tmask_out;
     wire [`XLEN-1:0] div_PC_out;
     wire [`NR_BITS-1:0] div_rd_out;

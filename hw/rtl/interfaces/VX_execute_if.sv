@@ -16,11 +16,12 @@
 interface VX_execute_if #(
     parameter THREAD_CNT = `NUM_THREADS,
     parameter NUM_LANES = 1,
-    parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES)
+    parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES),
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) ();
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]         uuid;                
-        logic [`NW_WIDTH-1:0]           wid;
+        logic [WARP_CNT_WIDTH-1:0]           wid;
         logic [NUM_LANES-1:0]           tmask;       
         logic [`INST_ALU_BITS-1:0]      op_type;
         logic [`INST_MOD_BITS-1:0]      op_mod;

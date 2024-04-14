@@ -17,7 +17,8 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter NUM_LANES = 1,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter WARP_CNT = `NUM_WARPS
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input wire              clk,
     input wire              reset,
@@ -35,7 +36,7 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
     localparam PID_BITS   = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH  = `UP(PID_BITS);
     localparam WCTL_WIDTH = $bits(tmc_t) + $bits(wspawn_t) + $bits(split_t) + $bits(join_t) + $bits(barrier_t);
-    localparam DATAW = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + WCTL_WIDTH + PID_WIDTH + 1 + 1;
+    localparam DATAW = `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + WCTL_WIDTH + PID_WIDTH + 1 + 1;
 
     `UNUSED_VAR (execute_if.data.rs3_data)
     

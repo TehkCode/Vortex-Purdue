@@ -20,7 +20,8 @@ module VX_raster_csr import VX_raster_pkg::*; #(
     parameter NUM_LANES = 1,
     parameter THREAD_CNT = THREAD_CNT,
     parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES),
-    parameter WARP_CNT = `NUM_WARPS
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input wire clk,
     input wire reset,
@@ -28,7 +29,7 @@ module VX_raster_csr import VX_raster_pkg::*; #(
     // Inputs    
     input wire                              write_enable,
     input wire [`UUID_WIDTH-1:0]            write_uuid,
-    input wire [`NW_WIDTH-1:0]              write_wid,
+    input wire [WARP_CNT_WIDTH-1:0]              write_wid,
     input wire [NUM_LANES-1:0]              write_tmask,
     input wire [PID_WIDTH-1:0]              write_pid,
     input raster_stamp_t [NUM_LANES-1:0]    write_data,
@@ -43,8 +44,8 @@ module VX_raster_csr import VX_raster_pkg::*; #(
     raster_csrs_t [THREAD_CNT-1:0] wdata;
     raster_csrs_t [THREAD_CNT-1:0] rdata;
     reg [THREAD_CNT-1:0]           write;
-    reg [`NW_WIDTH-1:0]              waddr;
-    wire [`NW_WIDTH-1:0]             raddr;
+    reg [WARP_CNT_WIDTH-1:0]              waddr;
+    wire [WARP_CNT_WIDTH-1:0]             raddr;
 
     // CSR registers
     for (genvar i = 0; i < THREAD_CNT; ++i) begin

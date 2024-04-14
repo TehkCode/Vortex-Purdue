@@ -16,7 +16,8 @@
 module VX_csr_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter NUM_LANES = 1,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input wire                  clk,
     input wire                  reset,
@@ -63,7 +64,7 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
     `UNUSED_PARAM (CORE_ID)
     localparam PID_BITS   = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH  = `UP(PID_BITS);
-    localparam DATAW      = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * 32 + PID_WIDTH + 1 + 1;
+    localparam DATAW      = `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * 32 + PID_WIDTH + 1 + 1;
 
     `UNUSED_VAR (execute_if.data.rs3_data)
     

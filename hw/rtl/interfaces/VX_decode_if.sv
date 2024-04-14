@@ -13,11 +13,11 @@
 
 `include "VX_define.vh"
 
-interface VX_decode_if #(parameter THREAD_CNT = `NUM_THREADS, parameter ISSUE_CNT = `ISSUE_WIDTH)();
+interface VX_decode_if #(parameter THREAD_CNT = `NUM_THREADS, parameter ISSUE_CNT = `ISSUE_WIDTH, parameter WARP_CNT_WIDTH = `NW_WIDTH)();
 
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]     uuid;
-        logic [`NW_WIDTH-1:0]       wid;
+        logic [WARP_CNT_WIDTH-1:0]       wid;
         logic [THREAD_CNT-1:0]    tmask;
         logic [`EX_BITS-1:0]        ex_type;    
         logic [`INST_OP_BITS-1:0]   op_type;

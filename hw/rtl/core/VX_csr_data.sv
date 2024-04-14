@@ -25,7 +25,8 @@ import VX_fpu_pkg::*;
 #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter WARP_CNT = `NUM_WARPS
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input wire                          clk,
     input wire                          reset,
@@ -62,14 +63,14 @@ import VX_fpu_pkg::*;
 
     input wire                          read_enable,
     input wire [`UUID_WIDTH-1:0]        read_uuid,
-    input wire [`NW_WIDTH-1:0]          read_wid,
+    input wire [WARP_CNT_WIDTH-1:0]          read_wid,
     input wire [`VX_CSR_ADDR_BITS-1:0]  read_addr,
     output wire [31:0]                  read_data_ro,
     output wire [31:0]                  read_data_rw,
 
     input wire                          write_enable, 
     input wire [`UUID_WIDTH-1:0]        write_uuid,
-    input wire [`NW_WIDTH-1:0]          write_wid,
+    input wire [WARP_CNT_WIDTH-1:0]          write_wid,
     input wire [`VX_CSR_ADDR_BITS-1:0]  write_addr,
     input wire [31:0]                   write_data
 );
@@ -83,7 +84,7 @@ import VX_fpu_pkg::*;
 `ifdef EXT_F_ENABLE    
     reg [WARP_CNT-1:0][`INST_FRM_BITS+`FP_FLAGS_BITS-1:0] fcsr, fcsr_n;
     wire [`NUM_FPU_BLOCKS-1:0]              fpu_write_enable;
-    wire [`NUM_FPU_BLOCKS-1:0][`NW_WIDTH-1:0] fpu_write_wid;
+    wire [`NUM_FPU_BLOCKS-1:0][WARP_CNT_WIDTH-1:0] fpu_write_wid;
     fflags_t [`NUM_FPU_BLOCKS-1:0]          fpu_write_fflags;
     for (genvar i = 0; i < `NUM_FPU_BLOCKS; ++i) begin
         assign fpu_write_enable[i] = fpu_to_csr_if[i].write_enable;

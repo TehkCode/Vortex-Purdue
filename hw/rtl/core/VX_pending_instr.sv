@@ -17,15 +17,16 @@ module VX_pending_instr #(
     parameter CTR_WIDTH  = 12,
     parameter ALM_EMPTY  = 1,
     parameter DECR_COUNT = 1,
-    parameter WARP_CNT = `NUM_WARPS
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input wire                  clk,
     input wire                  reset,
     input wire                  incr,
-    input wire [`NW_WIDTH-1:0]  incr_wid,
+    input wire [WARP_CNT_WIDTH-1:0]  incr_wid,
     input wire [DECR_COUNT-1:0] decr,
-    input wire [DECR_COUNT-1:0][`NW_WIDTH-1:0] decr_wid,
-    input wire [`NW_WIDTH-1:0]  alm_empty_wid,
+    input wire [DECR_COUNT-1:0][WARP_CNT_WIDTH-1:0] decr_wid,
+    input wire [WARP_CNT_WIDTH-1:0]  alm_empty_wid,
     output wire                 empty,
     output wire                 alm_empty
 );

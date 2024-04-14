@@ -17,7 +17,8 @@
 module VX_fpu_unit import VX_fpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input wire clk,
     input wire reset,
@@ -73,7 +74,7 @@ module VX_fpu_unit import VX_fpu_pkg::*; #(
         wire fpu_rsp_has_fflags;
 
         wire [`UUID_WIDTH-1:0]  fpu_rsp_uuid;
-        wire [`NW_WIDTH-1:0]    fpu_rsp_wid;
+        wire [WARP_CNT_WIDTH-1:0]    fpu_rsp_wid;
         wire [NUM_LANES-1:0]    fpu_rsp_tmask;
         wire [`XLEN-1:0]        fpu_rsp_PC;
         wire [`NR_BITS-1:0]     fpu_rsp_rd;
@@ -91,7 +92,7 @@ module VX_fpu_unit import VX_fpu_pkg::*; #(
         wire fpu_rsp_fire = fpu_rsp_valid && fpu_rsp_ready;
 
         VX_index_buffer #(
-            .DATAW  (`UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + PID_WIDTH + 1 + 1),
+            .DATAW  (`UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + PID_WIDTH + 1 + 1),
             .SIZE   (`FPU_REQ_QUEUE_SIZE)
         ) tag_store (
             .clk          (clk),
@@ -233,7 +234,7 @@ module VX_fpu_unit import VX_fpu_pkg::*; #(
         // send response
 
         VX_elastic_buffer #(
-            .DATAW (`UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + (NUM_LANES * `XLEN) + PID_WIDTH + 1 + 1),
+            .DATAW (`UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + (NUM_LANES * `XLEN) + PID_WIDTH + 1 + 1),
             .SIZE  (0)
         ) rsp_buf (
             .clk       (clk),

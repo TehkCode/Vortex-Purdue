@@ -16,18 +16,19 @@
 module VX_split_join import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter WARP_CNT = `NUM_WARPS
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input  wire                     clk,
     input  wire                     reset,
     input  wire                     valid,
-    input  wire [`NW_WIDTH-1:0]     wid,
+    input  wire [WARP_CNT_WIDTH-1:0]     wid,
     input  split_t                  split,
     input  join_t                   sjoin,
     output wire                     join_valid,
     output wire                     join_is_dvg,
     output wire                     join_is_else,
-    output wire [`NW_WIDTH-1:0]     join_wid,
+    output wire [WARP_CNT_WIDTH-1:0]     join_wid,
     output wire [THREAD_CNT-1:0]  join_tmask,
     output wire [`XLEN-1:0]         join_pc
 );
@@ -64,7 +65,7 @@ module VX_split_join import VX_gpu_pkg::*; #(
     end
 
     VX_pipe_register #(
-        .DATAW  (1 + 1 + `NW_WIDTH + 1 + `XLEN + THREAD_CNT),
+        .DATAW  (1 + 1 + WARP_CNT_WIDTH + 1 + `XLEN + THREAD_CNT),
         .DEPTH  (1),
         .RESETW (1)
     ) pipe_reg (

@@ -18,7 +18,8 @@
 module VX_tex_agent import VX_tex_pkg::*; #(
     parameter CORE_ID = 0,
     parameter NUM_LANES = 1,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input wire clk,
     input wire reset,
@@ -63,7 +64,7 @@ module VX_tex_agent import VX_tex_pkg::*; #(
     wire [`VX_TEX_STAGE_BITS-1:0] sfu_exe_stage;
 
     wire [`UUID_WIDTH-1:0]  rsp_uuid;
-    wire [`NW_WIDTH-1:0]    rsp_wid;
+    wire [WARP_CNT_WIDTH-1:0]    rsp_wid;
     wire [NUM_LANES-1:0]    rsp_tmask;
     wire [`XLEN-1:0]        rsp_PC;
     wire [`NR_BITS-1:0]     rsp_rd;
@@ -85,7 +86,7 @@ module VX_tex_agent import VX_tex_pkg::*; #(
     wire mdata_pop  = tex_bus_if.rsp_valid && tex_bus_if.rsp_ready;
 
     VX_index_buffer #(
-        .DATAW (`NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + PID_WIDTH + 1 + 1),
+        .DATAW (WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + PID_WIDTH + 1 + 1),
         .SIZE  (`TEX_REQ_QUEUE_SIZE)
     ) tag_store (
         .clk          (clk),
@@ -131,7 +132,7 @@ module VX_tex_agent import VX_tex_pkg::*; #(
     wire [NUM_LANES-1:0][31:0] commit_data;
 
     VX_elastic_buffer #(
-        .DATAW (`UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + (NUM_LANES * 32) + PID_WIDTH + 1 + 1),
+        .DATAW (`UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + (NUM_LANES * 32) + PID_WIDTH + 1 + 1),
         .SIZE  (2)
     ) rsp_buf (
         .clk       (clk),

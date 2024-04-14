@@ -17,7 +17,8 @@ module VX_fetch import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
     parameter WARP_CNT = `NUM_WARPS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     `SCOPE_IO_DECL
 
@@ -43,7 +44,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
     wire icache_req_ready;
 
     wire [`UUID_WIDTH-1:0] rsp_uuid;
-    wire [`NW_WIDTH-1:0] req_tag, rsp_tag;    
+    wire [WARP_CNT_WIDTH-1:0] req_tag, rsp_tag;    
 
     wire icache_req_fire = icache_req_valid && icache_req_ready;
 

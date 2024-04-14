@@ -13,15 +13,15 @@
 
 `include "VX_define.vh"
 // parameter THREAD_CNT = `NUM_THREADS
-interface VX_sched_csr_if #(parameter THREAD_CNT = `NUM_THREADS, parameter WARP_CNT = `NUM_WARPS)();
+interface VX_sched_csr_if #(parameter THREAD_CNT = `NUM_THREADS, parameter WARP_CNT = `NUM_WARPS, parameter WARP_CNT_WIDTH = `NW_WIDTH)();
 
     wire [`PERF_CTR_BITS-1:0] cycles;
     wire [WARP_CNT-1:0] active_warps;
     wire [WARP_CNT-1:0][THREAD_CNT-1:0] thread_masks;
     wire alm_empty;
-    wire [`NW_WIDTH-1:0] alm_empty_wid;
+    wire [WARP_CNT_WIDTH-1:0] alm_empty_wid;
     wire unlock_warp;
-    wire [`NW_WIDTH-1:0] unlock_wid;
+    wire [WARP_CNT_WIDTH-1:0] unlock_wid;
 
     modport master (
         output cycles,
