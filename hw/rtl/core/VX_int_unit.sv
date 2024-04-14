@@ -17,7 +17,8 @@ module VX_int_unit #(
     parameter CORE_ID   = 0,
     parameter BLOCK_IDX = 0,
     parameter NUM_LANES = 1,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) (
     input wire              clk,
     input wire              reset,
@@ -137,7 +138,7 @@ module VX_int_unit #(
     end   
 
     VX_elastic_buffer #(
-        .DATAW (`UUID_WIDTH + `NW_WIDTH + NUM_LANES + `NR_BITS + 1 + PID_WIDTH + 1 + 1 + (NUM_LANES * `XLEN) + `XLEN + `XLEN + 1 + `INST_BR_BITS + LANE_WIDTH)
+        .DATAW (`UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `NR_BITS + 1 + PID_WIDTH + 1 + 1 + (NUM_LANES * `XLEN) + `XLEN + `XLEN + 1 + `INST_BR_BITS + LANE_WIDTH)
     ) rsp_buf (
         .clk      (clk),
         .reset    (reset),
@@ -161,11 +162,11 @@ module VX_int_unit #(
     wire br_enable = is_br_op_r && commit_if.valid && commit_if.ready && commit_if.data.eop;
     wire br_taken = ((is_br_less ? is_less : is_equal) ^ is_br_neg) | is_br_static;
     wire [`XLEN-1:0] br_dest = is_br_static ? br_result : (PC_r + imm_r);
-    wire [`NW_WIDTH-1:0] br_wid;
+    wire [WARP_CNT_WIDTH-1:0] br_wid;
     `ASSIGN_BLOCKED_WID (br_wid, commit_if.data.wid, BLOCK_IDX, `NUM_ALU_BLOCKS)
 
     VX_pipe_register #(
-        .DATAW (1 + `NW_WIDTH + 1 + `XLEN)
+        .DATAW (1 + WARP_CNT_WIDTH + 1 + `XLEN)
     ) branch_reg (
         .clk      (clk),
         .reset    (reset),

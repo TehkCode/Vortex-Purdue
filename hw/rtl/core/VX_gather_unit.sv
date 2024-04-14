@@ -18,7 +18,8 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
     parameter NUM_LANES  = 1,
     parameter OUT_REG    = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT_WIDTH = `NW_WIDTH
 ) ( 
     input  wire         clk,
     input  wire         reset,
@@ -33,8 +34,8 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
     localparam BLOCK_SIZE_W = `LOG2UP(BLOCK_SIZE);
     localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
-    localparam DATAW        = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + 1 + `NR_BITS + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
-    localparam DATA_WIS_OFF = DATAW - (`UUID_WIDTH + `NW_WIDTH);
+    localparam DATAW        = `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + 1 + `NR_BITS + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
+    localparam DATA_WIS_OFF = DATAW - (`UUID_WIDTH + WARP_CNT_WIDTH);
 
     wire [BLOCK_SIZE-1:0] commit_in_valid;
     wire [BLOCK_SIZE-1:0][DATAW-1:0] commit_in_data;
