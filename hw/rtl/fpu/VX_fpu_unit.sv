@@ -16,15 +16,16 @@
 
 module VX_fpu_unit import VX_fpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) (
     input wire clk,
     input wire reset,
 
-    VX_dispatch_if.slave    dispatch_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    dispatch_if [ISSUE_CNT],
     VX_fpu_to_csr_if.master fpu_to_csr_if[`NUM_FPU_BLOCKS],
 
-    VX_commit_if.master     commit_if [`ISSUE_WIDTH]
+    VX_commit_if.master     commit_if [ISSUE_CNT]
 );
     `UNUSED_PARAM (CORE_ID)
     localparam BLOCK_SIZE = `NUM_FPU_BLOCKS;
@@ -32,7 +33,7 @@ module VX_fpu_unit import VX_fpu_pkg::*; #(
     localparam PID_BITS   = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH  = `UP(PID_BITS);
     localparam TAG_WIDTH  = `LOG2UP(`FPU_REQ_QUEUE_SIZE);
-    localparam PARTIAL_BW = (BLOCK_SIZE != `ISSUE_WIDTH) || (NUM_LANES != THREAD_CNT);
+    localparam PARTIAL_BW = (BLOCK_SIZE != ISSUE_CNT) || (NUM_LANES != THREAD_CNT);
 
     VX_execute_if #(
         .NUM_LANES (NUM_LANES),

@@ -16,7 +16,8 @@
 module VX_fetch import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter WARP_CNT = `NUM_WARPS
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) (
     `SCOPE_IO_DECL
 
@@ -34,7 +35,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
 );
     `UNUSED_PARAM (CORE_ID)
     `UNUSED_VAR (reset)
-    localparam ISW_WIDTH  = `LOG2UP(`ISSUE_WIDTH);
+    localparam ISW_WIDTH  = `LOG2UP(ISSUE_CNT);
 
     wire icache_req_valid;
     wire [ICACHE_ADDR_WIDTH-1:0] icache_req_addr;
@@ -73,8 +74,8 @@ module VX_fetch import VX_gpu_pkg::*; #(
     // Ensure that the ibuffer doesn't fill up.
     // This resolves potential deadlock if ibuffer fills and the LSU stalls the execute stage due to pending dcache request.
     // This issue is particularly prevalent when the icache and dcache is disabled and both requests share the same bus.
-    wire [`ISSUE_WIDTH-1:0] pending_ibuf_full;
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    wire [ISSUE_CNT-1:0] pending_ibuf_full;
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         VX_pending_size #( 
             .SIZE (`IBUF_SIZE)
         ) pending_reads (

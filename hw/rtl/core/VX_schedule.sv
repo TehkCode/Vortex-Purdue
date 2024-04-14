@@ -16,7 +16,8 @@
 module VX_schedule import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter WARP_CNT = `NUM_WARPS
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) (    
     input wire              clk,
     input wire              reset,
@@ -338,7 +339,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
     wire no_pending_instr;
     VX_pending_instr #( 
         .CTR_WIDTH  (12),
-        .DECR_COUNT (`ISSUE_WIDTH),
+        .DECR_COUNT (ISSUE_CNT),
         .ALM_EMPTY  (1)
     ) pending_instr(
         .clk       (clk),

@@ -15,7 +15,8 @@
 
 module VX_execute import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) (
     `SCOPE_IO_DECL
 
@@ -39,8 +40,8 @@ module VX_execute import VX_gpu_pkg::*; #(
 `endif
 
 `ifdef EXT_F_ENABLE
-    VX_dispatch_if.slave    fpu_dispatch_if [`ISSUE_WIDTH],
-    VX_commit_if.master     fpu_commit_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    fpu_dispatch_if [ISSUE_CNT],
+    VX_commit_if.master     fpu_commit_if [ISSUE_CNT],
 `endif
 
 `ifdef EXT_TEX_ENABLE
@@ -67,15 +68,15 @@ module VX_execute import VX_gpu_pkg::*; #(
 `endif
 `endif    
   
-    VX_dispatch_if.slave    alu_dispatch_if [`ISSUE_WIDTH],
-    VX_commit_if.master     alu_commit_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    alu_dispatch_if [ISSUE_CNT],
+    VX_commit_if.master     alu_commit_if [ISSUE_CNT],
     VX_branch_ctl_if.master branch_ctl_if [`NUM_ALU_BLOCKS],
     
-    VX_dispatch_if.slave    lsu_dispatch_if [`ISSUE_WIDTH],  
-    VX_commit_if.master     lsu_commit_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    lsu_dispatch_if [ISSUE_CNT],  
+    VX_commit_if.master     lsu_commit_if [ISSUE_CNT],
     
-    VX_dispatch_if.slave    sfu_dispatch_if [`ISSUE_WIDTH], 
-    VX_commit_if.master     sfu_commit_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    sfu_dispatch_if [ISSUE_CNT], 
+    VX_commit_if.master     sfu_commit_if [ISSUE_CNT],
     VX_warp_ctl_if.master   warp_ctl_if,
 
     // simulation helper signals

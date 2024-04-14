@@ -13,10 +13,10 @@
 
 `include "VX_define.vh"
 
-interface VX_commit_sched_if ();
+interface VX_commit_sched_if #(parameter ISSUE_CNT = `ISSUE_WIDTH) ();
 
-    wire [`ISSUE_WIDTH-1:0] committed;
-    wire [`ISSUE_WIDTH-1:0][`NW_WIDTH-1:0] committed_wid;
+    wire [ISSUE_CNT-1:0] committed;
+    wire [ISSUE_CNT-1:0][`NW_WIDTH-1:0] committed_wid;
 
     modport master (
         output committed,

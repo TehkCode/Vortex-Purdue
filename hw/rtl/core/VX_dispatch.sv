@@ -15,7 +15,8 @@
 
 module VX_dispatch import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) (
     input wire              clk,
     input wire              reset,
@@ -24,28 +25,28 @@ module VX_dispatch import VX_gpu_pkg::*; #(
     output wire [`PERF_CTR_BITS-1:0] perf_stalls [`NUM_EX_UNITS],
 `endif
     // inputs
-    VX_operands_if.slave    operands_if [`ISSUE_WIDTH],
+    VX_operands_if.slave    operands_if [ISSUE_CNT],
 
     // outputs
-    VX_dispatch_if.master   alu_dispatch_if [`ISSUE_WIDTH],
-    VX_dispatch_if.master   lsu_dispatch_if [`ISSUE_WIDTH],
+    VX_dispatch_if.master   alu_dispatch_if [ISSUE_CNT],
+    VX_dispatch_if.master   lsu_dispatch_if [ISSUE_CNT],
 `ifdef EXT_F_ENABLE
-    VX_dispatch_if.master   fpu_dispatch_if [`ISSUE_WIDTH],
+    VX_dispatch_if.master   fpu_dispatch_if [ISSUE_CNT],
 `endif
-    VX_dispatch_if.master   sfu_dispatch_if [`ISSUE_WIDTH] 
+    VX_dispatch_if.master   sfu_dispatch_if [ISSUE_CNT] 
 );
     `UNUSED_PARAM (CORE_ID)
 
     localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + 1 + `XLEN + `XLEN + `NR_BITS + (3 * THREAD_CNT * `XLEN) + `NT_WIDTH;
 
-    wire [`ISSUE_WIDTH-1:0][`NT_WIDTH-1:0] last_active_tid;
+    wire [ISSUE_CNT-1:0][`NT_WIDTH-1:0] last_active_tid;
 
     wire [THREAD_CNT-1:0][`NT_WIDTH-1:0] tids;
     for (genvar i = 0; i < THREAD_CNT; ++i) begin                 
         assign tids[i] = `NT_WIDTH'(i);
     end
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         VX_find_first #(
             .N (THREAD_CNT),
             .DATAW (`NT_WIDTH),
@@ -60,9 +61,9 @@ module VX_dispatch import VX_gpu_pkg::*; #(
  
     // ALU dispatch    
 
-    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) alu_operands_if[`ISSUE_WIDTH]();
+    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) alu_operands_if[ISSUE_CNT]();
     
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign alu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_ALU);
         assign alu_operands_if[i].data = operands_if[i].data;
 
@@ -86,9 +87,9 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 
     // LSU dispatch
 
-    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) lsu_operands_if[`ISSUE_WIDTH]();
+    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) lsu_operands_if[ISSUE_CNT]();
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign lsu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_LSU);
         assign lsu_operands_if[i].data = operands_if[i].data;
 
@@ -114,9 +115,9 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 
 `ifdef EXT_F_ENABLE
 
-    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) fpu_operands_if[`ISSUE_WIDTH]();
+    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) fpu_operands_if[ISSUE_CNT]();
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign fpu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_FPU);
         assign fpu_operands_if[i].data = operands_if[i].data;
 
@@ -141,9 +142,9 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 
     // SFU dispatch
 
-    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) sfu_operands_if[`ISSUE_WIDTH]();
+    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) sfu_operands_if[ISSUE_CNT]();
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign sfu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_SFU);
         assign sfu_operands_if[i].data = operands_if[i].data;
 
@@ -166,7 +167,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
     end
 
     // can take next request?
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign operands_if[i].ready = (alu_operands_if[i].ready && (operands_if[i].data.ex_type == `EX_ALU)) 
                                    || (lsu_operands_if[i].ready && (operands_if[i].data.ex_type == `EX_LSU))
                                 `ifdef EXT_F_ENABLE
@@ -177,17 +178,17 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 
 `ifdef PERF_ENABLE
     reg [`NUM_EX_UNITS-1:0][`PERF_CTR_BITS-1:0] perf_stalls_n, perf_stalls_r;
-    wire [`ISSUE_WIDTH-1:0] operands_stall;
-    wire [`ISSUE_WIDTH-1:0][`EX_BITS-1:0] operands_ex_type;
+    wire [ISSUE_CNT-1:0] operands_stall;
+    wire [ISSUE_CNT-1:0][`EX_BITS-1:0] operands_ex_type;
 
-    for (genvar i=0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i=0; i < ISSUE_CNT; ++i) begin
         assign operands_stall[i] = operands_if[i].valid && ~operands_if[i].ready;
         assign operands_ex_type[i] = operands_if[i].data.ex_type;
     end
 
     always @(*) begin
         perf_stalls_n = perf_stalls_r;
-        for (integer i=0; i < `ISSUE_WIDTH; ++i) begin
+        for (integer i=0; i < ISSUE_CNT; ++i) begin
             if (operands_stall[i]) begin
                 perf_stalls_n[operands_ex_type[i]] += `PERF_CTR_BITS'(1);
             end
@@ -208,7 +209,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 `endif
 
 `ifdef DBG_TRACE_CORE_PIPELINE
-    for (genvar i=0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i=0; i < ISSUE_CNT; ++i) begin
         always @(posedge clk) begin
             if (operands_if[i].valid && operands_if[i].ready) begin
                 `TRACE(1, ("%d: core%0d-issue: wid=%0d, PC=0x%0h, ex=", $time, CORE_ID, wis_to_wid(operands_if[i].data.wis, i), operands_if[i].data.PC));

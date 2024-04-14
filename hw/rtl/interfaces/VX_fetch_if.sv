@@ -13,7 +13,7 @@
 
 `include "VX_define.vh"
 
-interface VX_fetch_if #(parameter THREAD_CNT = `NUM_THREADS)();
+interface VX_fetch_if #(parameter THREAD_CNT = `NUM_THREADS, parameter ISSUE_CNT = `ISSUE_WIDTH)();
 
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]     uuid;
@@ -27,7 +27,7 @@ interface VX_fetch_if #(parameter THREAD_CNT = `NUM_THREADS)();
     data_t data;
     logic  ready;
     
-    logic [`ISSUE_WIDTH-1:0] ibuf_pop;
+    logic [ISSUE_CNT-1:0] ibuf_pop;
 
     modport master (
         output valid,

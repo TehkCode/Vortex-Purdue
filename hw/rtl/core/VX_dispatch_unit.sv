@@ -18,13 +18,14 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
     parameter NUM_LANES  = 1,
     parameter OUT_REG    = 0,
     parameter MAX_FANOUT = `MAX_FANOUT,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) ( 
     input  wire             clk,
     input  wire             reset,
 
     // inputs    
-    VX_dispatch_if.slave    dispatch_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    dispatch_if [ISSUE_CNT],
 
     // outputs
     VX_execute_if.master    execute_if [BLOCK_SIZE]
@@ -35,9 +36,9 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
     localparam NUM_PACKETS  = `UP(THREAD_CNT / NUM_LANES);
     localparam PID_BITS     = `CLOG2(NUM_PACKETS);
     localparam PID_WIDTH    = `UP(PID_BITS);
-    localparam BATCH_COUNT  = `ISSUE_WIDTH / BLOCK_SIZE;
+    localparam BATCH_COUNT  = ISSUE_CNT / BLOCK_SIZE;
     localparam BATCH_COUNT_W= `LOG2UP(BATCH_COUNT);
-    localparam ISSUE_W      = `LOG2UP(`ISSUE_WIDTH);
+    localparam ISSUE_W      = `LOG2UP(ISSUE_CNT);
     localparam IN_DATAW     = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + 1 + `XLEN + `XLEN + `NR_BITS + `NT_WIDTH + (3 * THREAD_CNT * `XLEN);
     localparam OUT_DATAW    = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + 1 + `XLEN + `XLEN + `NR_BITS + `NT_WIDTH + (3 * NUM_LANES * `XLEN) + PID_WIDTH + 1 + 1;
     localparam FANOUT_ENABLE= (THREAD_CNT > (MAX_FANOUT + MAX_FANOUT/2));
@@ -45,11 +46,11 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
     localparam DATA_TMASK_OFF = IN_DATAW - (`UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT);
     localparam DATA_REGS_OFF = 0;
 
-    wire [`ISSUE_WIDTH-1:0] dispatch_valid;
-    wire [`ISSUE_WIDTH-1:0][IN_DATAW-1:0] dispatch_data;
-    wire [`ISSUE_WIDTH-1:0] dispatch_ready;
+    wire [ISSUE_CNT-1:0] dispatch_valid;
+    wire [ISSUE_CNT-1:0][IN_DATAW-1:0] dispatch_data;
+    wire [ISSUE_CNT-1:0] dispatch_ready;
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign dispatch_valid[i] = dispatch_if[i].valid;
         assign dispatch_data[i] = dispatch_if[i].data;
         assign dispatch_if[i].ready = dispatch_ready[i];
@@ -245,7 +246,7 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
         );
     end
 
-    reg [`ISSUE_WIDTH-1:0] ready_in;
+    reg [ISSUE_CNT-1:0] ready_in;
     always @(*) begin
         ready_in = 0;
         for (integer i = 0; i < BLOCK_SIZE; ++i) begin

@@ -15,19 +15,20 @@
 
 module VX_scoreboard import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) (
     input wire              clk,
     input wire              reset,
 
-    VX_writeback_if.slave   writeback_if [`ISSUE_WIDTH],
-    VX_ibuffer_if.slave     ibuffer_if [`ISSUE_WIDTH],
-    VX_ibuffer_if.master    scoreboard_if [`ISSUE_WIDTH]
+    VX_writeback_if.slave   writeback_if [ISSUE_CNT],
+    VX_ibuffer_if.slave     ibuffer_if [ISSUE_CNT],
+    VX_ibuffer_if.master    scoreboard_if [ISSUE_CNT]
 );
     `UNUSED_PARAM (CORE_ID)
     localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4) + 1;
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         reg [`UP(ISSUE_RATIO)-1:0][`NUM_REGS-1:0] inuse_regs, inuse_regs_n;
         reg [3:0] ready_masks, ready_masks_n;        
         VX_ibuffer_if #(.THREAD_CNT(THREAD_CNT)) staging_if();

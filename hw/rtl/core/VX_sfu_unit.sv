@@ -15,7 +15,8 @@
 
 module VX_sfu_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) (    
     input wire              clk,
     input wire              reset,
@@ -28,7 +29,7 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     input base_dcrs_t       base_dcrs,
 
     // Inputs
-    VX_dispatch_if.slave    dispatch_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    dispatch_if [ISSUE_CNT],
     
 `ifdef EXT_F_ENABLE
     VX_fpu_to_csr_if.slave  fpu_to_csr_if [`NUM_FPU_BLOCKS],
@@ -59,7 +60,7 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
 `endif
 
     // Outputs
-    VX_commit_if.master     commit_if [`ISSUE_WIDTH],
+    VX_commit_if.master     commit_if [ISSUE_CNT],
     VX_commit_csr_if.slave  commit_csr_if,
     VX_sched_csr_if.slave   sched_csr_if,
     VX_warp_ctl_if.master   warp_ctl_if    

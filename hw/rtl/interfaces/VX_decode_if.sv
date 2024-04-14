@@ -13,7 +13,7 @@
 
 `include "VX_define.vh"
 
-interface VX_decode_if #(parameter THREAD_CNT = `NUM_THREADS)();
+interface VX_decode_if #(parameter THREAD_CNT = `NUM_THREADS, parameter ISSUE_CNT = `ISSUE_WIDTH)();
 
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]     uuid;
@@ -37,7 +37,7 @@ interface VX_decode_if #(parameter THREAD_CNT = `NUM_THREADS)();
     data_t data;
     logic  ready;
 
-    wire [`ISSUE_WIDTH-1:0] ibuf_pop;
+    wire [ISSUE_CNT-1:0] ibuf_pop;
 
     modport master (
         output valid,

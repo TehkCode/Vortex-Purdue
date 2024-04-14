@@ -17,7 +17,8 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
     parameter BLOCK_SIZE = 1,
     parameter NUM_LANES  = 1,
     parameter OUT_REG    = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) ( 
     input  wire         clk,
     input  wire         reset,
@@ -26,7 +27,7 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
     VX_commit_if.slave  commit_in_if [BLOCK_SIZE],
     
     // outputs
-    VX_commit_if.master commit_out_if [`ISSUE_WIDTH]
+    VX_commit_if.master commit_out_if [ISSUE_CNT]
 
 );
     localparam BLOCK_SIZE_W = `LOG2UP(BLOCK_SIZE);
@@ -44,7 +45,7 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
         assign commit_in_valid[i] = commit_in_if[i].valid;
         assign commit_in_data[i] = commit_in_if[i].data;
         assign commit_in_if[i].ready = commit_in_ready[i];
-        if (BLOCK_SIZE != `ISSUE_WIDTH) begin
+        if (BLOCK_SIZE != ISSUE_CNT) begin
             if (BLOCK_SIZE != 1) begin
                 assign commit_in_wsi[i] = {commit_in_data[i][DATA_WIS_OFF+BLOCK_SIZE_W +: (ISSUE_IDX_W-BLOCK_SIZE_W)], BLOCK_SIZE_W'(i)};
             end else begin
@@ -55,13 +56,13 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
         end
     end
 
-    reg [`ISSUE_WIDTH-1:0] commit_out_valid;
-    reg [`ISSUE_WIDTH-1:0][DATAW-1:0] commit_out_data;
-    wire [`ISSUE_WIDTH-1:0] commit_out_ready;
+    reg [ISSUE_CNT-1:0] commit_out_valid;
+    reg [ISSUE_CNT-1:0][DATAW-1:0] commit_out_data;
+    wire [ISSUE_CNT-1:0] commit_out_ready;
 
     always @(*) begin
         commit_out_valid = '0;
-        for (integer i = 0; i < `ISSUE_WIDTH; ++i) begin
+        for (integer i = 0; i < ISSUE_CNT; ++i) begin
             commit_out_data[i] = 'x;
         end
         for (integer i = 0; i < BLOCK_SIZE; ++i) begin
@@ -73,7 +74,7 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
         assign commit_in_ready[i] = commit_out_ready[commit_in_wsi[i]];
     end
     
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         VX_commit_if #(
             .THREAD_CNT (THREAD_CNT),
             .NUM_LANES (NUM_LANES)

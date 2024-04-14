@@ -15,7 +15,8 @@
 
 module VX_lsu_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) (    
     `SCOPE_IO_DECL
 
@@ -26,10 +27,10 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     VX_mem_bus_if.master    cache_bus_if [DCACHE_NUM_REQS],
 
     // inputs
-    VX_dispatch_if.slave    dispatch_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    dispatch_if [ISSUE_CNT],
 
     // outputs    
-    VX_commit_if.master     commit_if [`ISSUE_WIDTH]
+    VX_commit_if.master     commit_if [ISSUE_CNT]
 );
     localparam BLOCK_SIZE   = 1;
     localparam NUM_LANES    = `MIN(`NUM_LSU_LANES,THREAD_CNT);//; //
