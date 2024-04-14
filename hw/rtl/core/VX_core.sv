@@ -31,7 +31,8 @@
 
 module VX_core import VX_gpu_pkg::*; #( 
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS
 ) (        
     `SCOPE_IO_DECL
     
@@ -139,7 +140,8 @@ module VX_core import VX_gpu_pkg::*; #(
 
     VX_schedule #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) schedule (
         .clk            (clk),
         .reset          (schedule_reset),   
@@ -162,7 +164,8 @@ module VX_core import VX_gpu_pkg::*; #(
 
     VX_fetch #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) fetch (
         `SCOPE_IO_BIND  (0)
         .clk            (clk),
