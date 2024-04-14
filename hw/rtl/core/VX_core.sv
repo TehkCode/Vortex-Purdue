@@ -32,7 +32,8 @@
 module VX_core import VX_gpu_pkg::*; #( 
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter WARP_CNT = `NUM_WARPS
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH
 ) (        
     `SCOPE_IO_DECL
     
@@ -95,19 +96,19 @@ module VX_core import VX_gpu_pkg::*; #(
     VX_branch_ctl_if    branch_ctl_if[`NUM_ALU_BLOCKS]();
     VX_warp_ctl_if      warp_ctl_if();    
     
-    VX_dispatch_if #(.THREAD_CNT(THREAD_CNT))     alu_dispatch_if[`ISSUE_WIDTH]();
-    VX_commit_if   #(.THREAD_CNT(THREAD_CNT))     alu_commit_if[`ISSUE_WIDTH]();
+    VX_dispatch_if #(.THREAD_CNT(THREAD_CNT))     alu_dispatch_if[ISSUE_CNT]();
+    VX_commit_if   #(.THREAD_CNT(THREAD_CNT))     alu_commit_if[ISSUE_CNT]();
 
-    VX_dispatch_if #(.THREAD_CNT(THREAD_CNT))     lsu_dispatch_if[`ISSUE_WIDTH]();
-    VX_commit_if    #(.THREAD_CNT(THREAD_CNT))    lsu_commit_if[`ISSUE_WIDTH]();
+    VX_dispatch_if #(.THREAD_CNT(THREAD_CNT))     lsu_dispatch_if[ISSUE_CNT]();
+    VX_commit_if    #(.THREAD_CNT(THREAD_CNT))    lsu_commit_if[ISSUE_CNT]();
 `ifdef EXT_F_ENABLE 
-    VX_dispatch_if  #(.THREAD_CNT(THREAD_CNT))    fpu_dispatch_if[`ISSUE_WIDTH]();
-    VX_commit_if    #(.THREAD_CNT(THREAD_CNT))    fpu_commit_if[`ISSUE_WIDTH]();
+    VX_dispatch_if  #(.THREAD_CNT(THREAD_CNT))    fpu_dispatch_if[ISSUE_CNT]();
+    VX_commit_if    #(.THREAD_CNT(THREAD_CNT))    fpu_commit_if[ISSUE_CNT]();
 `endif
-    VX_dispatch_if  #(.THREAD_CNT(THREAD_CNT))    sfu_dispatch_if[`ISSUE_WIDTH]();
-    VX_commit_if #(.THREAD_CNT(THREAD_CNT))       sfu_commit_if[`ISSUE_WIDTH]();    
+    VX_dispatch_if  #(.THREAD_CNT(THREAD_CNT))    sfu_dispatch_if[ISSUE_CNT]();
+    VX_commit_if #(.THREAD_CNT(THREAD_CNT))       sfu_commit_if[ISSUE_CNT]();    
     
-    VX_writeback_if #(.THREAD_CNT(THREAD_CNT))     writeback_if[`ISSUE_WIDTH]();
+    VX_writeback_if #(.THREAD_CNT(THREAD_CNT))     writeback_if[ISSUE_CNT]();
 
     VX_mem_bus_if #(
         .DATA_SIZE (DCACHE_WORD_SIZE), 
