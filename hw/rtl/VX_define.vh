@@ -11,473 +11,439 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-`ifndef VX_TYPES_VH
-`define VX_TYPES_VH
+`ifndef VX_DEFINE_VH
+`define VX_DEFINE_VH
 
-// Device configuration registers
+`include "VX_platform.vh"
+`include "VX_config.vh"
+`include "VX_types.vh"
 
-`define VX_CSR_ADDR_BITS                12
-`define VX_DCR_ADDR_BITS                12
+///////////////////////////////////////////////////////////////////////////////
 
-`define VX_DCR_BASE_STATE_BEGIN         12'h001
-`define VX_DCR_BASE_STARTUP_ADDR0       12'h001
-`define VX_DCR_BASE_STARTUP_ADDR1       12'h002
-`define VX_DCR_BASE_MPM_CLASS           12'h003
-`define VX_DCR_BASE_STATE_END           12'h004
+`define NW_BITS         `CLOG2(`NUM_WARPS)
+`define NC_WIDTH        `UP(`NC_BITS)
 
-`define VX_DCR_BASE_STATE(addr)         ((addr) - `VX_DCR_BASE_STATE_BEGIN)
-`define VX_DCR_BASE_STATE_COUNT         (`VX_DCR_BASE_STATE_END-`VX_DCR_BASE_STATE_BEGIN)
+`define NT_BITS         `CLOG2(`NUM_THREADS)
+`define NW_WIDTH        `UP(`NW_BITS)
 
-// Machine Performance-monitoring counters classes
+`define NC_BITS         `CLOG2(`NUM_CORES)
+`define NT_WIDTH        `UP(`NT_BITS)
 
-`define VX_DCR_MPM_CLASS_NONE           0           
-`define VX_DCR_MPM_CLASS_CORE           1
-`define VX_DCR_MPM_CLASS_MEM            2
-`define VX_DCR_MPM_CLASS_TEX            3
-`define VX_DCR_MPM_CLASS_RASTER         4
-`define VX_DCR_MPM_CLASS_ROP            5
+`define NB_BITS         `CLOG2(`NUM_BARRIERS)
+`define NB_WIDTH        `UP(`NB_BITS)
 
-// User Floating-Point CSRs
+`define NUM_IREGS       32
 
-`define VX_CSR_FFLAGS                   12'h001
-`define VX_CSR_FRM                      12'h002
-`define VX_CSR_FCSR                     12'h003
- 
-`define VX_CSR_SATP                     12'h180
+`define NRI_BITS        `CLOG2(`NUM_IREGS)
 
-`define VX_CSR_PMPCFG0                  12'h3A0
-`define VX_CSR_PMPADDR0                 12'h3B0
+`ifdef EXT_F_ENABLE
+`define NUM_REGS        (2 * `NUM_IREGS)
+`else
+`define NUM_REGS        `NUM_IREGS
+`endif
 
-`define VX_CSR_MSTATUS                  12'h300
-`define VX_CSR_MISA                     12'h301
-`define VX_CSR_MEDELEG                  12'h302
-`define VX_CSR_MIDELEG                  12'h303
-`define VX_CSR_MIE                      12'h304
-`define VX_CSR_MTVEC                    12'h305
+`define NR_BITS         `CLOG2(`NUM_REGS)
 
-`define VX_CSR_MEPC                     12'h341
+`define PERF_CTR_BITS   44
 
-`define VX_CSR_MNSTATUS                 12'h744
+`ifndef NDEBUG
+`define UUID_WIDTH      44
+`else
+`define UUID_WIDTH      1
+`endif
 
-`define VX_CSR_MPM_BASE                 12'hB00
-`define VX_CSR_MPM_BASE_H               12'hB80
+///////////////////////////////////////////////////////////////////////////////
 
-// Machine Performance-monitoring core counters
-// PERF: Standard
-`define VX_CSR_MCYCLE                   12'hB00
-`define VX_CSR_MCYCLE_H                 12'hB80
-`define VX_CSR_MPM_RESERVED             12'hB01
-`define VX_CSR_MPM_RESERVED_H           12'hB81
-`define VX_CSR_MINSTRET                 12'hB02
-`define VX_CSR_MINSTRET_H               12'hB82
-// PERF: pipeline
-`define VX_CSR_MPM_IBUF_ST              12'hB03
-`define VX_CSR_MPM_IBUF_ST_H            12'hB83
-`define VX_CSR_MPM_SCRB_ST              12'hB04
-`define VX_CSR_MPM_SCRB_ST_H            12'hB84
-`define VX_CSR_MPM_ALU_ST               12'hB05
-`define VX_CSR_MPM_ALU_ST_H             12'hB85
-`define VX_CSR_MPM_LSU_ST               12'hB06
-`define VX_CSR_MPM_LSU_ST_H             12'hB86
-`define VX_CSR_MPM_FPU_ST               12'hB07
-`define VX_CSR_MPM_FPU_ST_H             12'hB87
-`define VX_CSR_MPM_SFU_ST               12'hB08
-`define VX_CSR_MPM_SFU_ST_H             12'hB88
-// PERF: memory
-`define VX_CSR_MPM_IFETCHES             12'hB0A
-`define VX_CSR_MPM_IFETCHES_H           12'hB8A
-`define VX_CSR_MPM_LOADS                12'hB0B
-`define VX_CSR_MPM_LOADS_H              12'hB8B
-`define VX_CSR_MPM_STORES               12'hB0C
-`define VX_CSR_MPM_STORES_H             12'hB8C
-`define VX_CSR_MPM_IFETCH_LAT           12'hB0D
-`define VX_CSR_MPM_IFETCH_LAT_H         12'hB8D
-`define VX_CSR_MPM_LOAD_LAT             12'hB0E 
-`define VX_CSR_MPM_LOAD_LAT_H           12'hB8E
+`define EX_ALU          0
+`define EX_LSU          1
+`define EX_SFU          2
+`define EX_FPU          3
 
-// Machine Performance-monitoring memory counters
-// PERF: icache
-`define VX_CSR_MPM_ICACHE_READS         12'hB03     // total reads
-`define VX_CSR_MPM_ICACHE_READS_H       12'hB83
-`define VX_CSR_MPM_ICACHE_MISS_R        12'hB04     // read misses
-`define VX_CSR_MPM_ICACHE_MISS_R_H      12'hB84
-// PERF: dcache
-`define VX_CSR_MPM_DCACHE_READS         12'hB05     // total reads
-`define VX_CSR_MPM_DCACHE_READS_H       12'hB85
-`define VX_CSR_MPM_DCACHE_WRITES        12'hB06     // total writes
-`define VX_CSR_MPM_DCACHE_WRITES_H      12'hB86
-`define VX_CSR_MPM_DCACHE_MISS_R        12'hB07     // read misses
-`define VX_CSR_MPM_DCACHE_MISS_R_H      12'hB87
-`define VX_CSR_MPM_DCACHE_MISS_W        12'hB08     // write misses
-`define VX_CSR_MPM_DCACHE_MISS_W_H      12'hB88
-`define VX_CSR_MPM_DCACHE_BANK_ST       12'hB09     // bank conflicts
-`define VX_CSR_MPM_DCACHE_BANK_ST_H     12'hB89
-`define VX_CSR_MPM_DCACHE_MSHR_ST       12'hB0A     // MSHR stalls
-`define VX_CSR_MPM_DCACHE_MSHR_ST_H     12'hB8A
-// PERF: smem
-`define VX_CSR_MPM_SMEM_READS           12'hB0B     // memory reads
-`define VX_CSR_MPM_SMEM_READS_H         12'hB8B
-`define VX_CSR_MPM_SMEM_WRITES          12'hB0C     // memory writes
-`define VX_CSR_MPM_SMEM_WRITES_H        12'hB8C
-`define VX_CSR_MPM_SMEM_BANK_ST         12'hB0D     // bank conflicts
-`define VX_CSR_MPM_SMEM_BANK_ST_H       12'hB8D
-// PERF: l2cache
-`define VX_CSR_MPM_L2CACHE_READS        12'hB0E     // total reads
-`define VX_CSR_MPM_L2CACHE_READS_H      12'hB8E
-`define VX_CSR_MPM_L2CACHE_WRITES       12'hB0F     // total writes
-`define VX_CSR_MPM_L2CACHE_WRITES_H     12'hB8F
-`define VX_CSR_MPM_L2CACHE_MISS_R       12'hB10     // read misses
-`define VX_CSR_MPM_L2CACHE_MISS_R_H     12'hB90
-`define VX_CSR_MPM_L2CACHE_MISS_W       12'hB11     // write misses
-`define VX_CSR_MPM_L2CACHE_MISS_W_H     12'hB91
-`define VX_CSR_MPM_L2CACHE_BANK_ST      12'hB12     // bank conflicts
-`define VX_CSR_MPM_L2CACHE_BANK_ST_H    12'hB92
-`define VX_CSR_MPM_L2CACHE_MSHR_ST      12'hB13     // MSHR stalls
-`define VX_CSR_MPM_L2CACHE_MSHR_ST_H    12'hB93
-// PERF: l3cache
-`define VX_CSR_MPM_L3CACHE_READS        12'hB14     // total reads
-`define VX_CSR_MPM_L3CACHE_READS_H      12'hB94
-`define VX_CSR_MPM_L3CACHE_WRITES       12'hB15     // total writes
-`define VX_CSR_MPM_L3CACHE_WRITES_H     12'hB95
-`define VX_CSR_MPM_L3CACHE_MISS_R       12'hB16     // read misses
-`define VX_CSR_MPM_L3CACHE_MISS_R_H     12'hB96
-`define VX_CSR_MPM_L3CACHE_MISS_W       12'hB17     // write misses
-`define VX_CSR_MPM_L3CACHE_MISS_W_H     12'hB97
-`define VX_CSR_MPM_L3CACHE_BANK_ST      12'hB18     // bank conflicts
-`define VX_CSR_MPM_L3CACHE_BANK_ST_H    12'hB98
-`define VX_CSR_MPM_L3CACHE_MSHR_ST      12'hB19     // MSHR stalls
-`define VX_CSR_MPM_L3CACHE_MSHR_ST_H    12'hB99
-// PERF: memory
-`define VX_CSR_MPM_MEM_READS            12'hB1A     // total reads
-`define VX_CSR_MPM_MEM_READS_H          12'hB9A
-`define VX_CSR_MPM_MEM_WRITES           12'hB1B     // total writes
-`define VX_CSR_MPM_MEM_WRITES_H         12'hB9B
-`define VX_CSR_MPM_MEM_LAT              12'hB1C     // memory latency
-`define VX_CSR_MPM_MEM_LAT_H            12'hB9C
+`define NUM_EX_UNITS    (3 + `EXT_F_ENABLED)
+`define EX_BITS         `CLOG2(`NUM_EX_UNITS)
 
-// Machine Performance-monitoring texture counters
-// PERF: texture unit
-`define VX_CSR_MPM_TEX_READS            12'hB03     // texture accesses
-`define VX_CSR_MPM_TEX_READS_H          12'hB83
-`define VX_CSR_MPM_TEX_LAT              12'hB04     // texture latency
-`define VX_CSR_MPM_TEX_LAT_H            12'hB84
-`define VX_CSR_MPM_TEX_STALL            12'hB05     // texture latency
-`define VX_CSR_MPM_TEX_STALL_H          12'hB85
-// PERF: texture cache
-`define VX_CSR_MPM_TCACHE_READS         12'hB06     // total reads
-`define VX_CSR_MPM_TCACHE_READS_H       12'hB86
-`define VX_CSR_MPM_TCACHE_MISS_R        12'hB07     // read misses
-`define VX_CSR_MPM_TCACHE_MISS_R_H      12'hB87
-`define VX_CSR_MPM_TCACHE_BANK_ST       12'hB08     // bank stalls
-`define VX_CSR_MPM_TCACHE_BANK_ST_H     12'hB88
-`define VX_CSR_MPM_TCACHE_MSHR_ST       12'hB09     // MSHR stalls
-`define VX_CSR_MPM_TCACHE_MSHR_ST_H     12'hB89
-// PERF: pipeline
-`define VX_CSR_MPM_TEX_ISSUE_ST         12'hB0A     // issue stalls
-`define VX_CSR_MPM_TEX_ISSUE_ST_H       12'hB8A
+///////////////////////////////////////////////////////////////////////////////
 
-// Machine Performance-monitoring raster counters
-// PERF: raster unit
-`define VX_CSR_MPM_RASTER_READS         12'hB03     // raster accesses
-`define VX_CSR_MPM_RASTER_READS_H       12'hB83
-`define VX_CSR_MPM_RASTER_LAT           12'hB04     // raster latency
-`define VX_CSR_MPM_RASTER_LAT_H         12'hB84
-`define VX_CSR_MPM_RASTER_STALL         12'hB05     // raster stall cycles
-`define VX_CSR_MPM_RASTER_STALL_H       12'hB85
-// PERF: raster cache
-`define VX_CSR_MPM_RCACHE_READS         12'hB06     // total reads
-`define VX_CSR_MPM_RCACHE_READS_H       12'hB86
-`define VX_CSR_MPM_RCACHE_MISS_R        12'hB07     // read misses
-`define VX_CSR_MPM_RCACHE_MISS_R_H      12'hB87
-`define VX_CSR_MPM_RCACHE_BANK_ST       12'hB08     // bank stalls
-`define VX_CSR_MPM_RCACHE_BANK_ST_H     12'hB88
-`define VX_CSR_MPM_RCACHE_MSHR_ST       12'hB09     // MSHR stalls
-`define VX_CSR_MPM_RCACHE_MSHR_ST_H     12'hB89
-// PERF: pipeline
-`define VX_CSR_MPM_RASTER_ISSUE_ST      12'hB0A     // issue stalls
-`define VX_CSR_MPM_RASTER_ISSUE_ST_H    12'hB8A
+`define INST_LUI        7'b0110111
+`define INST_AUIPC      7'b0010111
+`define INST_JAL        7'b1101111
+`define INST_JALR       7'b1100111
+`define INST_B          7'b1100011 // branch instructions
+`define INST_L          7'b0000011 // load instructions
+`define INST_S          7'b0100011 // store instructions
+`define INST_I          7'b0010011 // immediate instructions
+`define INST_R          7'b0110011 // register instructions
+`define INST_FENCE      7'b0001111 // Fence instructions
+`define INST_SYS        7'b1110011 // system instructions
 
-// Machine Performance-monitoring rop counters
-// PERF: rop unit
-`define VX_CSR_MPM_ROP_READS            12'hB03     // rop memory reads
-`define VX_CSR_MPM_ROP_READS_H          12'hB83
-`define VX_CSR_MPM_ROP_WRITES           12'hB04     // rop memory writes
-`define VX_CSR_MPM_ROP_WRITES_H         12'hB84
-`define VX_CSR_MPM_ROP_LAT              12'hB05     // rop memory latency
-`define VX_CSR_MPM_ROP_LAT_H            12'hB85
-`define VX_CSR_MPM_ROP_STALL            12'hB06     // rop stall cycles
-`define VX_CSR_MPM_ROP_STALL_H          12'hB86
-// PERF: rop cache
-`define VX_CSR_MPM_OCACHE_READS         12'hB07     // total reads
-`define VX_CSR_MPM_OCACHE_READS_H       12'hB87
-`define VX_CSR_MPM_OCACHE_WRITES        12'hB08     // total writes
-`define VX_CSR_MPM_OCACHE_WRITES_H      12'hB88
-`define VX_CSR_MPM_OCACHE_MISS_R        12'hB09     // read misses
-`define VX_CSR_MPM_OCACHE_MISS_R_H      12'hB89
-`define VX_CSR_MPM_OCACHE_MISS_W        12'hB0A     // write misses
-`define VX_CSR_MPM_OCACHE_MISS_W_H      12'hB8A
-`define VX_CSR_MPM_OCACHE_BANK_ST       12'hB0B     // bank stalls
-`define VX_CSR_MPM_OCACHE_BANK_ST_H     12'hB8B
-`define VX_CSR_MPM_OCACHE_MSHR_ST       12'hB0C     // MSHR stalls
-`define VX_CSR_MPM_OCACHE_MSHR_ST_H     12'hB8C
-// PERF: pipeline
-`define VX_CSR_MPM_ROP_ISSUE_ST         12'hB0D     // issue stalls
-`define VX_CSR_MPM_ROP_ISSUE_ST_H       12'hB8D
+// RV64I instruction specific opcodes (for any W instruction)
+`define INST_I_W        7'b0011011 // W type immediate instructions
+`define INST_R_W        7'b0111011 // W type register instructions
 
-// Machine Information Registers
+`define INST_FL         7'b0000111 // float load instruction
+`define INST_FS         7'b0100111 // float store  instruction
+`define INST_FMADD      7'b1000011  
+`define INST_FMSUB      7'b1000111
+`define INST_FNMSUB     7'b1001011
+`define INST_FNMADD     7'b1001111 
+`define INST_FCI        7'b1010011 // float common instructions
 
-`define VX_CSR_MVENDORID                12'hF11
-`define VX_CSR_MARCHID                  12'hF12
-`define VX_CSR_MIMPID                   12'hF13
-`define VX_CSR_MHARTID                  12'hF14
+// Custom extension opcodes
+`define INST_EXT1       7'b0001011 // 0x0B
+`define INST_EXT2       7'b0101011 // 0x2B
+`define INST_EXT3       7'b1011011 // 0x5B
+`define INST_EXT4       7'b1111011 // 0x7B
 
-// GPGU CSRs
+///////////////////////////////////////////////////////////////////////////////
 
-`define VX_CSR_THREAD_ID                12'hCC0
-`define VX_CSR_WARP_ID                  12'hCC1
-`define VX_CSR_CORE_ID                  12'hCC2
-`define VX_CSR_WARP_MASK                12'hCC3
-`define VX_CSR_THREAD_MASK              12'hCC4     // warning! this value is also used in LLVM
+`define INST_FRM_RNE    3'b000  // round to nearest even
+`define INST_FRM_RTZ    3'b001  // round to zero
+`define INST_FRM_RDN    3'b010  // round to -inf
+`define INST_FRM_RUP    3'b011  // round to +inf
+`define INST_FRM_RMM    3'b100  // round to nearest max magnitude
+`define INST_FRM_DYN    3'b111  // dynamic mode
+`define INST_FRM_BITS   3
 
-`define VX_CSR_NUM_THREADS              12'hFC0
-`define VX_CSR_NUM_WARPS                12'hFC1
-`define VX_CSR_NUM_CORES                12'hFC2
+///////////////////////////////////////////////////////////////////////////////
 
-// Raster unit CSRs
+`define INST_OP_BITS    4
+`define INST_MOD_BITS   3
+`define INST_FMT_BITS   2
 
-`define VX_CSR_RASTER_BEGIN             12'h7C0
-`define VX_CSR_RASTER_POS_MASK          (`VX_CSR_RASTER_BEGIN+0)
-`define VX_CSR_RASTER_BCOORD_X0         (`VX_CSR_RASTER_BEGIN+1)
-`define VX_CSR_RASTER_BCOORD_X1         (`VX_CSR_RASTER_BEGIN+2)
-`define VX_CSR_RASTER_BCOORD_X2         (`VX_CSR_RASTER_BEGIN+3)
-`define VX_CSR_RASTER_BCOORD_X3         (`VX_CSR_RASTER_BEGIN+4)
-`define VX_CSR_RASTER_BCOORD_Y0         (`VX_CSR_RASTER_BEGIN+5)
-`define VX_CSR_RASTER_BCOORD_Y1         (`VX_CSR_RASTER_BEGIN+6)
-`define VX_CSR_RASTER_BCOORD_Y2         (`VX_CSR_RASTER_BEGIN+7)
-`define VX_CSR_RASTER_BCOORD_Y3         (`VX_CSR_RASTER_BEGIN+8)
-`define VX_CSR_RASTER_BCOORD_Z0         (`VX_CSR_RASTER_BEGIN+9)
-`define VX_CSR_RASTER_BCOORD_Z1         (`VX_CSR_RASTER_BEGIN+10)
-`define VX_CSR_RASTER_BCOORD_Z2         (`VX_CSR_RASTER_BEGIN+11)
-`define VX_CSR_RASTER_BCOORD_Z3         (`VX_CSR_RASTER_BEGIN+12)
-`define VX_CSR_RASTER_END               (`VX_CSR_RASTER_BEGIN+13)
-`define VX_CSR_RASTER_COUNT             (`VX_CSR_RASTER_END-`VX_CSR_RASTER_BEGIN)
+///////////////////////////////////////////////////////////////////////////////
 
-// ROP unit CSRs
+`define INST_ALU_ADD         4'b0000
+`define INST_ALU_LUI         4'b0010
+`define INST_ALU_AUIPC       4'b0011
+`define INST_ALU_SLTU        4'b0100
+`define INST_ALU_SLT         4'b0101
+`define INST_ALU_SUB         4'b0111
+`define INST_ALU_SRL         4'b1000
+`define INST_ALU_SRA         4'b1001
+`define INST_ALU_AND         4'b1100
+`define INST_ALU_OR          4'b1101
+`define INST_ALU_XOR         4'b1110
+`define INST_ALU_SLL         4'b1111
+`define INST_ALU_OTHER       4'b0111
+`define INST_ALU_BITS        4
+`define INST_ALU_CLASS(op)   op[3:2]
+`define INST_ALU_SIGNED(op)  op[0]
+`define INST_ALU_IS_SUB(op)  op[1]
+`define INST_ALU_IS_BR(mod)  mod[0]
+`define INST_ALU_IS_M(mod)   mod[1]
+`define INST_ALU_IS_W(mod)   mod[2]
 
-`define VX_CSR_ROP_BEGIN                `VX_CSR_RASTER_END
-`define VX_CSR_ROP_RT_IDX               (`VX_CSR_ROP_BEGIN+0)
-`define VX_CSR_ROP_SAMPLE_IDX           (`VX_CSR_ROP_BEGIN+1)
-`define VX_CSR_ROP_END                  (`VX_CSR_ROP_BEGIN+2)
-`define VX_CSR_ROP_COUNT                (`VX_CSR_ROP_END-`VX_CSR_ROP_BEGIN)
+`define INST_BR_EQ           4'b0000
+`define INST_BR_NE           4'b0010
+`define INST_BR_LTU          4'b0100 
+`define INST_BR_GEU          4'b0110 
+`define INST_BR_LT           4'b0101
+`define INST_BR_GE           4'b0111
+`define INST_BR_JAL          4'b1000
+`define INST_BR_JALR         4'b1001
+`define INST_BR_ECALL        4'b1010
+`define INST_BR_EBREAK       4'b1011
+`define INST_BR_URET         4'b1100
+`define INST_BR_SRET         4'b1101
+`define INST_BR_MRET         4'b1110
+`define INST_BR_OTHER        4'b1111
+`define INST_BR_BITS         4
+`define INST_BR_CLASS(op)    {1'b0, ~op[3]}
+`define INST_BR_IS_NEG(op)   op[1]
+`define INST_BR_IS_LESS(op)  op[2]
+`define INST_BR_IS_STATIC(op) op[3]
 
-// Texture unit CSRs
+`define INST_M_MUL           3'b000
+`define INST_M_MULHU         3'b001
+`define INST_M_MULH          3'b010
+`define INST_M_MULHSU        3'b011
+`define INST_M_DIV           3'b100
+`define INST_M_DIVU          3'b101
+`define INST_M_REM           3'b110
+`define INST_M_REMU          3'b111
+`define INST_M_BITS          3
+`define INST_M_SIGNED(op)    (~op[0])
+`define INST_M_IS_MULX(op)   (~op[2])
+`define INST_M_IS_MULH(op)   (op[1:0] != 0)
+`define INST_M_SIGNED_A(op)  (op[1:0] != 1)
+`define INST_M_IS_REM(op)    op[1]
 
-`define VX_CSR_TEX_BEGIN                `VX_CSR_ROP_END
-`define VX_CSR_TEX_END                  (`VX_CSR_TEX_BEGIN+0)
-`define VX_CSR_TEX_COUNT                (`VX_CSR_TEX_END-`VX_CSR_TEX_BEGIN)
+`define INST_FMT_B           3'b000
+`define INST_FMT_H           3'b001
+`define INST_FMT_W           3'b010
+`define INST_FMT_D           3'b011
+`define INST_FMT_BU          3'b100
+`define INST_FMT_HU          3'b101
+`define INST_FMT_WU          3'b110
 
-`define VX_HW_ITR_CTRL_BEGIN (`VX_CSR_TEX_END+1)
-`define VX_HW_ITR_S2V        (`VX_HW_ITR_CTRL_BEGIN+0)
-`define VX_HW_ITR_V2S        (`VX_HW_ITR_CTRL_BEGIN+1)
-`define VX_HW_ITR_TID        (`VX_HW_ITR_CTRL_BEGIN+2)
-`define VX_HW_ITR_IPC        (`VX_HW_ITR_CTRL_BEGIN+3)
-`define VX_HW_ITR_IRQ        (`VX_HW_ITR_CTRL_BEGIN+4)
-`define VX_HW_ITR_ACC        (`VX_HW_ITR_CTRL_BEGIN+5)
-`define VX_HW_ITR_ERR        (`VX_HW_ITR_CTRL_BEGIN+6)
-`define VX_HW_ITR_R1         (`VX_HW_ITR_CTRL_BEGIN+7)
-`define VX_HW_ITR_R2         (`VX_HW_ITR_CTRL_BEGIN+8)
-`define VX_HW_ITR_R3         (`VX_HW_ITR_CTRL_BEGIN+9)
-`define VX_HW_ITR_R4         (`VX_HW_ITR_CTRL_BEGIN+10)
-`define VX_HW_ITR_R5         (`VX_HW_ITR_CTRL_BEGIN+11)
-`define VX_HW_ITR_R6         (`VX_HW_ITR_CTRL_BEGIN+12)
-`define VX_HW_ITR_R7         (`VX_HW_ITR_CTRL_BEGIN+13)
-`define VX_HW_ITR_R8         (`VX_HW_ITR_CTRL_BEGIN+14)
-`define VX_HW_ITR_R9         (`VX_HW_ITR_CTRL_BEGIN+15)
-`define VX_HW_ITR_R10        (`VX_HW_ITR_CTRL_BEGIN+16)
-`define VX_HW_ITR_R11        (`VX_HW_ITR_CTRL_BEGIN+17)
-`define VX_HW_ITR_R12        (`VX_HW_ITR_CTRL_BEGIN+18)
-`define VX_HW_ITR_R13        (`VX_HW_ITR_CTRL_BEGIN+19)
-`define VX_HW_ITR_R14        (`VX_HW_ITR_CTRL_BEGIN+20)
-`define VX_HW_ITR_R15        (`VX_HW_ITR_CTRL_BEGIN+21)
-`define VX_HW_ITR_R16        (`VX_HW_ITR_CTRL_BEGIN+22)
-`define VX_HW_ITR_R17        (`VX_HW_ITR_CTRL_BEGIN+23)
-`define VX_HW_ITR_R18        (`VX_HW_ITR_CTRL_BEGIN+24)
-`define VX_HW_ITR_R19        (`VX_HW_ITR_CTRL_BEGIN+25)
-`define VX_HW_ITR_R20        (`VX_HW_ITR_CTRL_BEGIN+26)
-`define VX_HW_ITR_R21        (`VX_HW_ITR_CTRL_BEGIN+27)
-`define VX_HW_ITR_R22        (`VX_HW_ITR_CTRL_BEGIN+28)
-`define VX_HW_ITR_R23        (`VX_HW_ITR_CTRL_BEGIN+29)
-`define VX_HW_ITR_R24        (`VX_HW_ITR_CTRL_BEGIN+30)
-`define VX_HW_ITR_R25        (`VX_HW_ITR_CTRL_BEGIN+31)
-`define VX_HW_ITR_R26        (`VX_HW_ITR_CTRL_BEGIN+32)
-`define VX_HW_ITR_R27        (`VX_HW_ITR_CTRL_BEGIN+33)
-`define VX_HW_ITR_R28        (`VX_HW_ITR_CTRL_BEGIN+34)
-`define VX_HW_ITR_R29        (`VX_HW_ITR_CTRL_BEGIN+35)
-`define VX_HW_ITR_R30        (`VX_HW_ITR_CTRL_BEGIN+36)
-`define VX_HW_ITR_R31        (`VX_HW_ITR_CTRL_BEGIN+37)
-`define VX_HW_ITR_CTRL_END   (`VX_HW_ITR_CTRL_BEGIN+38)
-`define VX_CSR_TEX_COUNT     (`VX_HW_ITR_CTRL_BEGIN-`VX_HW_ITR_CTRL_END)
+`define INST_LSU_LB          4'b0000 
+`define INST_LSU_LH          4'b0001
+`define INST_LSU_LW          4'b0010
+`define INST_LSU_LD          4'b0011 // new for RV64I LD
+`define INST_LSU_LBU         4'b0100
+`define INST_LSU_LHU         4'b0101
+`define INST_LSU_LWU         4'b0110 // new for RV64I LWU
+`define INST_LSU_SB          4'b1000 
+`define INST_LSU_SH          4'b1001
+`define INST_LSU_SW          4'b1010
+`define INST_LSU_SD          4'b1011 // new for RV64I SD
+`define INST_LSU_FENCE       4'b1111
+`define INST_LSU_BITS        4
+`define INST_LSU_FMT(op)     op[2:0]
+`define INST_LSU_WSIZE(op)   op[1:0]
+`define INST_LSU_IS_FENCE(op) (op[3:2] == 3)
 
+`define INST_FENCE_BITS      1
+`define INST_FENCE_D         1'h0
+`define INST_FENCE_I         1'h1
 
-// Texture Units //////////////////////////////////////////////////////////////
+`define INST_FPU_ADD         4'b0000 
+`define INST_FPU_SUB         4'b0001 
+`define INST_FPU_MUL         4'b0010 
+`define INST_FPU_DIV         4'b0011
+`define INST_FPU_SQRT        4'b0100
+`define INST_FPU_CMP         4'b0101 // mod: LE=0, LT=1, EQ=2
+`define INST_FPU_F2F         4'b0110
+`define INST_FPU_MISC        4'b0111 // mod: SGNJ=0, SGNJN=1, SGNJX=2, CLASS=3, MVXW=4, MVWX=5, FMIN=6, FMAX=7
+`define INST_FPU_F2I         4'b1000
+`define INST_FPU_F2U         4'b1001
+`define INST_FPU_I2F         4'b1010
+`define INST_FPU_U2F         4'b1011
+`define INST_FPU_MADD        4'b1100 
+`define INST_FPU_MSUB        4'b1101   
+`define INST_FPU_NMSUB       4'b1110   
+`define INST_FPU_NMADD       4'b1111
+`define INST_FPU_BITS        4
+`define INST_FPU_IS_W(mod)   (mod[4])
+`define INST_FPU_IS_CLASS(op, mod) (op == `INST_FPU_MISC && mod == 3)
+`define INST_FPU_IS_MVXW(op, mod) (op == `INST_FPU_MISC && mod == 4)
 
-`define VX_TEX_STAGE_COUNT              2
-`define VX_TEX_STAGE_BITS               1
+`define INST_SFU_TMC         4'h0
+`define INST_SFU_WSPAWN      4'h1 
+`define INST_SFU_SPLIT       4'h2
+`define INST_SFU_JOIN        4'h3
+`define INST_SFU_BAR         4'h4
+`define INST_SFU_PRED        4'h5
+`define INST_SFU_CSRRW       4'h6
+`define INST_SFU_CSRRS       4'h7
+`define INST_SFU_CSRRC       4'h8
+`define INST_SFU_TEX         4'h9
+`define INST_SFU_RASTER      4'hA
+`define INST_SFU_ROP         4'hB
+`define INST_SFU_CMOV        4'hC
+`define INST_SFU_BITS        4
+`define INST_SFU_CSR(f3)     (4'h6 + 4'(f3) - 4'h1)
+`define INST_SFU_IS_WCTL(op) (op <= 5)
+`define INST_SFU_IS_CSR(op)  (op >= 6 && op <= 8)
 
-`define VX_TEX_SUBPIXEL_BITS            8
+///////////////////////////////////////////////////////////////////////////////
 
-`define VX_TEX_DIM_BITS                 15
-`define VX_TEX_LOD_MAX                  `VX_TEX_DIM_BITS
-`define VX_TEX_LOD_BITS                 4
+`define NUM_SOCKETS            `UP(`NUM_CORES / `SOCKET_SIZE)
 
-`define VX_TEX_FXD_BITS                 32
-`define VX_TEX_FXD_FRAC                 (`VX_TEX_DIM_BITS+`VX_TEX_SUBPIXEL_BITS)
+////////////////////////// Texture Unit Definitions ///////////////////////////
 
-`define VX_TEX_FILTER_POINT             0
-`define VX_TEX_FILTER_BILINEAR          1
-`define VX_TEX_FILTER_BITS              1
+`define TEX_REQ_TAG_WIDTH       (`UUID_WIDTH + `LOG2UP(`TEX_REQ_QUEUE_SIZE))
+`define TEX_REQ_ARB1_TAG_WIDTH  (`TEX_REQ_TAG_WIDTH + `CLOG2(`SOCKET_SIZE))
+`define TEX_REQ_ARB2_TAG_WIDTH  (`TEX_REQ_ARB1_TAG_WIDTH + `ARB_SEL_BITS(`NUM_SOCKETS, `NUM_TEX_UNITS))
 
-`define VX_TEX_WRAP_CLAMP               0
-`define VX_TEX_WRAP_REPEAT              1
-`define VX_TEX_WRAP_MIRROR              2
+///////////////////////////////////////////////////////////////////////////////
 
-`define VX_TEX_FORMAT_A8R8G8B8          0
-`define VX_TEX_FORMAT_R5G6B5            1
-`define VX_TEX_FORMAT_A1R5G5B5          2
-`define VX_TEX_FORMAT_A4R4G4B4          3
-`define VX_TEX_FORMAT_A8L8              4
-`define VX_TEX_FORMAT_L8                5
-`define VX_TEX_FORMAT_A8                6
+// non-cacheable tag bits
+`define NC_TAG_BITS             1
 
-`define VX_DCR_TEX_STATE_BEGIN          (`VX_DCR_BASE_STATE_END)
-`define VX_DCR_TEX_STAGE                (`VX_DCR_TEX_STATE_BEGIN+0)
-`define VX_DCR_TEX_ADDR                 (`VX_DCR_TEX_STATE_BEGIN+1)
-`define VX_DCR_TEX_LOGDIM               (`VX_DCR_TEX_STATE_BEGIN+2)
-`define VX_DCR_TEX_FORMAT               (`VX_DCR_TEX_STATE_BEGIN+3)
-`define VX_DCR_TEX_FILTER               (`VX_DCR_TEX_STATE_BEGIN+4)
-`define VX_DCR_TEX_WRAP                 (`VX_DCR_TEX_STATE_BEGIN+5)
-`define VX_DCR_TEX_MIPOFF(lod)          (`VX_DCR_TEX_STATE_BEGIN+6+lod)
-`define VX_DCR_TEX_STATE_END            (`VX_DCR_TEX_MIPOFF(`VX_TEX_LOD_MAX)+1)
+// cache address type bits
+`ifdef SM_ENABLE
+`define CACHE_ADDR_TYPE_BITS    (`NC_TAG_BITS + 1)
+`else
+`define CACHE_ADDR_TYPE_BITS    `NC_TAG_BITS
+`endif
 
-`define VX_DCR_TEX_STATE(addr)          ((addr) - `VX_DCR_TEX_STATE_BEGIN)
-`define VX_DCR_TEX_STATE_COUNT          (`VX_DCR_TEX_STATE_END-`VX_DCR_TEX_STATE_BEGIN)
+`define ARB_SEL_BITS(I, O)      ((I > O) ? `CLOG2((I + O - 1) / O) : 0)
 
-// Raster Units ///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
-`define VX_RASTER_DIM_BITS              15
-`define VX_RASTER_STRIDE_BITS           16
-`define VX_RASTER_PID_BITS              16
-`define VX_RASTER_TILECNT_BITS          (2 * (`VX_RASTER_DIM_BITS - `VX_RASTER_TILE_LOGSIZE) + 1)
+`define CACHE_MEM_TAG_WIDTH(mshr_size, num_banks) \
+        (`CLOG2(mshr_size) + `CLOG2(num_banks) + `NC_TAG_BITS)
+        
+`define CACHE_NC_BYPASS_TAG_WIDTH(num_reqs, line_size, word_size, tag_width) \
+        (`CLOG2(num_reqs) + `CLOG2(line_size / word_size) + tag_width)
 
-`define VX_DCR_RASTER_STATE_BEGIN       `VX_DCR_TEX_STATE_END
-`define VX_DCR_RASTER_TBUF_ADDR         (`VX_DCR_RASTER_STATE_BEGIN+0)
-`define VX_DCR_RASTER_TILE_COUNT        (`VX_DCR_RASTER_STATE_BEGIN+1)
-`define VX_DCR_RASTER_PBUF_ADDR         (`VX_DCR_RASTER_STATE_BEGIN+2)
-`define VX_DCR_RASTER_PBUF_STRIDE       (`VX_DCR_RASTER_STATE_BEGIN+3)
-`define VX_DCR_RASTER_SCISSOR_X         (`VX_DCR_RASTER_STATE_BEGIN+4)
-`define VX_DCR_RASTER_SCISSOR_Y         (`VX_DCR_RASTER_STATE_BEGIN+5)
-`define VX_DCR_RASTER_STATE_END         (`VX_DCR_RASTER_STATE_BEGIN+6)
+`define CACHE_BYPASS_TAG_WIDTH(num_reqs, line_size, word_size, tag_width) \
+        (`CACHE_NC_BYPASS_TAG_WIDTH(num_reqs, line_size, word_size, tag_width) + `NC_TAG_BITS)
 
-`define VX_DCR_RASTER_STATE(addr)       ((addr) - `VX_DCR_RASTER_STATE_BEGIN)
-`define VX_DCR_RASTER_STATE_COUNT       (`VX_DCR_RASTER_STATE_END-`VX_DCR_RASTER_STATE_BEGIN)
+`define CACHE_NC_MEM_TAG_WIDTH(mshr_size, num_banks, num_reqs, line_size, word_size, tag_width) \
+        `MAX(`CACHE_MEM_TAG_WIDTH(mshr_size, num_banks), `CACHE_NC_BYPASS_TAG_WIDTH(num_reqs, line_size, word_size, tag_width))
 
-// Render Output Units ////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
-`define VX_ROP_DIM_BITS                 15
+`define CACHE_CLUSTER_CORE_ARB_TAG(tag_width, num_inputs, num_caches) \
+        (tag_width + `ARB_SEL_BITS(num_inputs, `UP(num_caches)))  
 
-`define VX_ROP_PITCH_BITS               (`VX_ROP_DIM_BITS + `CLOG2(4) + 1)
+`define CACHE_CLUSTER_MEM_ARB_TAG(tag_width, num_caches) \
+        (tag_width + `ARB_SEL_BITS(`UP(num_caches), 1))
 
-`define VX_ROP_DEPTH_BITS               24 
-`define VX_ROP_DEPTH_MASK               ((1 << `VX_ROP_DEPTH_BITS) - 1)
+`define CACHE_CLUSTER_MEM_TAG_WIDTH(mshr_size, num_banks, num_caches) \
+        `CACHE_CLUSTER_MEM_ARB_TAG(`CACHE_MEM_TAG_WIDTH(mshr_size, num_banks),  num_caches)
 
-`define VX_ROP_STENCIL_BITS             8
-`define VX_ROP_STENCIL_MASK             ((1 << `VX_ROP_STENCIL_BITS) - 1)
+`define CACHE_CLUSTER_NC_BYPASS_TAG_WIDTH(num_reqs, line_size, word_size, tag_width, num_inputs, num_caches) \
+        `CACHE_CLUSTER_MEM_ARB_TAG((`CLOG2(num_reqs) + `CLOG2(line_size / word_size) + `CACHE_CLUSTER_CORE_ARB_TAG(tag_width, num_inputs, num_caches)), num_caches)
 
-`define VX_ROP_DEPTH_FUNC_ALWAYS        0
-`define VX_ROP_DEPTH_FUNC_NEVER         1
-`define VX_ROP_DEPTH_FUNC_LESS          2
-`define VX_ROP_DEPTH_FUNC_LEQUAL        3
-`define VX_ROP_DEPTH_FUNC_EQUAL         4
-`define VX_ROP_DEPTH_FUNC_GEQUAL        5
-`define VX_ROP_DEPTH_FUNC_GREATER       6
-`define VX_ROP_DEPTH_FUNC_NOTEQUAL      7
-`define VX_ROP_DEPTH_FUNC_BITS          3
+`define CACHE_CLUSTER_BYPASS_TAG_WIDTH(num_reqs, line_size, word_size, tag_width, num_inputs, num_caches) \
+        `CACHE_CLUSTER_MEM_ARB_TAG((`CACHE_NC_BYPASS_TAG_WIDTH(num_reqs, line_size, word_size, `CACHE_CLUSTER_CORE_ARB_TAG(tag_width, num_inputs, num_caches)) + `NC_TAG_BITS), num_caches)
 
-`define VX_ROP_STENCIL_OP_KEEP          0 
-`define VX_ROP_STENCIL_OP_ZERO          1
-`define VX_ROP_STENCIL_OP_REPLACE       2
-`define VX_ROP_STENCIL_OP_INCR          3
-`define VX_ROP_STENCIL_OP_DECR          4
-`define VX_ROP_STENCIL_OP_INVERT        5
-`define VX_ROP_STENCIL_OP_INCR_WRAP     6
-`define VX_ROP_STENCIL_OP_DECR_WRAP     7
-`define VX_ROP_STENCIL_OP_BITS          3
+`define CACHE_CLUSTER_NC_MEM_TAG_WIDTH(mshr_size, num_banks, num_reqs, line_size, word_size, tag_width, num_inputs, num_caches) \
+        `CACHE_CLUSTER_MEM_ARB_TAG(`MAX(`CACHE_MEM_TAG_WIDTH(mshr_size, num_banks), `CACHE_NC_BYPASS_TAG_WIDTH(num_reqs, line_size, word_size, `CACHE_CLUSTER_CORE_ARB_TAG(tag_width, num_inputs, num_caches))), num_caches)
 
-`define VX_ROP_BLEND_MODE_ADD           0
-`define VX_ROP_BLEND_MODE_SUB           1
-`define VX_ROP_BLEND_MODE_REV_SUB       2
-`define VX_ROP_BLEND_MODE_MIN           3
-`define VX_ROP_BLEND_MODE_MAX           4
-`define VX_ROP_BLEND_MODE_LOGICOP       5
-`define VX_ROP_BLEND_MODE_BITS          3
+///////////////////////////////////////////////////////////////////////////////
 
-`define VX_ROP_BLEND_FUNC_ZERO          0 
-`define VX_ROP_BLEND_FUNC_ONE           1
-`define VX_ROP_BLEND_FUNC_SRC_RGB       2
-`define VX_ROP_BLEND_FUNC_ONE_MINUS_SRC_RGB 3
-`define VX_ROP_BLEND_FUNC_DST_RGB       4
-`define VX_ROP_BLEND_FUNC_ONE_MINUS_DST_RGB 5
-`define VX_ROP_BLEND_FUNC_SRC_A         6
-`define VX_ROP_BLEND_FUNC_ONE_MINUS_SRC_A   7
-`define VX_ROP_BLEND_FUNC_DST_A         8
-`define VX_ROP_BLEND_FUNC_ONE_MINUS_DST_A   9
-`define VX_ROP_BLEND_FUNC_CONST_RGB     10
-`define VX_ROP_BLEND_FUNC_ONE_MINUS_CONST_RGB 11
-`define VX_ROP_BLEND_FUNC_CONST_A       12
-`define VX_ROP_BLEND_FUNC_ONE_MINUS_CONST_A 13
-`define VX_ROP_BLEND_FUNC_ALPHA_SAT     14
-`define VX_ROP_BLEND_FUNC_BITS          4
+`ifdef L2_ENABLE
+`define L2_LINE_SIZE	        `MEM_BLOCK_SIZE
+`else
+`define L2_LINE_SIZE	        `L1_LINE_SIZE
+`endif
 
-`define VX_ROP_LOGIC_OP_CLEAR           0
-`define VX_ROP_LOGIC_OP_AND             1
-`define VX_ROP_LOGIC_OP_AND_REVERSE     2
-`define VX_ROP_LOGIC_OP_COPY            3
-`define VX_ROP_LOGIC_OP_AND_INVERTED    4
-`define VX_ROP_LOGIC_OP_NOOP            5
-`define VX_ROP_LOGIC_OP_XOR             6
-`define VX_ROP_LOGIC_OP_OR              7
-`define VX_ROP_LOGIC_OP_NOR             8
-`define VX_ROP_LOGIC_OP_EQUIV           9
-`define VX_ROP_LOGIC_OP_INVERT          10
-`define VX_ROP_LOGIC_OP_OR_REVERSE      11
-`define VX_ROP_LOGIC_OP_COPY_INVERTED   12
-`define VX_ROP_LOGIC_OP_OR_INVERTED     13
-`define VX_ROP_LOGIC_OP_NAND            14
-`define VX_ROP_LOGIC_OP_SET             15
-`define VX_ROP_LOGIC_OP_BITS            4
+`ifdef L3_ENABLE
+`define L3_LINE_SIZE	        `MEM_BLOCK_SIZE
+`else
+`define L3_LINE_SIZE	        `L2_LINE_SIZE
+`endif
 
-`define VX_DCR_ROP_STATE_BEGIN          `VX_DCR_RASTER_STATE_END
-`define VX_DCR_ROP_CBUF_ADDR            (`VX_DCR_ROP_STATE_BEGIN+0)
-`define VX_DCR_ROP_CBUF_PITCH           (`VX_DCR_ROP_STATE_BEGIN+1)
-`define VX_DCR_ROP_CBUF_WRITEMASK       (`VX_DCR_ROP_STATE_BEGIN+2)
-`define VX_DCR_ROP_ZBUF_ADDR            (`VX_DCR_ROP_STATE_BEGIN+3)
-`define VX_DCR_ROP_ZBUF_PITCH           (`VX_DCR_ROP_STATE_BEGIN+4)
-`define VX_DCR_ROP_DEPTH_FUNC           (`VX_DCR_ROP_STATE_BEGIN+5)
-`define VX_DCR_ROP_DEPTH_WRITEMASK      (`VX_DCR_ROP_STATE_BEGIN+6)
-`define VX_DCR_ROP_STENCIL_FUNC         (`VX_DCR_ROP_STATE_BEGIN+7)
-`define VX_DCR_ROP_STENCIL_ZPASS        (`VX_DCR_ROP_STATE_BEGIN+8)
-`define VX_DCR_ROP_STENCIL_ZFAIL        (`VX_DCR_ROP_STATE_BEGIN+9)
-`define VX_DCR_ROP_STENCIL_FAIL         (`VX_DCR_ROP_STATE_BEGIN+10)
-`define VX_DCR_ROP_STENCIL_REF          (`VX_DCR_ROP_STATE_BEGIN+11)
-`define VX_DCR_ROP_STENCIL_MASK         (`VX_DCR_ROP_STATE_BEGIN+12)
-`define VX_DCR_ROP_STENCIL_WRITEMASK    (`VX_DCR_ROP_STATE_BEGIN+13)
-`define VX_DCR_ROP_BLEND_MODE           (`VX_DCR_ROP_STATE_BEGIN+14)
-`define VX_DCR_ROP_BLEND_FUNC           (`VX_DCR_ROP_STATE_BEGIN+15)
-`define VX_DCR_ROP_BLEND_CONST          (`VX_DCR_ROP_STATE_BEGIN+16)
-`define VX_DCR_ROP_LOGIC_OP             (`VX_DCR_ROP_STATE_BEGIN+17)
-`define VX_DCR_ROP_STATE_END            (`VX_DCR_ROP_STATE_BEGIN+18)
+`define VX_MEM_BYTEEN_WIDTH     `L3_LINE_SIZE   
+`define VX_MEM_ADDR_WIDTH       (`MEM_ADDR_WIDTH - `CLOG2(`L3_LINE_SIZE))
+`define VX_MEM_DATA_WIDTH       (`L3_LINE_SIZE * 8)
+`define VX_MEM_TAG_WIDTH        L3_MEM_TAG_WIDTH
 
-`define VX_DCR_ROP_STATE(addr)          ((addr) - `VX_DCR_ROP_STATE_BEGIN)
-`define VX_DCR_ROP_STATE_COUNT          (`VX_DCR_ROP_STATE_END-`VX_DCR_ROP_STATE_BEGIN)
+`define VX_DCR_ADDR_WIDTH       `VX_DCR_ADDR_BITS
+`define VX_DCR_DATA_WIDTH       32
 
-`endif // VX_TYPES_VH
+`define TO_FULL_ADDR(x)         {x, (`MEM_ADDR_WIDTH-$bits(x))'(0)}
+
+///////////////////////////////////////////////////////////////////////////////
+
+`define BUFFER_BUSY(dst, src, enable) \
+    logic __busy; \
+    if (enable) begin \
+        always @(posedge clk) begin \
+            if (reset) begin \
+                __busy <= 1'b0; \
+            end else begin \
+                __busy <= src; \
+            end \
+        end \
+    end else begin \
+        assign __busy = src; \
+    end \
+    assign dst = __busy
+
+`define POP_COUNT_EX(out, in, model) \
+    VX_popcount #( \
+        .N ($bits(in)), \
+        .MODEL (model) \
+    ) __``out ( \
+        .data_in  (in), \
+        .data_out (out) \
+    )
+
+`define POP_COUNT(out, in) `POP_COUNT_EX(out, in, 1)
+
+`define ASSIGN_VX_MEM_BUS_IF(dst, src) \
+    assign dst.req_valid  = src.req_valid; \
+    assign dst.req_data   = src.req_data; \
+    assign src.req_ready  = dst.req_ready; \
+    assign src.rsp_valid  = dst.rsp_valid; \
+    assign src.rsp_data   = dst.rsp_data; \
+    assign dst.rsp_ready  = src.rsp_ready
+
+`define ASSIGN_VX_MEM_BUS_IF_X(dst, src, TD, TS) \
+    assign dst.req_valid = src.req_valid; \
+    assign dst.req_data.rw = src.req_data.rw; \
+    assign dst.req_data.byteen = src.req_data.byteen; \
+    assign dst.req_data.addr = src.req_data.addr; \
+    assign dst.req_data.data = src.req_data.data; \
+    if (TD != TS) \
+        assign dst.req_data.tag = {src.req_data.tag, {(TD-TS){1'b0}}}; \
+    else \
+        assign dst.req_data.tag = src.req_data.tag; \
+    assign src.req_ready = dst.req_ready; \
+    assign src.rsp_valid = dst.rsp_valid; \
+    assign src.rsp_data.data = dst.rsp_data.data; \
+    assign src.rsp_data.tag = dst.rsp_data.tag[TD-1 -: TS]; \
+    assign dst.rsp_ready = src.rsp_ready
+
+`define ASSIGN_VX_RASTER_BUS_IF(dst, src) \
+    assign dst.req_valid = src.req_valid; \
+    assign dst.req_data  = src.req_data; \
+    assign src.req_ready = dst.req_ready
+
+`define ASSIGN_VX_ROP_BUS_IF(dst, src) \
+    assign dst.req_valid = src.req_valid; \
+    assign dst.req_data  = src.req_data; \
+    assign src.req_ready = dst.req_ready
+
+`define ASSIGN_VX_TEX_BUS_IF(dst, src) \
+    assign dst.req_valid = src.req_valid; \
+    assign dst.req_data  = src.req_data; \
+    assign src.req_ready = dst.req_ready; \
+    assign src.rsp_valid = dst.rsp_valid; \
+    assign src.rsp_data  = dst.rsp_data; \
+    assign dst.rsp_ready = src.rsp_ready
+
+`define BUFFER_DCR_BUS_IF(dst, src, enable) \
+    logic [(1 + `VX_DCR_ADDR_WIDTH + `VX_DCR_DATA_WIDTH)-1:0] __``dst; \
+    if (enable) begin \
+        always @(posedge clk) begin \
+            __``dst <= {src.write_valid, src.write_addr, src.write_data}; \
+        end \
+    end else begin \
+        assign __``dst = {src.write_valid, src.write_addr, src.write_data}; \
+    end \
+    VX_dcr_bus_if dst(); \
+    assign {dst.write_valid, dst.write_addr, dst.write_data} = __``dst
+
+`define PERF_REDUCE(dst, src, field, width, count) \
+    wire [count-1:0][width-1:0] __reduce_add_i_``src``field; \
+    wire [width-1:0] __reduce_add_o_``dst``field; \
+    reg [width-1:0] __reduce_add_r_``dst``field; \
+    for (genvar __i = 0; __i < count; ++__i) begin \
+        assign __reduce_add_i_``src``field[__i] = ``src[__i].``field; \
+    end \
+    VX_reduce #(.DATAW_IN(width), .N(count), .OP("+")) __reduce_add_``dst``field ( \
+        __reduce_add_i_``src``field, \
+        __reduce_add_o_``dst``field \
+    ); \
+    always @(posedge clk) begin \
+       if (reset) begin \
+           __reduce_add_r_``dst``field <= '0; \
+       end else begin \
+           __reduce_add_r_``dst``field <= __reduce_add_o_``dst``field; \
+       end \
+    end \
+    assign ``dst.``field = __reduce_add_r_``dst``field
+
+`define PERF_CACHE_ADD(dst, src, count) \
+    `PERF_REDUCE (dst, src, reads, `PERF_CTR_BITS, count); \
+    `PERF_REDUCE (dst, src, writes, `PERF_CTR_BITS, count); \
+    `PERF_REDUCE (dst, src, read_misses, `PERF_CTR_BITS, count); \
+    `PERF_REDUCE (dst, src, write_misses, `PERF_CTR_BITS, count); \
+    `PERF_REDUCE (dst, src, bank_stalls, `PERF_CTR_BITS, count); \
+    `PERF_REDUCE (dst, src, mshr_stalls, `PERF_CTR_BITS, count); \
+    `PERF_REDUCE (dst, src, mem_stalls, `PERF_CTR_BITS, count); \
+    `PERF_REDUCE (dst, src, crsp_stalls, `PERF_CTR_BITS, count)
+
+`define ASSIGN_BLOCKED_WID(dst, src, block_idx, block_size) \
+    if (block_size != 1) begin \
+        if (block_size != `NUM_WARPS) begin \
+            assign dst = {src[`NW_WIDTH-1:`CLOG2(block_size)], `CLOG2(block_size)'(block_idx)}; \
+        end else begin \
+            assign dst = `NW_WIDTH'(block_idx); \
+        end \
+    end else begin \
+        assign dst = src; \
+    end
+
+`define TO_DISPATCH_DATA(data, tid) \
+    {data.uuid, data.wis, data.tmask, data.op_type, data.op_mod, data.wb, data.use_PC, data.use_imm, data.PC, data.imm, data.rd, tid, data.rs1_data, data.rs2_data, data.rs3_data}
+
+///////////////////////////////////////////////////////////////////////////////
+
+`endif // VX_DEFINE_VH
