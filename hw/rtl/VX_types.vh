@@ -316,7 +316,7 @@
 `define VX_HW_ITR_R30        (`VX_HW_ITR_CTRL_BEGIN+36)
 `define VX_HW_ITR_R31        (`VX_HW_ITR_CTRL_BEGIN+37)
 `define VX_HW_ITR_CTRL_END   (`VX_HW_ITR_CTRL_BEGIN+38)
-`define VX_CSR_TEX_COUNT     (`VX_HW_ITR_CTRL_BEGIN-`VX_HW_ITR_CTRL_END)
+`define VX_HW_ITR_COUNT     (`VX_HW_ITR_CTRL_BEGIN-`VX_HW_ITR_CTRL_END)
 
 
 // Texture Units //////////////////////////////////////////////////////////////

@@ -59,6 +59,8 @@ module VX_socket import VX_gpu_pkg::*; #(
     VX_gbar_bus_if.master   gbar_bus_if,
 `endif
 
+    VX_sfu_csr_if.master    hw_itr_ctrl_if, 
+
     // simulation helper signals
     output wire             sim_ebreak,
     output wire [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value,
@@ -309,6 +311,7 @@ module VX_socket import VX_gpu_pkg::*; #(
             `ifdef GBAR_ENABLE
                 .gbar_bus_if    (per_core_gbar_bus_if[i]),
             `endif
+                .hw_itr_ctrl_if (hw_itr_ctrl_if), 
 
                 .sim_ebreak     (per_core_sim_ebreak[i]),
                 .sim_wb_value   (per_core_sim_wb_value[i]),
@@ -360,6 +363,7 @@ module VX_socket import VX_gpu_pkg::*; #(
         `ifdef GBAR_ENABLE
             .gbar_bus_if    (per_core_gbar_bus_if[i]),
         `endif
+            .hw_itr_ctrl_if (hw_itr_ctrl_if), 
 
             .sim_ebreak     (per_core_sim_ebreak[i]),
             .sim_wb_value   (per_core_sim_wb_value[i]),

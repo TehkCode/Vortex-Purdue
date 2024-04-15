@@ -12,7 +12,10 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     // I/O
 
     // controls
-    VX_interrupt_ctl_if.hw_int    interrupt_ctl_if                
+    VX_interrupt_ctl_if.hw_int    interrupt_ctl_if,
+    // read/write bus
+    VX_sfu_csr_if.slave           simt_bus_if, 
+    VX_sfu_csr_if.slave           scalar_bus_if       
 );   
 
     typedef enum logic [2:0] {

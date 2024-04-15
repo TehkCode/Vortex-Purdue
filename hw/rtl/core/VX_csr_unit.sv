@@ -161,21 +161,45 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
 
     wire hwitr_addr_enable = (csr_addr >= `VX_HW_ITR_CTRL_BEGIN && csr_addr < `VX_HW_ITR_CTRL_END);
 
-    assign hw_itr_ctrl_if.read_enable = csr_req_valid && ~csr_write_enable && hwitr_addr_enable;
-    assign hw_itr_ctrl_if.read_uuid   = execute_if.data.uuid;`
-    assign hw_itr_ctrl_if.read_pid    = execute_if.data.pid;
-    assign hw_itr_ctrl_if.read_wid    = execute_if.data.wid;
-    assign hw_itr_ctrl_if.read_tmask  = execute_if.data.tmask;
-    assign hw_itr_ctrl_if.read_addr   = csr_addr;
-    `UNUSED_VAR (hw_itr_ctrl_if.read_data)
+    always @(*)
+    begin 
+        hw_itr_ctrl_if.read_enable = csr_req_valid && ~csr_write_enable && hwitr_addr_enable;
+        hw_itr_ctrl_if.read_uuid   = execute_if.data.uuid;
+        hw_itr_ctrl_if.read_pid    = execute_if.data.pid;
+        hw_itr_ctrl_if.read_wid    = execute_if.data.wid;
+        if(THREAD_CNT == 1)
+            hw_itr_ctrl_if.read_tmask  = {3'b000, execute_if.data.tmask};
+        else 
+            hw_itr_ctrl_if.read_tmask  = execute_if.data.tmask;
+        hw_itr_ctrl_if.read_addr   = csr_addr;
+
+        hw_itr_ctrl_if.write_enable = csr_req_valid && csr_write_enable && hwitr_addr_enable; 
+        hw_itr_ctrl_if.write_uuid   = execute_if.data.uuid;
+        hw_itr_ctrl_if.write_pid    = execute_if.data.pid;
+        hw_itr_ctrl_if.write_wid    = execute_if.data.wid;
+        if(THREAD_CNT == 1)
+            hw_itr_ctrl_if.write_tmask  = {3'b000, execute_if.data.tmask};
+        else 
+            hw_itr_ctrl_if.write_tmask  = execute_if.data.tmask;
+        hw_itr_ctrl_if.write_addr       = csr_addr;
+        hw_itr_ctrl_if.write_data       = rs1_data;
+    end
+
+    // assign hw_itr_ctrl_if.read_enable = csr_req_valid && ~csr_write_enable && hwitr_addr_enable;
+    // assign hw_itr_ctrl_if.read_uuid   = execute_if.data.uuid;
+    // assign hw_itr_ctrl_if.read_pid    = execute_if.data.pid;
+    // assign hw_itr_ctrl_if.read_wid    = execute_if.data.wid;
+    // assign hw_itr_ctrl_if.read_tmask  = execute_if.data.tmask;
+    // assign hw_itr_ctrl_if.read_addr   = csr_addr;
+    // // `UNUSED_VAR (hw_itr_ctrl_if.read_data)
     
-    assign hw_itr_ctrl_if.write_enable = csr_req_valid && csr_write_enable && hwitr_addr_enable; 
-    assign hw_itr_ctrl_if.write_uuid   = execute_if.data.uuid;
-    assign hw_itr_ctrl_if.write_pid    = execute_if.data.pid;
-    assign hw_itr_ctrl_if.write_wid    = execute_if.data.wid;
-    assign hw_itr_ctrl_if.write_tmask  = execute_if.data.tmask;
-    assign hw_itr_ctrl_if.write_addr   = csr_addr;
-    assign hw_itr_ctrl_if.write_data   = rs1_data;
+    // assign hw_itr_ctrl_if.write_enable = csr_req_valid && csr_write_enable && hwitr_addr_enable; 
+    // assign hw_itr_ctrl_if.write_uuid   = execute_if.data.uuid;
+    // assign hw_itr_ctrl_if.write_pid    = execute_if.data.pid;
+    // assign hw_itr_ctrl_if.write_wid    = execute_if.data.wid;
+    // assign hw_itr_ctrl_if.write_tmask  = execute_if.data.tmask;
+    // assign hw_itr_ctrl_if.write_addr   = csr_addr;
+    // assign hw_itr_ctrl_if.write_data   = rs1_data;
 
 
     VX_csr_data #(
@@ -261,8 +285,11 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
         `VX_CSR_MHARTID   : csr_read_data = gtid;
 
         default : begin
-            csr_read_data = {NUM_LANES{csr_read_data_ro | csr_read_data_rw}};
-            csr_rd_enable = 1;
+            if(hwitr_addr_enable)
+                csr_read_data = hw_itr_ctrl_if.read_data;
+            else 
+                csr_read_data = {NUM_LANES{csr_read_data_ro | csr_read_data_rw}};
+            csr_rd_enable = 1; // check what this does later
         end
         endcase
     end
