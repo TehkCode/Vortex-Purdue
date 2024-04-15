@@ -34,7 +34,7 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     data_t [(256 / INTREG_CNT) - 1:0] nextRegisters, registers; 
     hw_int_state_t nextState, currState; 
 
-    logic [1:0] counter, nextCounter; 
+    logic [2:0] counter, nextCounter; 
     logic [7:0] triggerBus, nextTriggerBus, grantBus;
     logic [7:0] finBus;
 
@@ -85,8 +85,8 @@ VX_mem_bus_if #(
             begin 
                 if(status_regs_bus_if[i].req_valid & ~status_regs_bus_if[i].req_data.rw)
                 begin 
-                    next_status_regs_bus_if[i].req_ready = 1;
-                    next_status_regs_bus_if[i].rsp_data.tag = status_regs_bus_if[i].req_data.tag; 
+                    // next_status_regs_bus_if[i].req_ready = 1;
+                    // next_status_regs_bus_if[i].rsp_data.tag = status_regs_bus_if[i].req_data.tag; 
                     nextTriggerBus[i] = 1;
                 end
                 else if(status_regs_bus_if[i].req_valid)
@@ -94,11 +94,22 @@ VX_mem_bus_if #(
                     next_status_regs_bus_if[i].req_ready = 1;
                 end
             end
-            if(counter == 1)
+            if(counter == 1) // ACK 1 request
             begin 
-                next_status_regs_bus_if[i].req_ready = 0;
+                if(grantBus[i])
+                begin 
+                     next_status_regs_bus_if[i].req_ready = 1;
+                     next_status_regs_bus_if[i].rsp_data.tag = status_regs_bus_if[i].req_data.tag; 
+                end
             end
-            if((counter == 2))
+            if(counter == 2)
+            begin 
+                if(grantBus[i])
+                begin 
+                    next_status_regs_bus_if[i].req_ready = 0;
+                end
+            end
+            if((counter == 3))
             begin 
                 if(triggerBus[i] & grantBus[i]) // only those who triggered read req on bus should get rsp
                 begin 
@@ -106,7 +117,7 @@ VX_mem_bus_if #(
                     next_status_regs_bus_if[i].rsp_data.data = 32'hb33ff00d;
                 end
             end
-            if(counter == 3)
+            if(counter == 4)
             begin 
                 if(status_regs_bus_if[i].rsp_ready & grantBus[i]) // you're done, deassert rsp
                 begin
@@ -140,11 +151,11 @@ VX_mem_bus_if #(
     always @(*)
     begin 
         nextCounter = counter;
-         if((counter == 3) && (|finBus) && (|nextTriggerBus))
+         if((counter == 4) && (|finBus) && (|nextTriggerBus))
             nextCounter = 1; // still more requests to handle
-        else if((counter == 3) && (|finBus))
+        else if((counter == 4) && (|finBus))
             nextCounter = 0;
-        else if((|triggerBus) && counter != 3)
+        else if((|triggerBus) && counter != 4)
             nextCounter = counter + 1;
     end
 
@@ -158,14 +169,12 @@ VX_mem_bus_if #(
             registers                   <= '{default:256'd0};
             currState                   <= IDLE;
             counter                     <= '0;
-            newCount                    <= '0;
         end
         else 
         begin 
             registers                  <= nextRegisters;
             currState                  <= nextState;
             counter                    <= nextCounter;
-            newCount                   <= nextNewCount;
         end
     end
 

@@ -419,7 +419,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
             cache_bus_if[i].req_data.data = 0;
             cache_bus_if[i].rsp_ready = 0;
 
-            if((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 960)) begin
+            if((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) begin
                 status_regs_bus_if[i].req_valid = cache_req_valid[i];
                 status_regs_bus_if[i].req_data.rw = cache_req_rw[i];
                 status_regs_bus_if[i].req_data.byteen = cache_req_byteen[i];
@@ -486,9 +486,9 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
             assign {cache_req_uuid, cache_req_type, cache_req_bid, cache_req_tag_x} = cache_req_tag[i];
             assign cache_req_type_bi = cache_req_type_b[cache_req_bid];
 
-            assign cache_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 960)) ? '0 : {cache_req_uuid, cache_req_bid, cache_req_tag_x, cache_req_type_bi};
-            assign {cache_rsp_uuid, cache_rsp_bid, cache_rsp_tag_x, cache_rsp_type_bi} = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 960)) ? status_regs_bus_if[i].rsp_data.tag : cache_bus_if[i].rsp_data.tag;
-            assign status_regs_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 960)) ? {cache_req_uuid, cache_req_bid, cache_req_tag_x, cache_req_type_bi} : '0;
+            assign cache_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? '0 : {cache_req_uuid, cache_req_bid, cache_req_tag_x, cache_req_type_bi};
+            assign {cache_rsp_uuid, cache_rsp_bid, cache_rsp_tag_x, cache_rsp_type_bi} = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? status_regs_bus_if[i].rsp_data.tag : cache_bus_if[i].rsp_data.tag;
+            assign status_regs_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? {cache_req_uuid, cache_req_bid, cache_req_tag_x, cache_req_type_bi} : '0;
 
             // assign cache_bus_if[i].req_data.tag = ((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) ? '0 : {cache_req_uuid, cache_req_bid, cache_req_tag_x, cache_req_type_bi};
             // assign {cache_rsp_uuid, cache_rsp_bid, cache_rsp_tag_x, cache_rsp_type_bi} = ((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) ? status_regs_bus_if[i].rsp_data.tag  : cache_bus_if[i].rsp_data.tag;
@@ -515,9 +515,9 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
             
             assign {cache_req_uuid, cache_req_type, cache_req_tag_x} = cache_req_tag[i];
 
-            assign cache_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 960)) ? '0 : {cache_req_uuid, cache_req_tag_x, cache_req_type[i]};
-            assign {cache_rsp_uuid, cache_rsp_tag_x, cache_rsp_type[i]} = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 960)) ? {1'b0, status_regs_bus_if[i].rsp_data.tag} : cache_bus_if[i].rsp_data.tag;
-            assign status_regs_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 960)) ? {cache_req_uuid[`UUID_WIDTH - 2 : 0], cache_req_tag_x, cache_req_type[i]} : '0;
+            assign cache_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? '0 : {cache_req_uuid, cache_req_tag_x, cache_req_type[i]};
+            assign {cache_rsp_uuid, cache_rsp_tag_x, cache_rsp_type[i]} = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? {1'b0, status_regs_bus_if[i].rsp_data.tag} : cache_bus_if[i].rsp_data.tag;
+            assign status_regs_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? {cache_req_uuid[`UUID_WIDTH - 2 : 0], cache_req_tag_x, cache_req_type[i]} : '0;
 
             // assign cache_bus_if[i].req_data.tag = ((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) ? '0 : {cache_req_uuid, cache_req_tag_x, cache_req_type[i]};
             // assign {cache_rsp_uuid, cache_rsp_tag_x, cache_rsp_type[i]} = ((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) ? {1'b0, status_regs_bus_if[i].rsp_data.tag}  : cache_bus_if[i].rsp_data.tag;
