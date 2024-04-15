@@ -450,7 +450,7 @@ module VX_cluster import VX_gpu_pkg::*; #(
     (
         .clk              (clk), 
         .reset            (interrupt_ctl_reset),
-        .interrupt_ctl_if (interrupt_ctl_if),
+        .interrupt_ctl_if (interrupt_ctl_if)
     );
 
     assign interrupt_ctl_if.err         = 0; 
