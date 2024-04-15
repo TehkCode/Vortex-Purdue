@@ -317,11 +317,6 @@ module VX_cluster import VX_gpu_pkg::*; #(
         .DATA_SIZE (DCACHE_WORD_SIZE), 
         .TAG_WIDTH (DCACHE_ARB_TAG_WIDTH)
     ) per_socket_dcache_bus_if[`NUM_SOCKETS * DCACHE_NUM_REQS]();
-
-    VX_mem_bus_if #(
-        .DATA_SIZE (DCACHE_WORD_SIZE), 
-        .TAG_WIDTH (DCACHE_ARB_TAG_WIDTH)
-    ) per_socket_status_regs_bus_if[`NUM_SOCKETS * DCACHE_NUM_REQS]();
     
     VX_mem_bus_if #(
         .DATA_SIZE (ICACHE_WORD_SIZE),
@@ -407,8 +402,6 @@ module VX_cluster import VX_gpu_pkg::*; #(
             .dcr_bus_if     (socket_dcr_bus_if),
 
             .dcache_bus_if  (per_socket_dcache_bus_if[i * DCACHE_NUM_REQS +: DCACHE_NUM_REQS]),
-            .status_regs_bus_if  (per_socket_status_regs_bus_if[i * DCACHE_NUM_REQS +: DCACHE_NUM_REQS]),
-
             .icache_bus_if  (per_socket_icache_bus_if[i]),
 
         `ifdef EXT_TEX_ENABLE
@@ -458,7 +451,6 @@ module VX_cluster import VX_gpu_pkg::*; #(
         .clk              (clk), 
         .reset            (interrupt_ctl_reset),
         .interrupt_ctl_if (interrupt_ctl_if),
-        .status_regs_bus_if (per_socket_status_regs_bus_if) // this assumes that there are only 2 Sockets per cluster (each socket has a core)
     );
 
     assign interrupt_ctl_if.err         = 0; 

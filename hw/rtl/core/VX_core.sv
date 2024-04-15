@@ -46,7 +46,6 @@ module VX_core import VX_gpu_pkg::*; #(
     VX_dcr_bus_if.slave     dcr_bus_if,
 
     VX_mem_bus_if.master    dcache_bus_if [DCACHE_NUM_REQS],
-    VX_mem_bus_if.master    status_regs_bus_if [DCACHE_NUM_REQS],
 
     VX_mem_bus_if.master    icache_bus_if,
 
@@ -226,7 +225,6 @@ module VX_core import VX_gpu_pkg::*; #(
     `endif 
 
         .dcache_bus_if  (dcache_bus_tmp_if),
-        .status_regs_bus_if (status_regs_bus_if),
     
     `ifdef EXT_F_ENABLE
         .fpu_dispatch_if(fpu_dispatch_if),
@@ -418,24 +416,6 @@ import VX_rop_pkg::*;
     output wire [DCACHE_NUM_REQS-1:0][DCACHE_NOSM_TAG_WIDTH-1:0] dcache_req_tag,
     input  wire [DCACHE_NUM_REQS-1:0]       dcache_req_ready,
 
-    output wire [DCACHE_NUM_REQS-1:0]       status_regs_req_valid,
-    output wire [DCACHE_NUM_REQS-1:0]       status_regs_req_rw,
-    output wire [DCACHE_NUM_REQS-1:0][DCACHE_WORD_SIZE-1:0] status_regs_req_byteen,
-    output wire [DCACHE_NUM_REQS-1:0][DCACHE_ADDR_WIDTH-1:0] status_regs_req_addr,
-    output wire [DCACHE_NUM_REQS-1:0][DCACHE_WORD_SIZE*8-1:0] status_regs_req_data,
-    output wire [DCACHE_NUM_REQS-1:0][DCACHE_NOSM_TAG_WIDTH-1:0] status_regs_req_tag,
-    input  wire [DCACHE_NUM_REQS-1:0]       status_regs_req_ready,
-
-    input wire  [DCACHE_NUM_REQS-1:0]       status_regs_rsp_valid,
-    input wire  [DCACHE_NUM_REQS-1:0][DCACHE_WORD_SIZE*8-1:0] status_regs_rsp_data,
-    input wire  [DCACHE_NUM_REQS-1:0][DCACHE_NOSM_TAG_WIDTH-1:0] status_regs_rsp_tag,
-    output wire [DCACHE_NUM_REQS-1:0]       status_regs_rsp_ready,
-
-    input wire  [DCACHE_NUM_REQS-1:0]       status_regs_rsp_valid,
-    input wire  [DCACHE_NUM_REQS-1:0][DCACHE_WORD_SIZE*8-1:0] status_regs_rsp_data,
-    input wire  [DCACHE_NUM_REQS-1:0][DCACHE_NOSM_TAG_WIDTH-1:0] status_regs_rsp_tag,
-    output wire [DCACHE_NUM_REQS-1:0]       status_regs_rsp_ready,
-
     output wire                             icache_req_valid,
     output wire                             icache_req_rw,
     output wire [ICACHE_WORD_SIZE-1:0]      icache_req_byteen,
@@ -524,10 +504,6 @@ import VX_rop_pkg::*;
         .TAG_WIDTH (DCACHE_NOSM_TAG_WIDTH)
     ) dcache_bus_if[DCACHE_NUM_REQS]();
 
-    VX_mem_bus_if #(
-        .DATA_SIZE (DCACHE_WORD_SIZE),
-        .TAG_WIDTH (DCACHE_NOSM_TAG_WIDTH)
-    ) status_regs_bus_if[DCACHE_NUM_REQS]();
 
     for (genvar i = 0; i < DCACHE_NUM_REQS; ++i) begin
         assign dcache_req_valid[i] = dcache_bus_if[i].req_valid;
@@ -544,20 +520,6 @@ import VX_rop_pkg::*;
         assign dcache_rsp_ready[i] = dcache_bus_if[i].rsp_ready;
     end
 
-    for (genvar i = 0; i < DCACHE_NUM_REQS; ++i) begin
-        assign status_regs_req_valid[i] = status_regs_bus_if[i].req_valid;
-        assign status_regs_req_rw[i] = status_regs_bus_if[i].req_data.rw;
-        assign status_regs_req_byteen[i] = status_regs_bus_if[i].req_data.byteen;
-        assign status_regs_req_addr[i] = status_regs_bus_if[i].req_data.addr;
-        assign status_regs_req_data[i] = status_regs_bus_if[i].req_data.data;
-        assign status_regs_req_tag[i] = status_regs_bus_if[i].req_data.tag;
-        assign status_regs_bus_if[i].req_ready = status_regs_req_ready[i];
-
-        assign status_regs_bus_if[i].rsp_valid = status_regs_rsp_valid[i];
-        assign status_regs_bus_if[i].rsp_data.tag = status_regs_rsp_tag[i];
-        assign status_regs_bus_if[i].rsp_data.data = status_regs_rsp_data[i];
-        assign status_regs_rsp_ready[i] = status_regs_bus_if[i].rsp_ready;
-    end
 
 
 
@@ -667,8 +629,6 @@ import VX_rop_pkg::*;
         .dcr_bus_if     (dcr_bus_if),
 
         .dcache_bus_if  (dcache_bus_if),
-        .status_regs_bus_if  (status_regs_bus_if),
-
         .icache_bus_if  (icache_bus_if),
 
     `ifdef EXT_TEX_ENABLE

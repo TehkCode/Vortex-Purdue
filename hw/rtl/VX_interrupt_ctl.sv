@@ -13,8 +13,6 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
 
     // controls
     VX_interrupt_ctl_if.hw_int    interrupt_ctl_if,                   
-    // memory bus from 4 vector lanes + 4 scalar lanes (only 1 scalar lane active)
-    VX_mem_bus_if.slave           status_regs_bus_if[`NUM_SOCKETS * DCACHE_NUM_REQS]
 );   
 
     typedef enum logic [2:0] {
@@ -34,131 +32,6 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     data_t [(256 / INTREG_CNT) - 1:0] nextRegisters, registers; 
     hw_int_state_t nextState, currState; 
 
-    logic [2:0] counter, nextCounter; 
-    logic [7:0] triggerBus, nextTriggerBus, grantBus;
-    logic [7:0] finBus;
-
-    logic [7:0] rdWr;
-
-VX_mem_bus_if #(
-        .DATA_SIZE (DCACHE_WORD_SIZE), 
-        .TAG_WIDTH (DCACHE_ARB_TAG_WIDTH)
-    ) next_status_regs_bus_if[`NUM_SOCKETS * DCACHE_NUM_REQS]();
-
-    
-
-    for(genvar i = 0; i < `NUM_SOCKETS * DCACHE_NUM_REQS; ++i)
-    begin 
-        always @(posedge clk)
-        begin 
-            if(reset)
-            begin 
-                status_regs_bus_if[i].req_ready     <= 0;
-                status_regs_bus_if[i].rsp_valid     <=  0;
-                status_regs_bus_if[i].rsp_data.tag  <= '0;
-                status_regs_bus_if[i].rsp_data.data <= '0;
-                triggerBus[i]                       <= '0;
-            end
-            else 
-            begin 
-                status_regs_bus_if[i].req_ready     <= next_status_regs_bus_if[i].req_ready;
-                status_regs_bus_if[i].rsp_valid     <= next_status_regs_bus_if[i].rsp_valid;
-                status_regs_bus_if[i].rsp_data.tag  <= next_status_regs_bus_if[i].rsp_data.tag;
-                status_regs_bus_if[i].rsp_data.data <= next_status_regs_bus_if[i].rsp_data.data;
-                triggerBus[i]                       <= nextTriggerBus[i];
-            end
-        end
-    end
-
-    for(genvar i = 0; i < `NUM_SOCKETS * DCACHE_NUM_REQS; ++i)
-    begin 
-        always @(*)
-        begin 
-            next_status_regs_bus_if[i].req_ready     = status_regs_bus_if[i].req_ready;
-            next_status_regs_bus_if[i].rsp_valid     = status_regs_bus_if[i].rsp_valid;
-            next_status_regs_bus_if[i].rsp_data.tag  = status_regs_bus_if[i].rsp_data.tag;
-            next_status_regs_bus_if[i].rsp_data.data = status_regs_bus_if[i].rsp_data.data;
-            nextTriggerBus[i]                        = triggerBus[i];
-            finBus[i]     = 0;
-
-            if(counter == 0)
-            begin 
-                if(status_regs_bus_if[i].req_valid & ~status_regs_bus_if[i].req_data.rw)
-                begin 
-                    // next_status_regs_bus_if[i].req_ready = 1;
-                    // next_status_regs_bus_if[i].rsp_data.tag = status_regs_bus_if[i].req_data.tag; 
-                    nextTriggerBus[i] = 1;
-                end
-                else if(status_regs_bus_if[i].req_valid)
-                begin 
-                    next_status_regs_bus_if[i].req_ready = 1;
-                end
-            end
-            if(counter == 1) // ACK 1 request
-            begin 
-                if(grantBus[i])
-                begin 
-                     next_status_regs_bus_if[i].req_ready = 1;
-                     next_status_regs_bus_if[i].rsp_data.tag = status_regs_bus_if[i].req_data.tag; 
-                end
-            end
-            if(counter == 2)
-            begin 
-                if(grantBus[i])
-                begin 
-                    next_status_regs_bus_if[i].req_ready = 0;
-                end
-            end
-            if((counter == 3))
-            begin 
-                if(triggerBus[i] & grantBus[i]) // only those who triggered read req on bus should get rsp
-                begin 
-                    next_status_regs_bus_if[i].rsp_valid = 1; 
-                    next_status_regs_bus_if[i].rsp_data.data = 32'hb33ff00d;
-                end
-            end
-            if(counter == 4)
-            begin 
-                if(status_regs_bus_if[i].rsp_ready & grantBus[i]) // you're done, deassert rsp
-                begin
-                    next_status_regs_bus_if[i].rsp_valid     = 0; 
-                    next_status_regs_bus_if[i].rsp_data.data = '0;
-                    next_status_regs_bus_if[i].rsp_data.tag  = '0;
-                    finBus[i]                                = 1;
-                    nextTriggerBus[i]                        = 0;
-                end
-            end
-            
-        end
-    end
-
-    always @(*)
-    begin 
-        grantBus = '0;
-        casez(triggerBus) // priority encoder
-            8'b???????1: grantBus[0] = 1;
-            8'b??????10: grantBus[1] = 1;
-            8'b?????100: grantBus[2] = 1;
-            8'b????1000: grantBus[3] = 1;
-            8'b???10000: grantBus[4] = 1;
-            8'b??100000: grantBus[5] = 1;
-            8'b?1000000: grantBus[6] = 1;
-            8'b10000000: grantBus[7] = 1;
-            default:     grantBus    = '0;
-        endcase
-    end
-
-    always @(*)
-    begin 
-        nextCounter = counter;
-         if((counter == 4) && (|finBus) && (|nextTriggerBus))
-            nextCounter = 1; // still more requests to handle
-        else if((counter == 4) && (|finBus))
-            nextCounter = 0;
-        else if((|triggerBus) && counter != 4)
-            nextCounter = counter + 1;
-    end
-
 
 
 
@@ -168,13 +41,11 @@ VX_mem_bus_if #(
         begin 
             registers                   <= '{default:256'd0};
             currState                   <= IDLE;
-            counter                     <= '0;
         end
         else 
         begin 
             registers                  <= nextRegisters;
             currState                  <= nextState;
-            counter                    <= nextCounter;
         end
     end
 

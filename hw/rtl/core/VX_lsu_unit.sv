@@ -25,8 +25,6 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
    // Dcache interface
     VX_mem_bus_if.master    cache_bus_if [DCACHE_NUM_REQS],
 
-    VX_mem_bus_if.master    status_regs_bus_if[DCACHE_NUM_REQS],
-
     // inputs
     VX_dispatch_if.slave    dispatch_if [`ISSUE_WIDTH],
 
@@ -405,33 +403,6 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
 
     for (genvar i = 0; i < DCACHE_NUM_REQS; ++i) begin
         always @(*) begin
-            status_regs_bus_if[i].req_valid = '0;
-            status_regs_bus_if[i].req_data.rw = '0;
-            status_regs_bus_if[i].req_data.byteen = '0;
-            status_regs_bus_if[i].req_data.addr = '0;
-            status_regs_bus_if[i].req_data.data = '0;
-            status_regs_bus_if[i].rsp_ready = '0;
-
-            cache_bus_if[i].req_valid = 0;
-            cache_bus_if[i].req_data.rw = 0;
-            cache_bus_if[i].req_data.byteen = 0;
-            cache_bus_if[i].req_data.addr = 0;
-            cache_bus_if[i].req_data.data = 0;
-            cache_bus_if[i].rsp_ready = 0;
-
-            if((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) begin
-                status_regs_bus_if[i].req_valid = cache_req_valid[i];
-                status_regs_bus_if[i].req_data.rw = cache_req_rw[i];
-                status_regs_bus_if[i].req_data.byteen = cache_req_byteen[i];
-                status_regs_bus_if[i].req_data.addr = cache_req_addr[i];
-                status_regs_bus_if[i].req_data.data = cache_req_data[i];
-                cache_req_ready[i] = status_regs_bus_if[i].req_ready;
-
-                cache_rsp_valid[i] = status_regs_bus_if[i].rsp_valid;
-                cache_rsp_data[i] = status_regs_bus_if[i].rsp_data.data;
-                status_regs_bus_if[i].rsp_ready = cache_rsp_ready[i];
-            end
-            else begin
                 cache_bus_if[i].req_valid = cache_req_valid[i];
                 cache_bus_if[i].req_data.rw = cache_req_rw[i];
                 cache_bus_if[i].req_data.byteen = cache_req_byteen[i];
@@ -443,33 +414,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
                 cache_rsp_data[i] = cache_bus_if[i].rsp_data.data;
                 cache_bus_if[i].rsp_ready = cache_rsp_ready[i];
             end
-
-            // if((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) begin
-            //     status_regs_bus_if[i].req_valid = cache_req_valid[i];
-            //     status_regs_bus_if[i].req_data.rw = cache_req_rw[i];
-            //     status_regs_bus_if[i].req_data.byteen = cache_req_byteen[i];
-            //     status_regs_bus_if[i].req_data.addr = cache_req_addr[i];
-            //     status_regs_bus_if[i].req_data.data = cache_req_data[i];
-            //     cache_req_ready[i] = status_regs_bus_if[i].req_ready;
-
-            //     cache_rsp_valid[i] = status_regs_bus_if[i].rsp_valid;
-            //     cache_rsp_data[i] = status_regs_bus_if[i].rsp_data.data;
-            //     status_regs_bus_if[i].rsp_ready = cache_rsp_ready[i];
-            // end
-            // else begin
-            //     cache_bus_if[i].req_valid = cache_req_valid[i];
-            //     cache_bus_if[i].req_data.rw = cache_req_rw[i];
-            //     cache_bus_if[i].req_data.byteen = cache_req_byteen[i];
-            //     cache_bus_if[i].req_data.addr = cache_req_addr[i];
-            //     cache_bus_if[i].req_data.data = cache_req_data[i];
-            //     cache_req_ready[i] = cache_bus_if[i].req_ready;
-
-            //     cache_rsp_valid[i] = cache_bus_if[i].rsp_valid;
-            //     cache_rsp_data[i] = cache_bus_if[i].rsp_data.data;
-            //     cache_bus_if[i].rsp_ready = cache_rsp_ready[i];
-            // end
         end
-    end
 
     // cache tag formatting: <uuid, tag, type>
     
@@ -486,13 +431,9 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
             assign {cache_req_uuid, cache_req_type, cache_req_bid, cache_req_tag_x} = cache_req_tag[i];
             assign cache_req_type_bi = cache_req_type_b[cache_req_bid];
 
-            assign cache_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? '0 : {cache_req_uuid, cache_req_bid, cache_req_tag_x, cache_req_type_bi};
-            assign {cache_rsp_uuid, cache_rsp_bid, cache_rsp_tag_x, cache_rsp_type_bi} = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? status_regs_bus_if[i].rsp_data.tag : cache_bus_if[i].rsp_data.tag;
-            assign status_regs_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? {cache_req_uuid, cache_req_bid, cache_req_tag_x, cache_req_type_bi} : '0;
+            assign cache_bus_if[i].req_data.tag = {cache_req_uuid, cache_req_bid, cache_req_tag_x, cache_req_type_bi};
+            assign {cache_rsp_uuid, cache_rsp_bid, cache_rsp_tag_x, cache_rsp_type_bi} = cache_bus_if[i].rsp_data.tag;
 
-            // assign cache_bus_if[i].req_data.tag = ((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) ? '0 : {cache_req_uuid, cache_req_bid, cache_req_tag_x, cache_req_type_bi};
-            // assign {cache_rsp_uuid, cache_rsp_bid, cache_rsp_tag_x, cache_rsp_type_bi} = ((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) ? status_regs_bus_if[i].rsp_data.tag  : cache_bus_if[i].rsp_data.tag;
-            // assign status_regs_bus_if[i].req_data.tag = ((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) ? {cache_req_uuid, cache_req_bid, cache_req_tag_x, cache_req_type_bi} : '0;
 
 
 
@@ -515,13 +456,9 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
             
             assign {cache_req_uuid, cache_req_type, cache_req_tag_x} = cache_req_tag[i];
 
-            assign cache_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? '0 : {cache_req_uuid, cache_req_tag_x, cache_req_type[i]};
-            assign {cache_rsp_uuid, cache_rsp_tag_x, cache_rsp_type[i]} = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? {1'b0, status_regs_bus_if[i].rsp_data.tag} : cache_bus_if[i].rsp_data.tag;
-            assign status_regs_bus_if[i].req_data.tag = ((cache_req_addr[i] < 1024) && (cache_req_addr[i] >= 512)) ? {cache_req_uuid[`UUID_WIDTH - 2 : 0], cache_req_tag_x, cache_req_type[i]} : '0;
+            assign cache_bus_if[i].req_data.tag = {cache_req_uuid, cache_req_tag_x, cache_req_type[i]};
+            assign {cache_rsp_uuid, cache_rsp_tag_x, cache_rsp_type[i]} = cache_bus_if[i].rsp_data.tag;
 
-            // assign cache_bus_if[i].req_data.tag = ((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) ? '0 : {cache_req_uuid, cache_req_tag_x, cache_req_type[i]};
-            // assign {cache_rsp_uuid, cache_rsp_tag_x, cache_rsp_type[i]} = ((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) ? {1'b0, status_regs_bus_if[i].rsp_data.tag}  : cache_bus_if[i].rsp_data.tag;
-            // assign status_regs_bus_if[i].req_data.tag = ((cache_req_addr[i] >= 65536) && (cache_req_addr[i] < 66550)) ? {cache_req_uuid[`UUID_WIDTH - 2 : 0], cache_req_tag_x, cache_req_type[i]} : '0;
 
             assign cache_rsp_tag[i] = {cache_rsp_uuid, cache_rsp_type, cache_rsp_tag_x};        
 
