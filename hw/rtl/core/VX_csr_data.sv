@@ -193,7 +193,9 @@ import VX_fpu_pkg::*;
             default: begin
                 read_addr_valid_r = 0;
                 if ((read_addr >= `VX_CSR_MPM_BASE   && read_addr < (`VX_CSR_MPM_BASE + 32))
-                 || (read_addr >= `VX_CSR_MPM_BASE_H && read_addr < (`VX_CSR_MPM_BASE_H + 32))) begin
+                 || (read_addr >= `VX_CSR_MPM_BASE_H && read_addr < (`VX_CSR_MPM_BASE_H + 32))
+                //  || (read_addr >= `VX_HW_ITR_CTRL_BEGIN && read_addr < `VX_HW_ITR_CTRL_END)
+                 ) begin
                     read_addr_valid_r = 1;
                 `ifdef PERF_ENABLE
                     case (base_dcrs.mpm_class)

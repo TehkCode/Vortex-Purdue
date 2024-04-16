@@ -313,50 +313,9 @@ module VX_cluster import VX_gpu_pkg::*; #(
     end
             
 `endif
-    // Warning: this is not parameterized to work in general. fix later.
     VX_sfu_csr_if #(
         .NUM_LANES (`NUM_SFU_LANES)
-    ) simt_bus_if();
-    VX_sfu_csr_if #(
-        .NUM_LANES (1)
-    ) scalar_bus_if();
-
-    VX_sfu_csr_if #(
-        .NUM_LANES (`NUM_SFU_LANES)
-    ) per_socket_csr_bus_if[`NUM_SOCKETS]();
-
-    // connect simt_bus_if and scalar_bus_if into per_socket_csr_bus_if
-    assign simt_bus_if.read_enable = per_socket_csr_bus_if[1].read_enable; 
-    assign simt_bus_if.read_uuid = per_socket_csr_bus_if[1].read_uuid; 
-    assign simt_bus_if.read_wid = per_socket_csr_bus_if[1].read_wid; 
-    assign simt_bus_if.read_tmask = per_socket_csr_bus_if[1].read_tmask; 
-    assign simt_bus_if.read_pid = per_socket_csr_bus_if[1].read_pid; 
-    assign simt_bus_if.read_addr = per_socket_csr_bus_if[1].read_addr; 
-    assign per_socket_csr_bus_if[1].read_data = simt_bus_if.read_data; 
-
-    assign simt_bus_if.write_enable = per_socket_csr_bus_if[1].write_enable; 
-    assign simt_bus_if.write_uuid = per_socket_csr_bus_if[1].write_uuid; 
-    assign simt_bus_if.write_wid = per_socket_csr_bus_if[1].write_wid; 
-    assign simt_bus_if.write_tmask = per_socket_csr_bus_if[1].write_tmask; 
-    assign simt_bus_if.write_pid = per_socket_csr_bus_if[1].write_pid; 
-    assign simt_bus_if.write_addr = per_socket_csr_bus_if[1].write_addr; 
-    assign simt_bus_if.write_data = per_socket_csr_bus_if[1].write_data; 
-
-    assign scalar_bus_if.read_enable = per_socket_csr_bus_if[0].read_enable; 
-    assign scalar_bus_if.read_uuid = per_socket_csr_bus_if[0].read_uuid; 
-    assign scalar_bus_if.read_wid = per_socket_csr_bus_if[0].read_wid; 
-    assign scalar_bus_if.read_tmask = per_socket_csr_bus_if[0].read_tmask; 
-    assign scalar_bus_if.read_pid = per_socket_csr_bus_if[0].read_pid; 
-    assign scalar_bus_if.read_addr = per_socket_csr_bus_if[0].read_addr; 
-    assign per_socket_csr_bus_if[0].read_data = scalar_bus_if.read_data; 
-
-    assign scalar_bus_if.write_enable = per_socket_csr_bus_if[0].write_enable; 
-    assign scalar_bus_if.write_uuid = per_socket_csr_bus_if[0].write_uuid; 
-    assign scalar_bus_if.write_wid = per_socket_csr_bus_if[0].write_wid; 
-    assign scalar_bus_if.write_tmask = per_socket_csr_bus_if[0].write_tmask; 
-    assign scalar_bus_if.write_pid = per_socket_csr_bus_if[0].write_pid; 
-    assign scalar_bus_if.write_addr = per_socket_csr_bus_if[0].write_addr; 
-    assign scalar_bus_if.write_data = per_socket_csr_bus_if[0].write_data; 
+    ) per_socket_csr_bus_if[2]();
 
     VX_mem_bus_if #(
         .DATA_SIZE (DCACHE_WORD_SIZE), 
@@ -498,8 +457,8 @@ module VX_cluster import VX_gpu_pkg::*; #(
         .clk              (clk), 
         .reset            (interrupt_ctl_reset),
         .interrupt_ctl_if (interrupt_ctl_if),
-        .simt_bus_if          (simt_bus_if),
-        .scalar_bus_if        (scalar_bus_if)
+        .simt_bus_if      (per_socket_csr_bus_if[0]),
+        .scalar_bus_if    (per_socket_csr_bus_if[1])
     );
 
     assign interrupt_ctl_if.err         = 0; 
