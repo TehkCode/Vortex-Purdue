@@ -261,11 +261,10 @@ module VX_socket import VX_gpu_pkg::*; #(
 
         `RESET_RELAY (core_reset, reset);
         if(((SOCKET_ID * `SOCKET_SIZE) + i)>=NUM_VEC_CORES) begin : scalar_core_gen
-            VX_core #(
+            VX_core_scalar #(
                 .CORE_ID ((SOCKET_ID * `SOCKET_SIZE) + i),
                 .THREAD_CNT(1),
-                .WARP_CNT(1),
-                .ISSUE_CNT(1)
+                .WARP_CNT(`NUM_WARPS)
             ) core (
                 `SCOPE_IO_BIND  (i)
 
