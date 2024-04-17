@@ -17,7 +17,9 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
     parameter ISSUE_CNT = `ISSUE_WIDTH,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter NUM_FPU_BLOCKS = `UP(ISSUE_CNT / 1)
 ) (    
     input wire              clk,
     input wire              reset,
@@ -33,7 +35,7 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     VX_dispatch_if.slave    dispatch_if [ISSUE_CNT],
     
 `ifdef EXT_F_ENABLE
-    VX_fpu_to_csr_if.slave  fpu_to_csr_if [`NUM_FPU_BLOCKS],
+    VX_fpu_to_csr_if.slave  fpu_to_csr_if [NUM_FPU_BLOCKS],
 `endif
 
 `ifdef EXT_TEX_ENABLE
@@ -69,7 +71,7 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     `UNUSED_PARAM (CORE_ID)
     localparam BLOCK_SIZE   = 1;
     localparam NUM_LANES    = `MIN(`NUM_SFU_LANES,THREAD_CNT);
-    localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
+    localparam PID_BITS     = `LOG2UP(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
 
     localparam RSP_ARB_DATAW = `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + (NUM_LANES * `XLEN) + `NR_BITS + 1 + `XLEN + PID_WIDTH + 1 + 1;
@@ -85,7 +87,8 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
 
     VX_execute_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) execute_if[BLOCK_SIZE]();
 
     `RESET_RELAY (dispatch_reset, reset);
@@ -94,7 +97,9 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
         .OUT_REG    (1),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) dispatch_unit (
         .clk        (clk),
         .reset      (dispatch_reset),
@@ -125,11 +130,13 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     // Warp control block    
     VX_execute_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) wctl_execute_if();
     VX_commit_if#(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) wctl_commit_if();
     
     assign wctl_execute_if.valid = execute_if[0].valid && `INST_SFU_IS_WCTL(execute_if[0].data.op_type);
@@ -140,7 +147,8 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     VX_wctl_unit #(
         .CORE_ID   (CORE_ID),
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) wctl_unit (
         .clk        (clk),
         .reset      (wctl_reset),
@@ -156,11 +164,13 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     // CSR unit
     VX_execute_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) csr_execute_if();
     VX_commit_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) csr_commit_if();
 
     assign csr_execute_if.valid = execute_if[0].valid && `INST_SFU_IS_CSR(execute_if[0].data.op_type);
@@ -171,7 +181,8 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     VX_csr_unit #(
         .CORE_ID   (CORE_ID),
         .NUM_LANES (NUM_LANES),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) csr_unit (
         .clk            (clk),
         .reset          (csr_reset),
@@ -226,11 +237,13 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
 
     VX_execute_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) tex_execute_if();
     VX_commit_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) tex_commit_if();
 
     assign tex_execute_if.valid = execute_if[0].valid && (execute_if[0].data.op_type == `INST_SFU_TEX);
@@ -260,11 +273,13 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     
     VX_execute_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) raster_execute_if();
     VX_commit_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) raster_commit_if();
 
     assign raster_execute_if.valid = execute_if[0].valid && (execute_if[0].data.op_type == `INST_SFU_RASTER);
@@ -295,11 +310,13 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     
     VX_execute_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) rop_execute_if();
     VX_commit_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT(WARP_CNT)
     ) rop_commit_if();
 
     assign rop_execute_if.valid = execute_if[0].valid && (execute_if[0].data.op_type == `INST_SFU_ROP);
@@ -354,7 +371,8 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
 
     VX_commit_if #(
         .THREAD_CNT(THREAD_CNT),
-        .NUM_LANES (NUM_LANES)
+        .NUM_LANES (NUM_LANES),
+        .WARP_CNT (WARP_CNT)
     ) arb_commit_if[BLOCK_SIZE]();
 
     VX_stream_arb #(
@@ -378,7 +396,8 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
         .OUT_REG    (3),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT (WARP_CNT)
     ) gather_unit (
         .clk           (clk),
         .reset         (commit_reset),

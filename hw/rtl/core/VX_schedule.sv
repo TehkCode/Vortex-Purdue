@@ -17,9 +17,10 @@ module VX_schedule import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
     parameter WARP_CNT = `NUM_WARPS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH,
-    parameter WAPR_CNT_WIDTH = `NW_WIDTH
-) (    
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
+    parameter NUM_ALU_BLOCKS = ISSUE_CNT,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
+) (   
     input wire              clk,
     input wire              reset,
 
@@ -28,7 +29,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
 
     // inputsdecode_if
     VX_warp_ctl_if.slave    warp_ctl_if, 
-    VX_branch_ctl_if.slave  branch_ctl_if [`NUM_ALU_BLOCKS],
+    VX_branch_ctl_if.slave  branch_ctl_if [NUM_ALU_BLOCKS],
     VX_decode_sched_if.slave decode_sched_if,
     VX_commit_sched_if.slave commit_sched_if,
 
@@ -72,11 +73,11 @@ module VX_schedule import VX_gpu_pkg::*; #(
     wire schedule_if_fire = schedule_if.valid && schedule_if.ready;
 
     // branch
-    wire [`NUM_ALU_BLOCKS-1:0]                  branch_valid;    
-    wire [`NUM_ALU_BLOCKS-1:0][WARP_CNT_WIDTH-1:0]   branch_wid;    
-    wire [`NUM_ALU_BLOCKS-1:0]                  branch_taken;
-    wire [`NUM_ALU_BLOCKS-1:0][`XLEN-1:0]       branch_dest;
-    for (genvar i = 0; i < `NUM_ALU_BLOCKS; ++i) begin
+    wire [NUM_ALU_BLOCKS-1:0]                  branch_valid;    
+    wire [NUM_ALU_BLOCKS-1:0][WARP_CNT_WIDTH-1:0]   branch_wid;    
+    wire [NUM_ALU_BLOCKS-1:0]                  branch_taken;
+    wire [NUM_ALU_BLOCKS-1:0][`XLEN-1:0]       branch_dest;
+    for (genvar i = 0; i < NUM_ALU_BLOCKS; ++i) begin
         assign branch_valid[i] = branch_ctl_if[i].valid;
         assign branch_wid[i]   = branch_ctl_if[i].wid;
         assign branch_taken[i] = branch_ctl_if[i].taken;
@@ -86,7 +87,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
     // barriers
     reg [`NUM_BARRIERS-1:0][WARP_CNT-1:0] barrier_masks, barrier_masks_n;
     reg [WARP_CNT-1:0] barrier_stalls, barrier_stalls_n;
-    wire [`CLOG2(WARP_CNT+1)-1:0] active_barrier_count;
+    wire [`LOG2UP(WARP_CNT+1)-1:0] active_barrier_count;
     wire [WARP_CNT-1:0] curr_barrier_mask;    
 `ifdef GBAR_ENABLE
     reg [WARP_CNT-1:0] curr_barrier_mask_n;
@@ -109,7 +110,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
 
         // wspawn handling
         if (warp_ctl_if.valid && warp_ctl_if.wspawn.valid) begin
-            active_warps_n |= warp_ctl_if.wspawn.wmask;
+            active_warps_n |= warp_ctl_if.wspawn.wmask[WARP_CNT-1:0];
             for (integer i = 0; i < WARP_CNT; ++i) begin
                 if (warp_ctl_if.wspawn.wmask[i]) begin
                     thread_masks_n[i][0] = 1;
@@ -169,7 +170,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
     `endif
 
         // Branch handling
-        for (integer i = 0; i < `NUM_ALU_BLOCKS; ++i) begin
+        for (integer i = 0; i < NUM_ALU_BLOCKS; ++i) begin
             if (branch_valid[i]) begin
                 if (branch_taken[i]) begin
                     warp_pcs_n[branch_wid[i]] = branch_dest[i];
@@ -266,7 +267,8 @@ module VX_schedule import VX_gpu_pkg::*; #(
 
     VX_split_join #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) split_join (
         .clk        (clk),
         .reset      (split_join_reset),
@@ -308,7 +310,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
 `ifndef NDEBUG
     localparam GNW_WIDTH = `LOG2UP(`NUM_CLUSTERS * `NUM_CORES * WARP_CNT);
     reg [`UUID_WIDTH-1:0] instr_uuid;
-    wire [GNW_WIDTH-1:0] g_wid = (GNW_WIDTH'(CORE_ID) << `NW_BITS) + GNW_WIDTH'(schedule_wid);
+    wire [GNW_WIDTH-1:0] g_wid = (GNW_WIDTH'(CORE_ID) << WARP_CNT_WIDTH) + GNW_WIDTH'(schedule_wid);
     always @(posedge clk) begin
         if (reset) begin
             instr_uuid <= `UUID_WIDTH'(dpi_uuid_gen(1, 0, 0));
@@ -341,7 +343,8 @@ module VX_schedule import VX_gpu_pkg::*; #(
     VX_pending_instr #( 
         .CTR_WIDTH  (12),
         .DECR_COUNT (ISSUE_CNT),
-        .ALM_EMPTY  (1)
+        .ALM_EMPTY  (1),
+        .WARP_CNT(WARP_CNT)
     ) pending_instr(
         .clk       (clk),
         .reset     (pending_instr_reset),

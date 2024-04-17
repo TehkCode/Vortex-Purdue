@@ -17,7 +17,8 @@ module VX_operands import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter CACHE_ENABLE = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT = `NUM_WARPS
 ) (
     input wire              clk,
     input wire              reset,
@@ -27,6 +28,10 @@ module VX_operands import VX_gpu_pkg::*; #(
     VX_operands_if.master   operands_if [ISSUE_CNT]
 );
     `UNUSED_PARAM (CORE_ID)
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_WIS_W = `LOG2UP(WARP_CNT / ISSUE_CNT);
+    localparam ISSUE_RATIO = WARP_CNT / ISSUE_CNT;
+`IGNORE_WARNINGS_END
     localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + `NR_BITS;
 
     localparam STATE_IDLE   = 2'd0;

@@ -16,8 +16,9 @@
 module VX_commit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4)
 ) (
     input wire              clk,
     input wire              reset,
@@ -39,16 +40,19 @@ module VX_commit import VX_gpu_pkg::*; #(
     output wire [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam DATAW = `UUID_WIDTH + `NW_WIDTH + THREAD_CNT + `XLEN + 1 + `NR_BITS + THREAD_CNT * `XLEN + 1 + 1 + 1;
-    localparam COMMIT_SIZEW = `CLOG2(THREAD_CNT + 1);
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_WIS_W = `LOG2UP(WARP_CNT / ISSUE_CNT);
+`IGNORE_WARNINGS_END
+    localparam DATAW = `UUID_WIDTH + WARP_CNT_WIDTH + THREAD_CNT + `XLEN + 1 + `NR_BITS + THREAD_CNT * `XLEN + 1 + 1 + 1;
+    localparam COMMIT_SIZEW = `LOG2UP(THREAD_CNT + 1);
     localparam COMMIT_ALL_SIZEW = COMMIT_SIZEW + ISSUE_CNT - 1;
 
     // commit arbitration
 
-    VX_commit_if#(.THREAD_CNT (THREAD_CNT)) commit_if[ISSUE_CNT]();
+    VX_commit_if#(.WARP_CNT(WARP_CNT), .THREAD_CNT (THREAD_CNT)) commit_if[ISSUE_CNT]();
 
     wire [ISSUE_CNT-1:0] commit_fire;    
-    wire [ISSUE_CNT-1:0][`NW_WIDTH-1:0] commit_wid;
+    wire [ISSUE_CNT-1:0][WARP_CNT_WIDTH-1:0] commit_wid;
     wire [ISSUE_CNT-1:0][THREAD_CNT-1:0] commit_tmask;
     wire [ISSUE_CNT-1:0] commit_eop;
 
@@ -163,7 +167,7 @@ module VX_commit import VX_gpu_pkg::*; #(
     // Committed instructions
 
     VX_pipe_register #(
-        .DATAW  (ISSUE_CNT * (1 + `NW_WIDTH)),
+        .DATAW  (ISSUE_CNT * (1 + WARP_CNT_WIDTH)),
         .RESETW (ISSUE_CNT)
     ) committed_pipe_reg (
         .clk      (clk),
@@ -178,7 +182,7 @@ module VX_commit import VX_gpu_pkg::*; #(
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign writeback_if[i].valid = commit_if[i].valid && commit_if[i].data.wb;
         assign writeback_if[i].data.uuid = commit_if[i].data.uuid; 
-        assign writeback_if[i].data.wis = wid_to_wis(commit_if[i].data.wid);
+        assign writeback_if[i].data.wis = `WID_TO_WIS(commit_if[i].data.wid, ISSUE_WIS_W, ISSUE_CNT);
         assign writeback_if[i].data.PC = commit_if[i].data.PC; 
         assign writeback_if[i].data.tmask = commit_if[i].data.tmask; 
         assign writeback_if[i].data.rd = commit_if[i].data.rd; 

@@ -13,7 +13,7 @@
 
 `include "VX_define.vh"
 
-interface VX_decode_sched_if #(parameter WARP_CNT_WIDTH = `NW_WIDTH)();
+interface VX_decode_sched_if #(parameter WARP_CNT = `NUM_WARPS, parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT))();
 
     wire                    valid;
     wire                    is_wstall;

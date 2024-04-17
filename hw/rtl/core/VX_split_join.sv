@@ -17,7 +17,7 @@ module VX_split_join import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
     parameter WARP_CNT = `NUM_WARPS,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) (
     input  wire                     clk,
     input  wire                     reset,

@@ -26,7 +26,9 @@ import VX_fpu_pkg::*;
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
     parameter WARP_CNT = `NUM_WARPS,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
+    parameter NUM_FPU_BLOCKS = `UP(ISSUE_CNT / 1)
 ) (
     input wire                          clk,
     input wire                          reset,
@@ -54,7 +56,7 @@ import VX_fpu_pkg::*;
     VX_commit_csr_if.slave              commit_csr_if,
 
 `ifdef EXT_F_ENABLE
-    VX_fpu_to_csr_if.slave              fpu_to_csr_if [`NUM_FPU_BLOCKS],
+    VX_fpu_to_csr_if.slave              fpu_to_csr_if [NUM_FPU_BLOCKS],
 `endif
 
     input wire [`PERF_CTR_BITS-1:0]     cycles,
@@ -83,17 +85,17 @@ import VX_fpu_pkg::*;
 
 `ifdef EXT_F_ENABLE    
     reg [WARP_CNT-1:0][`INST_FRM_BITS+`FP_FLAGS_BITS-1:0] fcsr, fcsr_n;
-    wire [`NUM_FPU_BLOCKS-1:0]              fpu_write_enable;
-    wire [`NUM_FPU_BLOCKS-1:0][WARP_CNT_WIDTH-1:0] fpu_write_wid;
-    fflags_t [`NUM_FPU_BLOCKS-1:0]          fpu_write_fflags;
-    for (genvar i = 0; i < `NUM_FPU_BLOCKS; ++i) begin
+    wire [NUM_FPU_BLOCKS-1:0]              fpu_write_enable;
+    wire [NUM_FPU_BLOCKS-1:0][WARP_CNT_WIDTH-1:0] fpu_write_wid;
+    fflags_t [NUM_FPU_BLOCKS-1:0]          fpu_write_fflags;
+    for (genvar i = 0; i < NUM_FPU_BLOCKS; ++i) begin
         assign fpu_write_enable[i] = fpu_to_csr_if[i].write_enable;
         assign fpu_write_wid[i]    = fpu_to_csr_if[i].write_wid;
         assign fpu_write_fflags[i] = fpu_to_csr_if[i].write_fflags;
     end
     always @(*) begin
         fcsr_n = fcsr;
-        for (integer i = 0; i < `NUM_FPU_BLOCKS; ++i) begin
+        for (integer i = 0; i < NUM_FPU_BLOCKS; ++i) begin
             if (fpu_write_enable[i]) begin
                 fcsr_n[fpu_write_wid[i]][`FP_FLAGS_BITS-1:0] = fcsr[fpu_write_wid[i]][`FP_FLAGS_BITS-1:0]
                                                              | fpu_write_fflags[i];
@@ -109,7 +111,7 @@ import VX_fpu_pkg::*;
         end
     end
     
-    for (genvar i = 0; i < `NUM_FPU_BLOCKS; ++i) begin
+    for (genvar i = 0; i < NUM_FPU_BLOCKS; ++i) begin
         assign fpu_to_csr_if[i].read_frm = fcsr[fpu_to_csr_if[i].read_wid][`INST_FRM_BITS+`FP_FLAGS_BITS-1:`FP_FLAGS_BITS];
     end
 
@@ -161,7 +163,7 @@ import VX_fpu_pkg::*;
             `VX_CSR_MVENDORID  : read_data_ro_r = 32'(`VENDOR_ID);
             `VX_CSR_MARCHID    : read_data_ro_r = 32'(`ARCHITECTURE_ID);
             `VX_CSR_MIMPID     : read_data_ro_r = 32'(`IMPLEMENTATION_ID);
-            `VX_CSR_MISA       : read_data_ro_r = (((`CLOG2(`XLEN)-4) << (`XLEN-2)) | `MISA_STD);
+            `VX_CSR_MISA       : read_data_ro_r = (((`LOG2UP(`XLEN)-4) << (`XLEN-2)) | `MISA_STD);
         `ifdef EXT_F_ENABLE
             `VX_CSR_FFLAGS     : read_data_rw_r = 32'(fcsr[read_wid][`FP_FLAGS_BITS-1:0]);
             `VX_CSR_FRM        : read_data_rw_r = 32'(fcsr[read_wid][`INST_FRM_BITS+`FP_FLAGS_BITS-1:`FP_FLAGS_BITS]);

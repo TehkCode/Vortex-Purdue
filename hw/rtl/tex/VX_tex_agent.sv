@@ -19,7 +19,7 @@ module VX_tex_agent import VX_tex_pkg::*; #(
     parameter CORE_ID = 0,
     parameter NUM_LANES = 1,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT_WIDTH = `CLOG2(WARP_CNT)
 ) (
     input wire clk,
     input wire reset,

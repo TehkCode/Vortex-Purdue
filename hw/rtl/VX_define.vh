@@ -444,6 +444,14 @@
 `define TO_DISPATCH_DATA(data, tid) \
     {data.uuid, data.wis, data.tmask, data.op_type, data.op_mod, data.wb, data.use_PC, data.use_imm, data.PC, data.imm, data.rd, tid, data.rs1_data, data.rs2_data, data.rs3_data}
 
+`define WID_TO_ISW(wid, issue_width, issue_idx_w) (issue_width > 1) ? issue_idx_w'(wid) : 0
+
+`define WIS_TO_WID(wid, isw, issue_idx_w, issue_cnt, nw_width) nw_width'({wis, isw} >> (issue_idx_w-`LOG2UP(issue_cnt)))
+
+`define WID_TO_WIS(wid, issue_wis_w, issue_cnt) issue_wis_w'(wid >> `LOG2UP(issue_cnt))
+
+`define WIS_TO_ADDR(rid, wis, issue_wis_w, issue_ratio, issue_addrw) issue_addrw'({rid, wis} >> (issue_wis_w-`LOG2UP(issue_ratio)))
+
 ///////////////////////////////////////////////////////////////////////////////
 
 `endif // VX_DEFINE_VH

@@ -17,7 +17,9 @@ module VX_alu_unit #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
     parameter ISSUE_CNT = `ISSUE_WIDTH,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter NUM_ALU_BLOCKS = `UP(ISSUE_CNT/1)
 ) (
     input wire              clk,
     input wire              reset,
@@ -27,13 +29,13 @@ module VX_alu_unit #(
 
     // Outputs
     VX_commit_if.master     commit_if [ISSUE_CNT],
-    VX_branch_ctl_if.master branch_ctl_if [`NUM_ALU_BLOCKS]
+    VX_branch_ctl_if.master branch_ctl_if [NUM_ALU_BLOCKS]
 );   
 
     `UNUSED_PARAM (CORE_ID)
-    localparam BLOCK_SIZE   = `NUM_ALU_BLOCKS;
-    localparam NUM_LANES    = `UP(THREAD_CNT/2); //`MIN(`UP(THREAD_CNT/2),`NUM_ALU_LANES); // need to figure out what this does. 
-    localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
+    localparam BLOCK_SIZE = `UP(ISSUE_CNT / 1);
+    localparam NUM_LANES    = `UP(THREAD_CNT); //`MIN(`UP(THREAD_CNT/2),`NUM_ALU_LANES); // need to figure out what this does. 
+    localparam PID_BITS     = `LOG2UP(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
     localparam RSP_ARB_DATAW= `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
     localparam RSP_ARB_SIZE = 1 + `EXT_M_ENABLED;
@@ -41,7 +43,8 @@ module VX_alu_unit #(
 
     VX_execute_if #(
         .NUM_LANES (NUM_LANES),
-        .THREAD_CNT (THREAD_CNT)
+        .THREAD_CNT (THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) execute_if[BLOCK_SIZE]();
 
     `RESET_RELAY (dispatch_reset, reset);
@@ -50,7 +53,8 @@ module VX_alu_unit #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
         .OUT_REG    (PARTIAL_BW ? 1 : 0),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) dispatch_unit (
         .clk        (clk),
         .reset      (dispatch_reset),
@@ -60,7 +64,8 @@ module VX_alu_unit #(
 
     VX_commit_if #(
         .NUM_LANES (NUM_LANES),
-        .THREAD_CNT (THREAD_CNT)
+        .THREAD_CNT (THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) commit_block_if[BLOCK_SIZE]();
 
     for (genvar block_idx = 0; block_idx < BLOCK_SIZE; ++block_idx) begin
@@ -69,7 +74,8 @@ module VX_alu_unit #(
 
         VX_execute_if #(
             .NUM_LANES (NUM_LANES),
-        .THREAD_CNT (THREAD_CNT)
+            .THREAD_CNT (THREAD_CNT),
+            .WARP_CNT(WARP_CNT)
         ) int_execute_if();
 
         assign int_execute_if.valid = execute_if[block_idx].valid && ~is_muldiv_op;
@@ -77,7 +83,8 @@ module VX_alu_unit #(
 
         VX_commit_if #(
             .NUM_LANES (NUM_LANES),
-        .THREAD_CNT (THREAD_CNT)
+            .THREAD_CNT (THREAD_CNT),
+            .WARP_CNT(WARP_CNT)
         ) int_commit_if();
 
         `RESET_RELAY (int_reset, reset);
@@ -86,7 +93,8 @@ module VX_alu_unit #(
             .CORE_ID   (CORE_ID),
             .BLOCK_IDX (block_idx),
             .NUM_LANES (NUM_LANES),
-            .THREAD_CNT(THREAD_CNT)
+            .THREAD_CNT(THREAD_CNT),
+            .WARP_CNT(WARP_CNT)
         ) int_unit (
             .clk        (clk),
             .reset      (int_reset),
@@ -103,7 +111,8 @@ module VX_alu_unit #(
 
         VX_execute_if #(
             .NUM_LANES (NUM_LANES),
-        .THREAD_CNT (THREAD_CNT)
+            .THREAD_CNT (THREAD_CNT),
+            .WARP_CNT(WARP_CNT)
         ) mdv_execute_if();
         
         assign mdv_execute_if.valid = execute_if[block_idx].valid && is_muldiv_op;
@@ -111,13 +120,15 @@ module VX_alu_unit #(
 
         VX_commit_if #(
             .NUM_LANES (NUM_LANES),
-        .THREAD_CNT (THREAD_CNT)
+            .THREAD_CNT (THREAD_CNT),
+            .WARP_CNT(WARP_CNT)
         ) mdv_commit_if();
 
         VX_muldiv_unit #(
             .CORE_ID   (CORE_ID),
             .NUM_LANES (NUM_LANES),
-            .THREAD_CNT(THREAD_CNT)
+            .THREAD_CNT(THREAD_CNT),
+            .WARP_CNT(WARP_CNT)
         ) mdv_unit (
             .clk        (clk),
             .reset      (mdv_reset),
@@ -174,7 +185,8 @@ module VX_alu_unit #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
         .OUT_REG    (PARTIAL_BW ? 3 : 0),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) gather_unit (
         .clk           (clk),
         .reset         (commit_reset),

@@ -21,7 +21,7 @@ module VX_raster_csr import VX_raster_pkg::*; #(
     parameter THREAD_CNT = THREAD_CNT,
     parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES),
     parameter WARP_CNT = `NUM_WARPS,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT_WIDTH = `CLOG2(WARP_CNT)
 ) (
     input wire clk,
     input wire reset,

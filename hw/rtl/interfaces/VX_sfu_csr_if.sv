@@ -17,7 +17,8 @@ interface VX_sfu_csr_if  #(
     parameter NUM_LANES = `NUM_SFU_LANES,
     parameter THREAD_CNT = `NUM_THREADS,
     parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES),
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) ();
 
     wire                        read_enable;

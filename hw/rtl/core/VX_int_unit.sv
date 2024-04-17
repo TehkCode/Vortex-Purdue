@@ -18,7 +18,9 @@ module VX_int_unit #(
     parameter BLOCK_IDX = 0,
     parameter NUM_LANES = 1,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4)
 ) (
     input wire              clk,
     input wire              reset,
@@ -32,11 +34,11 @@ module VX_int_unit #(
 );   
 
     `UNUSED_PARAM (CORE_ID)
-    localparam LANE_BITS      = `CLOG2(NUM_LANES);
+    localparam LANE_BITS      = `LOG2UP(NUM_LANES);
     localparam LANE_WIDTH     = `UP(LANE_BITS);
-    localparam PID_BITS       = `CLOG2(THREAD_CNT / NUM_LANES);
+    localparam PID_BITS       = `LOG2UP(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH      = `UP(PID_BITS);
-    localparam SHIFT_IMM_BITS = `CLOG2(`XLEN);
+    localparam SHIFT_IMM_BITS = `LOG2UP(`XLEN);
 
     `UNUSED_VAR (execute_if.data.rs3_data)
 
@@ -163,7 +165,16 @@ module VX_int_unit #(
     wire br_taken = ((is_br_less ? is_less : is_equal) ^ is_br_neg) | is_br_static;
     wire [`XLEN-1:0] br_dest = is_br_static ? br_result : (PC_r + imm_r);
     wire [WARP_CNT_WIDTH-1:0] br_wid;
-    `ASSIGN_BLOCKED_WID (br_wid, commit_if.data.wid, BLOCK_IDX, `NUM_ALU_BLOCKS)
+
+    if (ISSUE_CNT != 1) begin
+        if (ISSUE_CNT != WARP_CNT) begin
+            assign br_wid = {commit_if.data.wid[WARP_CNT_WIDTH-1:`LOG2UP(ISSUE_CNT)], `LOG2UP(ISSUE_CNT)'(BLOCK_IDX)};
+        end else begin
+            assign br_wid = WARP_CNT_WIDTH'(BLOCK_IDX);
+        end
+    end else begin
+        assign br_wid = commit_if.data.wid;
+    end
 
     VX_pipe_register #(
         .DATAW (1 + WARP_CNT_WIDTH + 1 + `XLEN)

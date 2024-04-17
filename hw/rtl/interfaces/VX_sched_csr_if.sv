@@ -13,7 +13,7 @@
 
 `include "VX_define.vh"
 // parameter THREAD_CNT = `NUM_THREADS
-interface VX_sched_csr_if #(parameter THREAD_CNT = `NUM_THREADS, parameter WARP_CNT = `NUM_WARPS, parameter WARP_CNT_WIDTH = `NW_WIDTH)();
+interface VX_sched_csr_if #(parameter WARP_CNT = `NUM_WARPS, parameter THREAD_CNT = `NUM_THREADS, parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT))();
 
     wire [`PERF_CTR_BITS-1:0] cycles;
     wire [WARP_CNT-1:0] active_warps;

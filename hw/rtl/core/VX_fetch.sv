@@ -17,8 +17,8 @@ module VX_fetch import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
     parameter WARP_CNT = `NUM_WARPS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) (
     `SCOPE_IO_DECL
 
@@ -36,7 +36,10 @@ module VX_fetch import VX_gpu_pkg::*; #(
 );
     `UNUSED_PARAM (CORE_ID)
     `UNUSED_VAR (reset)
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_IDX_W = `LOG2UP(ISSUE_CNT); 
     localparam ISW_WIDTH  = `LOG2UP(ISSUE_CNT);
+`IGNORE_WARNINGS_END
 
     wire icache_req_valid;
     wire [ICACHE_ADDR_WIDTH-1:0] icache_req_addr;
@@ -44,13 +47,13 @@ module VX_fetch import VX_gpu_pkg::*; #(
     wire icache_req_ready;
 
     wire [`UUID_WIDTH-1:0] rsp_uuid;
-    wire [WARP_CNT_WIDTH-1:0] req_tag, rsp_tag;    
+    wire [`NW_WIDTH-1:0] req_tag, rsp_tag;    
 
     wire icache_req_fire = icache_req_valid && icache_req_ready;
 
-    wire [ISW_WIDTH-1:0] schedule_isw = wid_to_isw(schedule_if.data.wid);
+    wire [ISW_WIDTH-1:0] schedule_isw = `WID_TO_ISW(schedule_if.data.wid, ISW_WIDTH, ISSUE_IDX_W);
     
-    assign req_tag = schedule_if.data.wid;
+    assign req_tag = `NW_WIDTH'(schedule_if.data.wid);
     
     assign {rsp_uuid, rsp_tag} = icache_bus_if.rsp_data.tag;
 
@@ -66,9 +69,9 @@ module VX_fetch import VX_gpu_pkg::*; #(
         .read  (1'b1),
         .write (icache_req_fire),        
         `UNUSED_PIN (wren),
-        .waddr (req_tag),
+        .waddr (req_tag[WARP_CNT_WIDTH-1:0]),
         .wdata ({schedule_if.data.PC, schedule_if.data.tmask}),
-        .raddr (rsp_tag),
+        .raddr (rsp_tag[WARP_CNT_WIDTH-1:0]),
         .rdata ({rsp_PC, rsp_tmask})
     );
 
@@ -124,7 +127,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
 
     assign fetch_if.valid = icache_bus_if.rsp_valid;
     assign fetch_if.data.tmask = rsp_tmask;
-    assign fetch_if.data.wid   = rsp_tag;
+    assign fetch_if.data.wid   = rsp_tag[WARP_CNT_WIDTH-1:0];
     assign fetch_if.data.PC    = rsp_PC;
     assign fetch_if.data.instr = icache_bus_if.rsp_data.data;
     assign fetch_if.data.uuid  = rsp_uuid;

@@ -17,7 +17,8 @@ interface VX_commit_if #(
     parameter THREAD_CNT = `NUM_THREADS,
     parameter NUM_LANES = THREAD_CNT,
     parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES),
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) ();
     
     typedef struct packed {

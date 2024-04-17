@@ -16,7 +16,8 @@
 module VX_scoreboard import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT = `NUM_WARPS
 ) (
     input wire              clk,
     input wire              reset,
@@ -26,6 +27,10 @@ module VX_scoreboard import VX_gpu_pkg::*; #(
     VX_ibuffer_if.master    scoreboard_if [ISSUE_CNT]
 );
     `UNUSED_PARAM (CORE_ID)
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_RATIO = WARP_CNT / ISSUE_CNT;
+    localparam ISSUE_WIS_W = `LOG2UP(WARP_CNT / ISSUE_CNT);
+`IGNORE_WARNINGS_END
     localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4) + 1;
 
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin

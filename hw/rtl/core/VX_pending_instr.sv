@@ -18,7 +18,7 @@ module VX_pending_instr #(
     parameter ALM_EMPTY  = 1,
     parameter DECR_COUNT = 1,
     parameter WARP_CNT = `NUM_WARPS,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) (
     input wire                  clk,
     input wire                  reset,
@@ -30,7 +30,7 @@ module VX_pending_instr #(
     output wire                 empty,
     output wire                 alm_empty
 );
-    localparam COUNTW = `CLOG2(DECR_COUNT+1);
+    localparam COUNTW = `LOG2UP(DECR_COUNT+1);
 
     reg [WARP_CNT-1:0][CTR_WIDTH-1:0] pending_instrs;
     reg [WARP_CNT-1:0][COUNTW-1:0] decr_cnt;

@@ -16,7 +16,9 @@
 module VX_execute import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter NUM_ALU_BLOCKS = `UP(ISSUE_CNT/1)
 ) (
     `SCOPE_IO_DECL
 
@@ -70,7 +72,7 @@ module VX_execute import VX_gpu_pkg::*; #(
   
     VX_dispatch_if.slave    alu_dispatch_if [ISSUE_CNT],
     VX_commit_if.master     alu_commit_if [ISSUE_CNT],
-    VX_branch_ctl_if.master branch_ctl_if [`NUM_ALU_BLOCKS],
+    VX_branch_ctl_if.master branch_ctl_if [NUM_ALU_BLOCKS],
     
     VX_dispatch_if.slave    lsu_dispatch_if [ISSUE_CNT],  
     VX_commit_if.master     lsu_commit_if [ISSUE_CNT],
@@ -82,9 +84,10 @@ module VX_execute import VX_gpu_pkg::*; #(
     // simulation helper signals
     output wire             sim_ebreak
 );
+    localparam NUM_FPU_BLOCKS = `UP(ISSUE_CNT / 1);
 
 `ifdef EXT_F_ENABLE
-    VX_fpu_to_csr_if fpu_to_csr_if[`NUM_FPU_BLOCKS]();
+    VX_fpu_to_csr_if #(.WARP_CNT(WARP_CNT)) fpu_to_csr_if[NUM_FPU_BLOCKS]();
 `endif
 
     `RESET_RELAY (alu_reset, reset);
@@ -93,7 +96,9 @@ module VX_execute import VX_gpu_pkg::*; #(
     
     VX_alu_unit #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) alu_unit (
         .clk            (clk),
         .reset          (alu_reset),
@@ -106,7 +111,9 @@ module VX_execute import VX_gpu_pkg::*; #(
 
     VX_lsu_unit #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) lsu_unit (
         `SCOPE_IO_BIND  (0)
         .clk            (clk),
@@ -121,7 +128,9 @@ module VX_execute import VX_gpu_pkg::*; #(
 
     VX_fpu_unit #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) fpu_unit (
         .clk            (clk),
         .reset          (fpu_reset),    
@@ -133,7 +142,9 @@ module VX_execute import VX_gpu_pkg::*; #(
 
     VX_sfu_unit #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) sfu_unit (
         .clk            (clk),
         .reset          (sfu_reset),

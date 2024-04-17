@@ -13,10 +13,12 @@
 
 `include "VX_define.vh"
 
-module VX_ibuffer import VX_gpu_pkg::*; #(
+module VX_ibuffer #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4)
 ) (
     input wire          clk,
     input wire          reset,
@@ -28,20 +30,24 @@ module VX_ibuffer import VX_gpu_pkg::*; #(
     VX_ibuffer_if.master ibuffer_if [ISSUE_CNT]
 );
     `UNUSED_PARAM (CORE_ID)
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_WIS_W = `LOG2UP(WARP_CNT / ISSUE_CNT);
+`IGNORE_WARNINGS_END
     localparam ISW_WIDTH  = `LOG2UP(ISSUE_CNT);
+    localparam ISSUE_IDX_W = `LOG2UP(ISSUE_CNT);
     localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4);
     
     wire [ISSUE_CNT-1:0] ibuf_ready_in;
 
-    wire [ISW_WIDTH-1:0] decode_isw = wid_to_isw(decode_if.data.wid);
-    wire [ISSUE_WIS_W-1:0] decode_wis = wid_to_wis(decode_if.data.wid);
+    wire [ISW_WIDTH-1:0] decode_isw = `WID_TO_ISW(decode_if.data.wid, ISSUE_CNT, ISSUE_IDX_W);
+    wire [ISSUE_WIS_W-1:0] decode_wis = `WID_TO_WIS(decode_if.data.wid, ISSUE_WIS_W, ISSUE_CNT);
     
     assign decode_if.ready = ibuf_ready_in[decode_isw];
 
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         VX_elastic_buffer #(
             .DATAW   (DATAW),
-            .SIZE    (`IBUF_SIZE),
+            .SIZE    ((2 * (WARP_CNT / ISSUE_CNT))),
             .OUT_REG (1)
         ) instr_buf (
             .clk      (clk),

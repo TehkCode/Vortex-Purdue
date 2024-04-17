@@ -19,8 +19,10 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
     parameter OUT_REG    = 0,
     parameter MAX_FANOUT = `MAX_FANOUT,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH,
-    parameter WARP_CNT_WIDTH = `NW_WIDTH
+    parameter THREAD_CNT_WIDTH = `LOG2UP(THREAD_CNT),
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4)
 ) ( 
     input  wire             clk,
     input  wire             reset,
@@ -33,15 +35,18 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
 
 );
     `STATIC_ASSERT ((THREAD_CNT == NUM_LANES  * (THREAD_CNT / NUM_LANES)), ("invalid parameter"))
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_WIS_W = `LOG2UP(WARP_CNT / ISSUE_CNT);
+`IGNORE_WARNINGS_END
     localparam BLOCK_SIZE_W = `LOG2UP(BLOCK_SIZE);
     localparam NUM_PACKETS  = `UP(THREAD_CNT / NUM_LANES);
-    localparam PID_BITS     = `CLOG2(NUM_PACKETS);
+    localparam PID_BITS     = `LOG2UP(NUM_PACKETS);
     localparam PID_WIDTH    = `UP(PID_BITS);
     localparam BATCH_COUNT  = ISSUE_CNT / BLOCK_SIZE;
     localparam BATCH_COUNT_W= `LOG2UP(BATCH_COUNT);
     localparam ISSUE_W      = `LOG2UP(ISSUE_CNT);
-    localparam IN_DATAW     = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + 1 + `XLEN + `XLEN + `NR_BITS + `NT_WIDTH + (3 * THREAD_CNT * `XLEN);
-    localparam OUT_DATAW    = `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + 1 + `XLEN + `XLEN + `NR_BITS + `NT_WIDTH + (3 * NUM_LANES * `XLEN) + PID_WIDTH + 1 + 1;
+    localparam IN_DATAW     = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + 1 + `XLEN + `XLEN + `NR_BITS + THREAD_CNT_WIDTH + (3 * THREAD_CNT * `XLEN);
+    localparam OUT_DATAW    = `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + 1 + `XLEN + `XLEN + `NR_BITS + THREAD_CNT_WIDTH + (3 * NUM_LANES * `XLEN) + PID_WIDTH + 1 + 1;
     localparam FANOUT_ENABLE= (THREAD_CNT > (MAX_FANOUT + MAX_FANOUT/2));
 
     localparam DATA_TMASK_OFF = IN_DATAW - (`UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT);
@@ -219,7 +224,10 @@ module VX_dispatch_unit import VX_gpu_pkg::*; #(
 
         `RESET_RELAY(buf_out_reset, reset);
 
-        wire [WARP_CNT_WIDTH-1:0] block_wid = wis_to_wid(dispatch_data[issue_idx][DATA_TMASK_OFF+THREAD_CNT +: ISSUE_WIS_W], wsi);
+        // tmp_block_wid is being used as the function wis_to_wid uses different macros than what we use in this module
+        // it is a temp workaround for elaboration
+        wire [`NW_WIDTH-1:0] tmp_block_wid = wis_to_wid(dispatch_data[issue_idx][DATA_TMASK_OFF+THREAD_CNT +: ISSUE_WIS_W], wsi);
+        wire [WARP_CNT_WIDTH-1:0] block_wid = tmp_block_wid[WARP_CNT_WIDTH-1:0];
 
         VX_elastic_buffer #(
             .DATAW   (OUT_DATAW),

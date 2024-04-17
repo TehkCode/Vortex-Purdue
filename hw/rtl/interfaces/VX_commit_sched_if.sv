@@ -13,7 +13,12 @@
 
 `include "VX_define.vh"
 
-interface VX_commit_sched_if #(parameter ISSUE_CNT = `ISSUE_WIDTH, parameter WARP_CNT_WIDTH = `NW_WIDTH) ();
+interface VX_commit_sched_if
+#(
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
+ ) ();
 
     wire [ISSUE_CNT-1:0] committed;
     wire [ISSUE_CNT-1:0][WARP_CNT_WIDTH-1:0] committed_wid;

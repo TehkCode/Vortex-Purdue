@@ -33,7 +33,7 @@ module VX_core import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
     parameter WARP_CNT = `NUM_WARPS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4)
 ) (        
     `SCOPE_IO_DECL
     
@@ -86,29 +86,33 @@ module VX_core import VX_gpu_pkg::*; #(
     // Status
     output wire             busy
 );
-    VX_schedule_if #(.THREAD_CNT(THREAD_CNT))      schedule_if();
-    VX_fetch_if #(.THREAD_CNT(THREAD_CNT))        fetch_if();
-    VX_decode_if  #(.THREAD_CNT(THREAD_CNT))      decode_if();
-    VX_sched_csr_if #(.THREAD_CNT(THREAD_CNT))    sched_csr_if();
-    VX_decode_sched_if  decode_sched_if();
-    VX_commit_sched_if  commit_sched_if();
-    VX_commit_csr_if    commit_csr_if();
-    VX_branch_ctl_if    branch_ctl_if[`NUM_ALU_BLOCKS]();
-    VX_warp_ctl_if      warp_ctl_if();    
-    
-    VX_dispatch_if #(.THREAD_CNT(THREAD_CNT))     alu_dispatch_if[ISSUE_CNT]();
-    VX_commit_if   #(.THREAD_CNT(THREAD_CNT))     alu_commit_if[ISSUE_CNT]();
+`IGNORE_WARNINGS_BEGIN
+    localparam NUM_ALU_BLOCKS = `UP(ISSUE_CNT/1);
+`IGNORE_WARNINGS_END
 
-    VX_dispatch_if #(.THREAD_CNT(THREAD_CNT))     lsu_dispatch_if[ISSUE_CNT]();
-    VX_commit_if    #(.THREAD_CNT(THREAD_CNT))    lsu_commit_if[ISSUE_CNT]();
-`ifdef EXT_F_ENABLE 
-    VX_dispatch_if  #(.THREAD_CNT(THREAD_CNT))    fpu_dispatch_if[ISSUE_CNT]();
-    VX_commit_if    #(.THREAD_CNT(THREAD_CNT))    fpu_commit_if[ISSUE_CNT]();
-`endif
-    VX_dispatch_if  #(.THREAD_CNT(THREAD_CNT))    sfu_dispatch_if[ISSUE_CNT]();
-    VX_commit_if #(.THREAD_CNT(THREAD_CNT))       sfu_commit_if[ISSUE_CNT]();    
+    VX_schedule_if #(.WARP_CNT(WARP_CNT), .THREAD_CNT(THREAD_CNT))      schedule_if();
+    VX_fetch_if #(.WARP_CNT(WARP_CNT), .THREAD_CNT(THREAD_CNT))        fetch_if();
+    VX_decode_if  #(.WARP_CNT(WARP_CNT), .THREAD_CNT(THREAD_CNT))      decode_if();
+    VX_sched_csr_if #(.WARP_CNT(WARP_CNT), .THREAD_CNT(THREAD_CNT))    sched_csr_if();
+    VX_decode_sched_if #(.WARP_CNT(WARP_CNT))  decode_sched_if();
+    VX_commit_sched_if #(.WARP_CNT(WARP_CNT)) commit_sched_if();
+    VX_commit_csr_if    commit_csr_if();
+    VX_branch_ctl_if   #(.WARP_CNT(WARP_CNT)) branch_ctl_if[NUM_ALU_BLOCKS]();
+    VX_warp_ctl_if     #(.WARP_CNT(WARP_CNT)) warp_ctl_if();    
     
-    VX_writeback_if #(.THREAD_CNT(THREAD_CNT))     writeback_if[ISSUE_CNT]();
+    VX_dispatch_if #(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT(THREAD_CNT))     alu_dispatch_if[ISSUE_CNT]();
+    VX_commit_if   #(.WARP_CNT(WARP_CNT), .THREAD_CNT(THREAD_CNT))     alu_commit_if[ISSUE_CNT]();
+
+    VX_dispatch_if #(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT(THREAD_CNT))     lsu_dispatch_if[ISSUE_CNT]();
+    VX_commit_if    #(.WARP_CNT(WARP_CNT), .THREAD_CNT(THREAD_CNT))    lsu_commit_if[ISSUE_CNT]();
+`ifdef EXT_F_ENABLE 
+    VX_dispatch_if  #(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT(THREAD_CNT))    fpu_dispatch_if[ISSUE_CNT]();
+    VX_commit_if    #(.WARP_CNT(WARP_CNT), .THREAD_CNT(THREAD_CNT))    fpu_commit_if[ISSUE_CNT]();
+`endif
+    VX_dispatch_if  #(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT(THREAD_CNT))    sfu_dispatch_if[ISSUE_CNT]();
+    VX_commit_if #(.WARP_CNT(WARP_CNT), .THREAD_CNT(THREAD_CNT))       sfu_commit_if[ISSUE_CNT]();    
+    
+    VX_writeback_if #(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT(THREAD_CNT))     writeback_if[ISSUE_CNT]();
 
     VX_mem_bus_if #(
         .DATA_SIZE (DCACHE_WORD_SIZE), 
@@ -142,7 +146,8 @@ module VX_core import VX_gpu_pkg::*; #(
     VX_schedule #(
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT),
-        .WARP_CNT(WARP_CNT)
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) schedule (
         .clk            (clk),
         .reset          (schedule_reset),   
@@ -166,7 +171,8 @@ module VX_core import VX_gpu_pkg::*; #(
     VX_fetch #(
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT),
-        .WARP_CNT(WARP_CNT)
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) fetch (
         `SCOPE_IO_BIND  (0)
         .clk            (clk),
@@ -178,7 +184,8 @@ module VX_core import VX_gpu_pkg::*; #(
 
     VX_decode #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) decode (
         .clk            (clk),
         .reset          (decode_reset),
@@ -189,7 +196,9 @@ module VX_core import VX_gpu_pkg::*; #(
 
     VX_issue #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) issue (
         `SCOPE_IO_BIND  (1)
 
@@ -213,7 +222,9 @@ module VX_core import VX_gpu_pkg::*; #(
 
     VX_execute #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) execute (
         `SCOPE_IO_BIND  (2)
         
@@ -277,7 +288,9 @@ module VX_core import VX_gpu_pkg::*; #(
 
     VX_commit #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) commit (
         .clk            (clk),
         .reset          (commit_reset),
@@ -313,13 +326,13 @@ module VX_core import VX_gpu_pkg::*; #(
 
 `ifdef PERF_ENABLE
 
-    wire [`CLOG2(DCACHE_NUM_REQS+1)-1:0] perf_dcache_rd_req_per_cycle;
-    wire [`CLOG2(DCACHE_NUM_REQS+1)-1:0] perf_dcache_wr_req_per_cycle;
+    wire [`LOG2UP(DCACHE_NUM_REQS+1)-1:0] perf_dcache_rd_req_per_cycle;
+    wire [`LOG2UP(DCACHE_NUM_REQS+1)-1:0] perf_dcache_wr_req_per_cycle;
 
-    wire [`CLOG2(DCACHE_NUM_REQS+1)-1:0] perf_dcache_rsp_per_cycle;    
+    wire [`LOG2UP(DCACHE_NUM_REQS+1)-1:0] perf_dcache_rsp_per_cycle;    
 
     wire perf_icache_pending_read_cycle;
-    wire [`CLOG2(DCACHE_NUM_REQS+1)+1-1:0] perf_dcache_pending_read_cycle;
+    wire [`LOG2UP(DCACHE_NUM_REQS+1)+1-1:0] perf_dcache_pending_read_cycle;
 
     reg  [`PERF_CTR_BITS-1:0] perf_icache_pending_reads;
     reg  [`PERF_CTR_BITS-1:0] perf_dcache_pending_reads;

@@ -13,7 +13,7 @@
 
 `include "VX_fpu_define.vh"
 
-interface VX_fpu_to_csr_if import VX_fpu_pkg::*; #(parameter WARP_CNT_WIDTH = `NW_WIDTH)();
+interface VX_fpu_to_csr_if import VX_fpu_pkg::*; #(parameter WARP_CNT = `NUM_WARPS, parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT))();
 
     wire                    write_enable;
     wire [WARP_CNT_WIDTH-1:0]    write_wid;
