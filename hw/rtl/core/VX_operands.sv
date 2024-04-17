@@ -17,8 +17,8 @@ module VX_operands import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter CACHE_ENABLE = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH,
-    parameter WARP_CNT = `NUM_WARPS
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4)
 ) (
     input wire              clk,
     input wire              reset,

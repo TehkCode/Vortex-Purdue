@@ -124,9 +124,9 @@ module VX_core_scalar import VX_gpu_pkg::*; #(
     VX_pipeline_perf_if pipeline_perf_if();
 `endif
 
-    wire commit_if_valid;
-	wire commit_if_ready;
-	wire branch_mispredict_flush;
+    wire [ISSUE_CNT-1:0] commit_if_valid;
+    wire [ISSUE_CNT-1:0] commit_if_ready;
+    wire [ISSUE_CNT-1:0] branch_mispredict_flush;
 
     `RESET_RELAY (dcr_data_reset, reset);
     `RESET_RELAY (schedule_reset, reset);
@@ -186,7 +186,7 @@ module VX_core_scalar import VX_gpu_pkg::*; #(
         .icache_bus_if  (icache_bus_if),
         .schedule_if    (schedule_if),
         .fetch_if       (fetch_if),
-        .branch_mispredict_flush (branch_mispredict_flush),
+        .branch_mispredict_flush (branch_mispredict_flush)
     );
 
     VX_decode_scalar #(
@@ -294,7 +294,7 @@ module VX_core_scalar import VX_gpu_pkg::*; #(
         .lsu_commit_if  (lsu_commit_if),
         .sfu_commit_if  (sfu_commit_if),
 
-        .branch_mispredict_flush(branch_mispredict_flush)
+        .branch_mispredict_flush(branch_mispredict_flush),
 
         .sim_ebreak     (sim_ebreak)
     );    

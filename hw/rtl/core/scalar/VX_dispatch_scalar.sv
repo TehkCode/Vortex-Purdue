@@ -22,6 +22,8 @@ module VX_dispatch_scalar import VX_gpu_pkg::*; #(
 ) (
     input wire              clk,
     input wire              reset,
+    input [ISSUE_CNT-1:0] commit_if_valid,
+    input [ISSUE_CNT-1:0] commit_if_ready,
     input wire [ISSUE_CNT-1:0] branch_mispredict_flush,
 
 `ifdef PERF_ENABLE
@@ -101,7 +103,7 @@ module VX_dispatch_scalar import VX_gpu_pkg::*; #(
 
     // ALU dispatch    
 
-    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) alu_operands_if[ISSUE_CNT]();
+    VX_operands_scalar_if#(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT (THREAD_CNT)) alu_operands_if[ISSUE_CNT]();
     
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign alu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_ALU) && operands_if[i].ready;
@@ -127,7 +129,7 @@ module VX_dispatch_scalar import VX_gpu_pkg::*; #(
 
     // LSU dispatch
 
-    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) lsu_operands_if[ISSUE_CNT]();
+    VX_operands_scalar_if#(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT (THREAD_CNT)) lsu_operands_if[ISSUE_CNT]();
 
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign lsu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_LSU) && operands_if[i].ready;
@@ -155,7 +157,7 @@ module VX_dispatch_scalar import VX_gpu_pkg::*; #(
 
 `ifdef EXT_F_ENABLE
 
-    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) fpu_operands_if[ISSUE_CNT]();
+    VX_operands_scalar_if#(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT (THREAD_CNT)) fpu_operands_if[ISSUE_CNT]();
 
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign fpu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_FPU) && operands_if[i].ready;
@@ -182,7 +184,7 @@ module VX_dispatch_scalar import VX_gpu_pkg::*; #(
 
     // SFU dispatch
 
-    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) sfu_operands_if[ISSUE_CNT]();
+    VX_operands_scalar_if#(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT (THREAD_CNT)) sfu_operands_if[ISSUE_CNT]();
 
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign sfu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_SFU) && operands_if[i].ready;

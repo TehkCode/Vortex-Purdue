@@ -21,7 +21,7 @@ module VX_scoreboard_scalar import VX_gpu_pkg::*; #(
 ) (
     input wire              clk,
     input wire              reset,
-    input wire [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
+    input wire [ISSUE_CNT-1:0] branch_mispredict_flush,
 
     VX_writeback_if.slave   writeback_if [ISSUE_CNT],
     VX_ibuffer_scalar_if.slave     ibuffer_if [ISSUE_CNT],
@@ -32,7 +32,7 @@ module VX_scoreboard_scalar import VX_gpu_pkg::*; #(
     localparam ISSUE_RATIO = WARP_CNT / ISSUE_CNT;
     localparam ISSUE_WIS_W = `LOG2UP(WARP_CNT / ISSUE_CNT);
 `IGNORE_WARNINGS_END
-    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4) + 1;
+    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4) + 1 + 1;
 
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         reg [`UP(ISSUE_RATIO)-1:0][`NUM_REGS-1:0] inuse_regs, inuse_regs_n;

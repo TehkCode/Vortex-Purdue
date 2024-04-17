@@ -47,7 +47,7 @@ module VX_decode_scalar  #(
     VX_decode_sched_if.master decode_sched_if
 );
 
-    localparam DATAW = `UUID_WIDTH + WARP_CNT_WIDTH + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + (`NR_BITS * 4) + `XLEN + 1 + 1;
+    localparam DATAW = `UUID_WIDTH + WARP_CNT_WIDTH + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + (`NR_BITS * 4) + `XLEN + 1 + 1 + 1;
 
     `UNUSED_PARAM (CORE_ID)
     `UNUSED_VAR (clk)

@@ -16,8 +16,8 @@
 module VX_alu_unit #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH,
     parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
     parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
     parameter NUM_ALU_BLOCKS = `UP(ISSUE_CNT/1)
 ) (

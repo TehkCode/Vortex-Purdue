@@ -35,8 +35,8 @@ module VX_commit_scalar import VX_gpu_pkg::*; #(
     VX_writeback_if.master  writeback_if  [ISSUE_CNT],
     VX_commit_csr_if.master commit_csr_if,
     VX_commit_sched_scalar_if.master commit_sched_if,
-    output commit_if_valid, // to let issue stage know that a instruction is out of execute stage
-	output commit_if_ready,
+    output [ISSUE_CNT-1:0] commit_if_valid, // to let issue stage know that a instruction is out of execute stage
+	output [ISSUE_CNT-1:0] commit_if_ready,
 
     // simulation helper signals
     output wire [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value
@@ -197,7 +197,7 @@ module VX_commit_scalar import VX_gpu_pkg::*; #(
     end
 
 	// To issue.dispatch
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign commit_if_valid[i] = commit_if[i].valid;
         assign commit_if_ready[i] = commit_if[i].ready;
     end

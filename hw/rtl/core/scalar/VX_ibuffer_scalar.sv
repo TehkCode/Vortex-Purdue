@@ -36,7 +36,7 @@ module VX_ibuffer_scalar #(
 `IGNORE_WARNINGS_END
     localparam ISW_WIDTH  = `LOG2UP(ISSUE_CNT);
     localparam ISSUE_IDX_W = `LOG2UP(ISSUE_CNT);
-    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4);
+    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4) + 1;
     
     wire [ISSUE_CNT-1:0] ibuf_ready_in;
 

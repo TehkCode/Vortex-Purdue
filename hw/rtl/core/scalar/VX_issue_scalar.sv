@@ -17,8 +17,8 @@
 module VX_issue_scalar #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH,
     parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
     parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) (
     `SCOPE_IO_DECL
@@ -26,9 +26,9 @@ module VX_issue_scalar #(
     input wire              clk,
     input wire              reset,
 
-    input [`ISSUE_WIDTH-1:0]commit_if_valid,
-    input [`ISSUE_WIDTH-1:0]commit_if_ready,
-    input [`ISSUE_WIDTH-1:0]branch_mispredict_flush,
+    input [ISSUE_CNT-1:0]commit_if_valid,
+    input [ISSUE_CNT-1:0]commit_if_ready,
+    input [ISSUE_CNT-1:0]branch_mispredict_flush,
 
 `ifdef PERF_ENABLE
     VX_pipeline_perf_if.issue perf_issue_if,
@@ -88,7 +88,7 @@ module VX_issue_scalar #(
     ) operands (
         .clk            (clk), 
         .reset          (operands_reset), 
-        .branch_mispredict_flush (branch_mispredict_flush)
+        .branch_mispredict_flush (branch_mispredict_flush),
         .writeback_if   (writeback_if),
         .scoreboard_if  (scoreboard_if),
         .operands_if    (operands_if)
@@ -102,7 +102,7 @@ module VX_issue_scalar #(
     ) dispatch (
         .clk            (clk), 
         .reset          (dispatch_reset),
-        .branch_mispredict_flush (branch_mispredict_flush)
+        .branch_mispredict_flush (branch_mispredict_flush),
     `ifdef PERF_ENABLE
         .perf_stalls    (perf_issue_if.dsp_stalls),
     `endif

@@ -33,7 +33,7 @@ module VX_operands_scalar import VX_gpu_pkg::*; #(
     localparam ISSUE_WIS_W = `LOG2UP(WARP_CNT / ISSUE_CNT);
     localparam ISSUE_RATIO = WARP_CNT / ISSUE_CNT;
 `IGNORE_WARNINGS_END
-    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + `NR_BITS;
+    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + `NR_BITS + 1;
 
     localparam STATE_IDLE   = 2'd0;
     localparam STATE_FETCH1 = 2'd1;

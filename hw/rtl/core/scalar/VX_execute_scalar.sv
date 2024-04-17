@@ -16,8 +16,8 @@
 module VX_execute_scalar import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter ISSUE_CNT = `ISSUE_WIDTH,
     parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
     parameter NUM_ALU_BLOCKS = `UP(ISSUE_CNT/1)
 ) (
     `SCOPE_IO_DECL
@@ -82,7 +82,7 @@ module VX_execute_scalar import VX_gpu_pkg::*; #(
     VX_warp_ctl_if.master   warp_ctl_if,
 
     // flush mispredicts
-    output [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
+    output [ISSUE_CNT-1:0] branch_mispredict_flush,
 
     // simulation helper signals
     output wire             sim_ebreak
@@ -197,7 +197,7 @@ module VX_execute_scalar import VX_gpu_pkg::*; #(
 
     // flush operation
     // flush only when branch taken or thread mask is set to 0
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin    
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin    
         assign branch_mispredict_flush[i] = (branch_ctl_if[i].valid & branch_ctl_if[i].taken) 
             | (warp_ctl_if.valid & warp_ctl_if.tmc.valid & !(|warp_ctl_if.tmc.tmask));
     end
