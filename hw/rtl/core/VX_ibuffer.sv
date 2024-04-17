@@ -22,14 +22,13 @@ module VX_ibuffer import VX_gpu_pkg::*; #(
 
     // inputs
     VX_decode_if.slave  decode_if,
-    input wire [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
 
     // outputs
     VX_ibuffer_if.master ibuffer_if [`ISSUE_WIDTH]
 );
     `UNUSED_PARAM (CORE_ID)
     localparam ISW_WIDTH  = `LOG2UP(`ISSUE_WIDTH);
-    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4) + 1;
+    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4);
     
     wire [`ISSUE_WIDTH-1:0] ibuf_ready_in;
 
@@ -45,7 +44,7 @@ module VX_ibuffer import VX_gpu_pkg::*; #(
             .OUT_REG (1)
         ) instr_buf (
             .clk      (clk),
-            .reset    (reset | (|branch_mispredict_flush) ),
+            .reset    (reset),
             .valid_in (decode_if.valid && decode_isw == i),
             .ready_in (ibuf_ready_in[i]),
             .data_in  ({
@@ -63,8 +62,7 @@ module VX_ibuffer import VX_gpu_pkg::*; #(
                 decode_if.data.rd, 
                 decode_if.data.rs1, 
                 decode_if.data.rs2, 
-                decode_if.data.rs3,
-                decode_if.data.is_branch }),
+                decode_if.data.rs3}),
             .data_out(ibuffer_if[i].data),
             .valid_out (ibuffer_if[i].valid),
             .ready_out(ibuffer_if[i].ready)

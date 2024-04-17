@@ -20,14 +20,13 @@ module VX_operands import VX_gpu_pkg::*; #(
 ) (
     input wire              clk,
     input wire              reset,
-    input wire [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
 
     VX_writeback_if.slave   writeback_if [`ISSUE_WIDTH],
     VX_ibuffer_if.slave     scoreboard_if [`ISSUE_WIDTH],
     VX_operands_if.master   operands_if [`ISSUE_WIDTH]
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + `NR_BITS + 1;
+    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + `NR_BITS;
 
     localparam STATE_IDLE   = 2'd0;
     localparam STATE_FETCH1 = 2'd1;
@@ -172,7 +171,7 @@ module VX_operands import VX_gpu_pkg::*; #(
         end
 
         always @(posedge clk)  begin
-            if (reset | (|branch_mispredict_flush) ) begin
+            if (reset) begin
                 state       <= STATE_IDLE;
                 gpr_rd_rid  <= '0;
                 gpr_rd_wis  <= '0;
@@ -240,7 +239,7 @@ module VX_operands import VX_gpu_pkg::*; #(
             .DATAW (DATAW)
         ) stg_buf (
             .clk      (clk),
-            .reset    (stg_buf_reset | (|branch_mispredict_flush) ),
+            .reset    (stg_buf_reset),
             .valid_in (scoreboard_if[i].valid),
             .ready_in (scoreboard_if[i].ready),
             .data_in  ({
@@ -255,8 +254,7 @@ module VX_operands import VX_gpu_pkg::*; #(
                 scoreboard_if[i].data.use_PC,
                 scoreboard_if[i].data.use_imm,
                 scoreboard_if[i].data.imm,
-                scoreboard_if[i].data.rd,
-                scoreboard_if[i].data.is_branch}),
+                scoreboard_if[i].data.rd}),
             .data_out ({
                 staging_if.data.uuid,
                 staging_if.data.wis,
@@ -269,8 +267,7 @@ module VX_operands import VX_gpu_pkg::*; #(
                 staging_if.data.use_PC,
                 staging_if.data.use_imm,
                 staging_if.data.imm,
-                staging_if.data.rd,
-                staging_if.data.is_branch}),                                               
+                staging_if.data.rd}),                                               
             .valid_out (staging_if.valid),
             .ready_out (staging_if.ready)
         );
@@ -293,7 +290,7 @@ module VX_operands import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) out_buf (
             .clk       (clk),
-            .reset     (out_buf_reset | (|branch_mispredict_flush) ),
+            .reset     (out_buf_reset),
             .valid_in  (valid_stg),
             .ready_in  (ready_stg),
             .data_in   (staging_if.data),

@@ -27,10 +27,6 @@ module VX_issue #(
     VX_pipeline_perf_if.issue perf_issue_if,
 `endif
 
-    input [`ISSUE_WIDTH-1:0]commit_if_valid,
-    input [`ISSUE_WIDTH-1:0]commit_if_ready,
-    input [`ISSUE_WIDTH-1:0]branch_mispredict_flush,
-
     VX_decode_if.slave      decode_if,
     VX_writeback_if.slave   writeback_if [`ISSUE_WIDTH],
 
@@ -57,8 +53,7 @@ module VX_issue #(
         .clk            (clk),
         .reset          (ibuf_reset), 
         .decode_if      (decode_if),
-        .ibuffer_if     (ibuffer_if),
-        .branch_mispredict_flush (branch_mispredict_flush)
+        .ibuffer_if     (ibuffer_if)
     );
 
     VX_scoreboard #(
@@ -67,7 +62,6 @@ module VX_issue #(
     ) scoreboard (
         .clk            (clk),
         .reset          (scoreboard_reset),
-        .branch_mispredict_flush (branch_mispredict_flush),
         .writeback_if   (writeback_if),
         .ibuffer_if     (ibuffer_if),
         .scoreboard_if  (scoreboard_if)
@@ -81,8 +75,7 @@ module VX_issue #(
         .reset          (operands_reset), 
         .writeback_if   (writeback_if),
         .scoreboard_if  (scoreboard_if),
-        .operands_if    (operands_if),
-        .branch_mispredict_flush(branch_mispredict_flush)
+        .operands_if    (operands_if)
     );
 
     VX_dispatch #(
@@ -91,13 +84,10 @@ module VX_issue #(
     ) dispatch (
         .clk            (clk), 
         .reset          (dispatch_reset),
-        .branch_mispredict_flush (branch_mispredict_flush),
     `ifdef PERF_ENABLE
         .perf_stalls    (perf_issue_if.dsp_stalls),
     `endif
         .operands_if    (operands_if),
-        .commit_if_valid(commit_if_valid),
-        .commit_if_ready(commit_if_ready),
         .alu_dispatch_if(alu_dispatch_if),
         .lsu_dispatch_if(lsu_dispatch_if),
     `ifdef EXT_F_ENABLE

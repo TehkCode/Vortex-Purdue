@@ -33,7 +33,7 @@ module VX_alu_unit #(
     localparam NUM_LANES    = `UP(THREAD_CNT/2); //`MIN(`UP(THREAD_CNT/2),`NUM_ALU_LANES); // need to figure out what this does. 
     localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
-    localparam RSP_ARB_DATAW= `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1 + 1;
+    localparam RSP_ARB_DATAW= `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
     localparam RSP_ARB_SIZE = 1 + `EXT_M_ENABLED;
     localparam PARTIAL_BW   = (BLOCK_SIZE != `ISSUE_WIDTH) || (NUM_LANES != THREAD_CNT);
 

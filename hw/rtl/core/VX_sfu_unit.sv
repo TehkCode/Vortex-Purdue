@@ -70,7 +70,7 @@ module VX_sfu_unit import VX_gpu_pkg::*; #(
     localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
 
-    localparam RSP_ARB_DATAW = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + (NUM_LANES * `XLEN) + `NR_BITS + 1 + `XLEN + PID_WIDTH + 1 + 1 + 1;
+    localparam RSP_ARB_DATAW = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + (NUM_LANES * `XLEN) + `NR_BITS + 1 + `XLEN + PID_WIDTH + 1 + 1;
     localparam RSP_ARB_SIZE = 1 + 1 + `EXT_TEX_ENABLED + `EXT_RASTER_ENABLED + `EXT_ROP_ENABLED;
     localparam RSP_ARB_IDX_WCTL = 0;
     localparam RSP_ARB_IDX_CSR = 1;

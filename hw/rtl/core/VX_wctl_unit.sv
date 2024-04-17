@@ -143,9 +143,6 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
         .ready_out (commit_if.ready)
     );
 
-    
-    assign commit_if.data.halt = (commit_if.valid & tmc_r.valid & !(|tmc_r.tmask)) ; //signify a thread killing itself
-
     assign warp_ctl_if.valid   = commit_if.valid && commit_if.ready && commit_if.data.eop;
     assign warp_ctl_if.wid     = commit_if.data.wid;
     assign warp_ctl_if.tmc     = tmc_r;

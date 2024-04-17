@@ -35,7 +35,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     localparam NUM_LANES    = `MIN(`NUM_LSU_LANES,THREAD_CNT);//; //
     localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
-    localparam RSP_ARB_DATAW= `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1 + 1;
+    localparam RSP_ARB_DATAW= `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
     localparam LSUQ_SIZEW   = `LOG2UP(`LSUQ_SIZE);
     localparam MEM_ASHIFT   = `CLOG2(`MEM_BLOCK_SIZE);    
     localparam MEM_ADDRW    = `XLEN - MEM_ASHIFT;
@@ -565,8 +565,6 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     assign commit_st_if.data.rd   = '0;
     assign commit_st_if.data.wb   = 1'b0;
     assign commit_st_if.data.data = commit_ld_if.data.data; // force arbiter passthru
-    assign commit_st_if.data.halt = 0;
-    assign commit_ld_if.data.halt = 0;
 
     // lsu commit
     

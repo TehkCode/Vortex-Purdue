@@ -19,14 +19,13 @@ module VX_scoreboard import VX_gpu_pkg::*; #(
 ) (
     input wire              clk,
     input wire              reset,
-    input wire [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
 
     VX_writeback_if.slave   writeback_if [`ISSUE_WIDTH],
     VX_ibuffer_if.slave     ibuffer_if [`ISSUE_WIDTH],
     VX_ibuffer_if.master    scoreboard_if [`ISSUE_WIDTH]
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4) + 1 + 1;
+    localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + (`NR_BITS * 4) + 1;
 
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
         reg [`UP(ISSUE_RATIO)-1:0][`NUM_REGS-1:0] inuse_regs, inuse_regs_n;
@@ -59,7 +58,7 @@ module VX_scoreboard import VX_gpu_pkg::*; #(
         end   
 
         always @(posedge clk) begin
-            if (reset | (|branch_mispredict_flush) ) begin
+            if (reset) begin
                 inuse_regs  <= '0;
                 ready_masks <= '0;
             end else begin            
@@ -76,7 +75,7 @@ module VX_scoreboard import VX_gpu_pkg::*; #(
             .DATAW (DATAW)
         ) stg_buf (
             .clk       (clk),
-            .reset     (stg_buf_reset | (|branch_mispredict_flush) ),
+            .reset     (stg_buf_reset),
             .valid_in  (ibuffer_if[i].valid),
             .ready_in  (ibuffer_if[i].ready),
             .data_in   (ibuffer_if[i].data),
@@ -100,7 +99,7 @@ module VX_scoreboard import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) out_buf (
             .clk       (clk),
-            .reset     (out_buf_reset | (|branch_mispredict_flush) ),
+            .reset     (out_buf_reset),
             .valid_in  (valid_stg),
             .ready_in  (ready_stg),
             .data_in   (staging_if.data),
@@ -133,7 +132,7 @@ module VX_scoreboard import VX_gpu_pkg::*; #(
                             $time, CORE_ID, wis_to_wid(staging_if.data.wis, i), staging_if.data.PC, staging_if.data.tmask, timeout_ctr,
                             ~ready_masks, staging_if.data.uuid));
 
-        `RUNTIME_ASSERT(~writeback_fire || inuse_regs[writeback_if[i].data.wis][writeback_if[i].data.rd] != 0 || $past(branch_mispredict_flush[i]),
+        `RUNTIME_ASSERT(~writeback_fire || inuse_regs[writeback_if[i].data.wis][writeback_if[i].data.rd] != 0,
             ("%t: *** core%0d: invalid writeback register: wid=%0d, PC=0x%0h, tmask=%b, rd=%0d (#%0d)",
                 $time, CORE_ID, wis_to_wid(writeback_if[i].data.wis, i), writeback_if[i].data.PC, writeback_if[i].data.tmask, writeback_if[i].data.rd, writeback_if[i].data.uuid));
     end    

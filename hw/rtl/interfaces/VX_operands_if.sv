@@ -31,7 +31,6 @@ interface VX_operands_if import VX_gpu_pkg::*; #(parameter THREAD_CNT = `NUM_THR
         logic [THREAD_CNT-1:0][`XLEN-1:0] rs1_data;
         logic [THREAD_CNT-1:0][`XLEN-1:0] rs2_data;
         logic [THREAD_CNT-1:0][`XLEN-1:0] rs3_data;
-        logic                           is_branch;
     } data_t;
 
     logic  valid;

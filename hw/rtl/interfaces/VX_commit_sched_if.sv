@@ -17,18 +17,15 @@ interface VX_commit_sched_if ();
 
     wire [`ISSUE_WIDTH-1:0] committed;
     wire [`ISSUE_WIDTH-1:0][`NW_WIDTH-1:0] committed_wid;
-    wire [`ISSUE_WIDTH-1:0] halt;
 
     modport master (
         output committed,
-        output committed_wid,
-        output halt
+        output committed_wid
     );
 
     modport slave (
         input committed,
-        input committed_wid,
-        input halt
+        input committed_wid
     );
 
 endinterface

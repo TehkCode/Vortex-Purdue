@@ -148,7 +148,6 @@ module VX_int_unit #(
         .valid_out (commit_if.valid),
         .ready_out (commit_if.ready)
     );
-    assign commit_if.data.halt = 1'b0;
 
     `UNUSED_VAR (br_op_r)
     wire is_br_neg  = `INST_BR_IS_NEG(br_op_r);

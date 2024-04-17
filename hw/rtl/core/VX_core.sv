@@ -117,10 +117,6 @@ module VX_core import VX_gpu_pkg::*; #(
     VX_mem_perf_if mem_perf_tmp_if();
     VX_pipeline_perf_if pipeline_perf_if();
 `endif
-    
-    wire [`ISSUE_WIDTH-1:0] commit_if_valid;
-    wire [`ISSUE_WIDTH-1:0] commit_if_ready;
-    wire [`ISSUE_WIDTH-1:0] branch_mispredict_flush;
 
     `RESET_RELAY (dcr_data_reset, reset);
     `RESET_RELAY (schedule_reset, reset);
@@ -159,8 +155,8 @@ module VX_core import VX_gpu_pkg::*; #(
     `ifdef GBAR_ENABLE
         .gbar_bus_if    (gbar_bus_if),
     `endif
-        .sched_csr_if   (sched_csr_if),
-        .branch_mispredict_flush (branch_mispredict_flush),
+        .sched_csr_if   (sched_csr_if),        
+
         .busy           (busy)
     );
 
@@ -173,8 +169,7 @@ module VX_core import VX_gpu_pkg::*; #(
         .reset          (fetch_reset),
         .icache_bus_if  (icache_bus_if),
         .schedule_if    (schedule_if),
-        .fetch_if       (fetch_if),
-        .branch_mispredict_flush (branch_mispredict_flush)
+        .fetch_if       (fetch_if)
     );
 
     VX_decode #(
@@ -183,7 +178,6 @@ module VX_core import VX_gpu_pkg::*; #(
     ) decode (
         .clk            (clk),
         .reset          (decode_reset),
-        .branch_mispredict_flush (branch_mispredict_flush),
         .fetch_if       (fetch_if),
         .decode_if      (decode_if),
         .decode_sched_if(decode_sched_if)
@@ -202,9 +196,6 @@ module VX_core import VX_gpu_pkg::*; #(
         .perf_issue_if  (pipeline_perf_if.issue),
     `endif
 
-        .commit_if_valid(commit_if_valid),
-        .commit_if_ready(commit_if_ready),
-
         .decode_if      (decode_if),
         .writeback_if   (writeback_if),
 
@@ -213,8 +204,7 @@ module VX_core import VX_gpu_pkg::*; #(
     `ifdef EXT_F_ENABLE
         .fpu_dispatch_if(fpu_dispatch_if),
     `endif
-        .sfu_dispatch_if(sfu_dispatch_if),
-        .branch_mispredict_flush(branch_mispredict_flush)
+        .sfu_dispatch_if(sfu_dispatch_if)
     );
 
     VX_execute #(
@@ -277,8 +267,6 @@ module VX_core import VX_gpu_pkg::*; #(
         .alu_commit_if  (alu_commit_if),
         .lsu_commit_if  (lsu_commit_if),
         .sfu_commit_if  (sfu_commit_if),
-        
-        .branch_mispredict_flush (branch_mispredict_flush),
 
         .sim_ebreak     (sim_ebreak)
     );    
@@ -301,9 +289,6 @@ module VX_core import VX_gpu_pkg::*; #(
         
         .commit_csr_if  (commit_csr_if),
         .commit_sched_if(commit_sched_if),
-
-        .commit_if_valid(commit_if_valid),
-        .commit_if_ready(commit_if_ready),
 
         .sim_wb_value   (sim_wb_value)
     );

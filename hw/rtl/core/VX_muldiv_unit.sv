@@ -333,6 +333,5 @@ module VX_muldiv_unit #(
         .ready_out (commit_if.ready),
         `UNUSED_PIN (sel_out)
     );
-    assign commit_if.data.halt = 1'b0;
     
 endmodule

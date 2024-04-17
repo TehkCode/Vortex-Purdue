@@ -19,15 +19,12 @@ module VX_dispatch import VX_gpu_pkg::*; #(
 ) (
     input wire              clk,
     input wire              reset,
-    input wire [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
 
 `ifdef PERF_ENABLE
     output wire [`PERF_CTR_BITS-1:0] perf_stalls [`NUM_EX_UNITS],
 `endif
     // inputs
     VX_operands_if.slave    operands_if [`ISSUE_WIDTH],
-    input [`ISSUE_WIDTH-1:0] commit_if_valid, //to check if a previous reached commmit stage
-    input [`ISSUE_WIDTH-1:0] commit_if_ready,
 
     // outputs
     VX_dispatch_if.master   alu_dispatch_if [`ISSUE_WIDTH],
@@ -60,47 +57,13 @@ module VX_dispatch import VX_gpu_pkg::*; #(
             `UNUSED_PIN (valid_out)
         );
     end
-	
-    // Stall instructions being sent to execute stage
-    //
-    // When there is a branch or jump instruction being sent to the execute
-    // stage, we want to ensure it executes alone. This helps simplify flush
-    // mechanism incase of a mispredict.
-
-    wire fu_buffer_ready[`ISSUE_WIDTH-1:0]; //indicates if ALU/SFU/FPU/LSU input is ready to receive
-
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
-        VX_execution_staller #(
-        ) execution_staller (
-            .clk(clk),
-            .reset(reset),
-            .branch_mispredict_flush(branch_mispredict_flush[i]),
-
-            // data to/from register file output buffer (operand rsp buf)
-            .valid_in(operands_if[i].valid),
-            .ready_in(operands_if[i].ready),
-
-            // keep track of number of instructions currently in execute stage
-            .decr(commit_if_valid[i] & commit_if_ready[i]),
-            .incr(  (alu_operands_if[i].ready && alu_operands_if[i].valid && (operands_if[i].data.ex_type == `EX_ALU)) 
-                 || (lsu_operands_if[i].ready && lsu_operands_if[i].valid && (operands_if[i].data.ex_type == `EX_LSU))
-                 `ifdef EXT_F_ENABLE
-                 || (fpu_operands_if[i].ready && fpu_operands_if[i].valid && (operands_if[i].data.ex_type == `EX_FPU))
-                 `endif
-                 || (sfu_operands_if[i].ready && sfu_operands_if[i].valid && (operands_if[i].data.ex_type == `EX_SFU)) ),
-
-            // other inputs
-            .fu_buffer_ready(fu_buffer_ready[i]),
-            .is_branch(operands_if[i].data.is_branch)
-        );
-    end
-
+ 
     // ALU dispatch    
 
     VX_operands_if#(.THREAD_CNT (THREAD_CNT)) alu_operands_if[`ISSUE_WIDTH]();
     
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
-        assign alu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_ALU) && operands_if[i].ready;
+        assign alu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_ALU);
         assign alu_operands_if[i].data = operands_if[i].data;
 
         `RESET_RELAY (alu_reset, reset);
@@ -111,7 +74,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) alu_buffer (
             .clk        (clk),
-            .reset      (alu_reset | branch_mispredict_flush[i]),
+            .reset      (alu_reset),
             .valid_in   (alu_operands_if[i].valid),
             .ready_in   (alu_operands_if[i].ready),
             .data_in    (`TO_DISPATCH_DATA(alu_operands_if[i].data, last_active_tid[i])),
@@ -126,7 +89,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
     VX_operands_if#(.THREAD_CNT (THREAD_CNT)) lsu_operands_if[`ISSUE_WIDTH]();
 
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
-        assign lsu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_LSU) && operands_if[i].ready;
+        assign lsu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_LSU);
         assign lsu_operands_if[i].data = operands_if[i].data;
 
         `RESET_RELAY (lsu_reset, reset);
@@ -137,7 +100,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) lsu_buffer (
             .clk        (clk),
-            .reset      (lsu_reset | branch_mispredict_flush[i]),
+            .reset      (lsu_reset),
             .valid_in   (lsu_operands_if[i].valid),
             .ready_in   (lsu_operands_if[i].ready),
             .data_in    (`TO_DISPATCH_DATA(lsu_operands_if[i].data, last_active_tid[i])),           
@@ -154,7 +117,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
     VX_operands_if#(.THREAD_CNT (THREAD_CNT)) fpu_operands_if[`ISSUE_WIDTH]();
 
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
-        assign fpu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_FPU) && operands_if[i].ready;
+        assign fpu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_FPU);
         assign fpu_operands_if[i].data = operands_if[i].data;
 
         `RESET_RELAY (fpu_reset, reset);
@@ -165,7 +128,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) fpu_buffer (
             .clk        (clk),
-            .reset      (fpu_reset | branch_mispredict_flush[i]),
+            .reset      (fpu_reset),
             .valid_in   (fpu_operands_if[i].valid),
             .ready_in   (fpu_operands_if[i].ready),
             .data_in    (`TO_DISPATCH_DATA(fpu_operands_if[i].data, last_active_tid[i])),           
@@ -181,7 +144,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
     VX_operands_if#(.THREAD_CNT (THREAD_CNT)) sfu_operands_if[`ISSUE_WIDTH]();
 
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
-        assign sfu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_SFU) && operands_if[i].ready;
+        assign sfu_operands_if[i].valid = operands_if[i].valid && (operands_if[i].data.ex_type == `EX_SFU);
         assign sfu_operands_if[i].data = operands_if[i].data;
 
         `RESET_RELAY (sfu_reset, reset);
@@ -192,7 +155,7 @@ module VX_dispatch import VX_gpu_pkg::*; #(
             .OUT_REG (2)
         ) sfu_buffer (
             .clk        (clk),
-            .reset      (sfu_reset | branch_mispredict_flush[i]),
+            .reset      (sfu_reset),
             .valid_in   (sfu_operands_if[i].valid),
             .ready_in   (sfu_operands_if[i].ready),
             .data_in    (`TO_DISPATCH_DATA(sfu_operands_if[i].data, last_active_tid[i])),           
@@ -202,9 +165,9 @@ module VX_dispatch import VX_gpu_pkg::*; #(
         );
     end
 
-    // can a functional unit's (FU aka ALU/SFU/LSU/FPU) buffer take next request?
+    // can take next request?
     for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
-        assign fu_buffer_ready[i] = (alu_operands_if[i].ready && (operands_if[i].data.ex_type == `EX_ALU)) 
+        assign operands_if[i].ready = (alu_operands_if[i].ready && (operands_if[i].data.ex_type == `EX_ALU)) 
                                    || (lsu_operands_if[i].ready && (operands_if[i].data.ex_type == `EX_LSU))
                                 `ifdef EXT_F_ENABLE
                                    || (fpu_operands_if[i].ready && (operands_if[i].data.ex_type == `EX_FPU))
