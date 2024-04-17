@@ -77,7 +77,8 @@
                               /* verilator lint_off IMPLICIT */ \
                               /* verilator lint_off PINMISSING */ \
                               /* verilator lint_off IMPORTSTAR */ \
-                              /* verilator lint_off UNSIGNED */
+                              /* verilator lint_off UNSIGNED */ \
+                              /* verilator lint_off VARHIDDEN */
 
 `define IGNORE_WARNINGS_END   /* verilator lint_on UNUSED */ \
                               /* verilator lint_on PINCONNECTEMPTY */ \
@@ -86,9 +87,10 @@
                               /* verilator lint_on UNDRIVEN */ \
                               /* verilator lint_on DECLFILENAME */ \
                               /* verilator lint_on IMPLICIT */ \
-                              /* verilator lint_off PINMISSING */ \
+                              /* verilator lint_on PINMISSING */ \
                               /* verilator lint_on IMPORTSTAR */ \
-                              /* verilator lint_on UNSIGNED */
+                              /* verilator lint_on UNSIGNED */ \
+                              /* verilator lint_on VARHIDDEN */
 
 `define UNUSED_PARAM(x)  /* verilator lint_off UNUSED */ \
                          localparam  __``x = x; \

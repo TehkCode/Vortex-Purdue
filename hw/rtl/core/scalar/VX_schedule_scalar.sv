@@ -13,22 +13,26 @@
 
 `include "VX_define.vh"
 
-module VX_schedule import VX_gpu_pkg::*; #(
+module VX_schedule_scalar import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
-) (    
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
+    parameter NUM_ALU_BLOCKS = ISSUE_CNT,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
+) (   
     input wire              clk,
     input wire              reset,
-	input wire [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
+    input wire [ISSUE_CNT-1:0] branch_mispredict_flush,
 
     // configuration
     input base_dcrs_t       base_dcrs,
 
     // inputsdecode_if
     VX_warp_ctl_if.slave    warp_ctl_if, 
-    VX_branch_ctl_if.slave  branch_ctl_if [`NUM_ALU_BLOCKS],
+    VX_branch_ctl_if.slave  branch_ctl_if [NUM_ALU_BLOCKS],
     VX_decode_sched_if.slave decode_sched_if,
-    VX_commit_sched_if.slave commit_sched_if,
+    VX_commit_sched_scalar_if.slave commit_sched_if,
 
     // outputs
     VX_schedule_if.master   schedule_if,
@@ -42,13 +46,13 @@ module VX_schedule import VX_gpu_pkg::*; #(
 );
     `UNUSED_PARAM (CORE_ID)
 
-    reg [`NUM_WARPS-1:0] active_warps, active_warps_n; // updated when a warp is activated or disabled
-    reg [`NUM_WARPS-1:0] stalled_warps, stalled_warps_n;  // set when branch/gpgpu instructions are issued
+    reg [WARP_CNT-1:0] active_warps, active_warps_n; // updated when a warp is activated or disabled
+    reg [WARP_CNT-1:0] stalled_warps, stalled_warps_n;  // set when branch/gpgpu instructions are issued
     
-    reg [`NUM_WARPS-1:0][THREAD_CNT-1:0] thread_masks, thread_masks_n;
-    reg [`NUM_WARPS-1:0][`XLEN-1:0] warp_pcs, warp_pcs_n;
+    reg [WARP_CNT-1:0][THREAD_CNT-1:0] thread_masks, thread_masks_n;
+    reg [WARP_CNT-1:0][`XLEN-1:0] warp_pcs, warp_pcs_n;
 
-    wire [`NW_WIDTH-1:0]    schedule_wid;
+    wire [WARP_CNT_WIDTH-1:0]    schedule_wid;
     wire [THREAD_CNT-1:0] schedule_tmask;
     wire [`XLEN-1:0]        schedule_pc;
     wire                    schedule_valid;
@@ -58,23 +62,23 @@ module VX_schedule import VX_gpu_pkg::*; #(
     wire                    join_valid;
     wire                    join_is_dvg;
     wire                    join_is_else;
-    wire [`NW_WIDTH-1:0]    join_wid;   
+    wire [WARP_CNT_WIDTH-1:0]    join_wid;   
     wire [THREAD_CNT-1:0] join_tmask;
     wire [`XLEN-1:0]        join_pc;
 
     reg [`PERF_CTR_BITS-1:0] cycles;
 
-    reg [`NUM_WARPS-1:0][`UUID_WIDTH-1:0] issued_instrs;
+    reg [WARP_CNT-1:0][`UUID_WIDTH-1:0] issued_instrs;
 
     wire schedule_fire = schedule_valid && schedule_ready;
     wire schedule_if_fire = schedule_if.valid && schedule_if.ready;
 
     // branch
-    wire [`NUM_ALU_BLOCKS-1:0]                  branch_valid;    
-    wire [`NUM_ALU_BLOCKS-1:0][`NW_WIDTH-1:0]   branch_wid;    
-    wire [`NUM_ALU_BLOCKS-1:0]                  branch_taken;
-    wire [`NUM_ALU_BLOCKS-1:0][`XLEN-1:0]       branch_dest;
-    for (genvar i = 0; i < `NUM_ALU_BLOCKS; ++i) begin
+    wire [NUM_ALU_BLOCKS-1:0]                  branch_valid;    
+    wire [NUM_ALU_BLOCKS-1:0][WARP_CNT_WIDTH-1:0]   branch_wid;    
+    wire [NUM_ALU_BLOCKS-1:0]                  branch_taken;
+    wire [NUM_ALU_BLOCKS-1:0][`XLEN-1:0]       branch_dest;
+    for (genvar i = 0; i < NUM_ALU_BLOCKS; ++i) begin
         assign branch_valid[i] = branch_ctl_if[i].valid;
         assign branch_wid[i]   = branch_ctl_if[i].wid;
         assign branch_taken[i] = branch_ctl_if[i].taken;
@@ -82,12 +86,12 @@ module VX_schedule import VX_gpu_pkg::*; #(
     end
 
     // barriers
-    reg [`NUM_BARRIERS-1:0][`NUM_WARPS-1:0] barrier_masks, barrier_masks_n;
-    reg [`NUM_WARPS-1:0] barrier_stalls, barrier_stalls_n;
-    wire [`CLOG2(`NUM_WARPS+1)-1:0] active_barrier_count;
-    wire [`NUM_WARPS-1:0] curr_barrier_mask;    
+    reg [`NUM_BARRIERS-1:0][WARP_CNT-1:0] barrier_masks, barrier_masks_n;
+    reg [WARP_CNT-1:0] barrier_stalls, barrier_stalls_n;
+    wire [`LOG2UP(WARP_CNT+1)-1:0] active_barrier_count;
+    wire [WARP_CNT-1:0] curr_barrier_mask;    
 `ifdef GBAR_ENABLE
-    reg [`NUM_WARPS-1:0] curr_barrier_mask_n;
+    reg [WARP_CNT-1:0] curr_barrier_mask_n;
     reg gbar_req_valid;
     reg [`NB_WIDTH-1:0] gbar_req_id;
     reg [`NC_WIDTH-1:0] gbar_req_size_m1;
@@ -107,8 +111,8 @@ module VX_schedule import VX_gpu_pkg::*; #(
 
         // wspawn handling
         if (warp_ctl_if.valid && warp_ctl_if.wspawn.valid) begin
-            active_warps_n |= warp_ctl_if.wspawn.wmask;
-            for (integer i = 0; i < `NUM_WARPS; ++i) begin
+            active_warps_n |= warp_ctl_if.wspawn.wmask[WARP_CNT-1:0];
+            for (integer i = 0; i < WARP_CNT; ++i) begin
                 if (warp_ctl_if.wspawn.wmask[i]) begin
                     thread_masks_n[i][0] = 1;
                     warp_pcs_n[i] = warp_ctl_if.wspawn.pc;
@@ -155,7 +159,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
     `endif
         if (warp_ctl_if.valid && warp_ctl_if.barrier.valid) begin
             if (~warp_ctl_if.barrier.is_global 
-             && (active_barrier_count[`NW_WIDTH-1:0] == warp_ctl_if.barrier.size_m1[`NW_WIDTH-1:0])) begin                                
+             && (active_barrier_count[WARP_CNT_WIDTH-1:0] == warp_ctl_if.barrier.size_m1[WARP_CNT_WIDTH-1:0])) begin                                
                 barrier_masks_n[warp_ctl_if.barrier.id] = '0;
                 barrier_stalls_n &= ~barrier_masks[warp_ctl_if.barrier.id];
             end else begin
@@ -172,7 +176,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
     `endif
 
         // Branch handling
-        for (integer i = 0; i < `NUM_ALU_BLOCKS; ++i) begin
+        for (integer i = 0; i < NUM_ALU_BLOCKS; ++i) begin
             if (branch_valid[i]) begin
                 if (branch_taken[i]) begin
                     warp_pcs_n[branch_wid[i]] = branch_dest[i];
@@ -197,7 +201,6 @@ module VX_schedule import VX_gpu_pkg::*; #(
         if (schedule_fire) begin
             stalled_warps_n[schedule_wid] = 0;
         end
-        
     end
 
     `UNUSED_VAR (base_dcrs)
@@ -267,7 +270,8 @@ module VX_schedule import VX_gpu_pkg::*; #(
 
     VX_split_join #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) split_join (
         .clk        (clk),
         .reset      (split_join_reset),
@@ -285,10 +289,10 @@ module VX_schedule import VX_gpu_pkg::*; #(
 
     // schedule the next ready warp
 
-    wire [`NUM_WARPS-1:0] ready_warps = active_warps & ~(stalled_warps | barrier_stalls);
+    wire [WARP_CNT-1:0] ready_warps = active_warps & ~(stalled_warps | barrier_stalls);
 
     VX_lzc #(
-        .N       (`NUM_WARPS),
+        .N       (WARP_CNT),
         .REVERSE (1)
     ) wid_select (
         .data_in   (ready_warps),
@@ -296,8 +300,8 @@ module VX_schedule import VX_gpu_pkg::*; #(
         .valid_out (schedule_valid)
     );
 
-    wire [`NUM_WARPS-1:0][(THREAD_CNT + `XLEN)-1:0] schedule_data;
-    for (genvar i = 0; i < `NUM_WARPS; ++i) begin
+    wire [WARP_CNT-1:0][(THREAD_CNT + `XLEN)-1:0] schedule_data;
+    for (genvar i = 0; i < WARP_CNT; ++i) begin
         assign schedule_data[i] = {thread_masks[i], warp_pcs[i]};
     end
 
@@ -307,9 +311,9 @@ module VX_schedule import VX_gpu_pkg::*; #(
     };
 
 `ifndef NDEBUG
-    localparam GNW_WIDTH = `LOG2UP(`NUM_CLUSTERS * `NUM_CORES * `NUM_WARPS);
+    localparam GNW_WIDTH = `LOG2UP(`NUM_CLUSTERS * `NUM_CORES * WARP_CNT);
     reg [`UUID_WIDTH-1:0] instr_uuid;
-    wire [GNW_WIDTH-1:0] g_wid = (GNW_WIDTH'(CORE_ID) << `NW_BITS) + GNW_WIDTH'(schedule_wid);
+    wire [GNW_WIDTH-1:0] g_wid = (GNW_WIDTH'(CORE_ID) << WARP_CNT_WIDTH) + GNW_WIDTH'(schedule_wid);
     always @(posedge clk) begin
         if (reset) begin
             instr_uuid <= `UUID_WIDTH'(dpi_uuid_gen(1, 0, 0));
@@ -322,7 +326,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
 `endif
 
     VX_elastic_buffer #( 
-        .DATAW (THREAD_CNT + `XLEN + `NW_WIDTH)
+        .DATAW (THREAD_CNT + `XLEN + WARP_CNT_WIDTH)
     ) out_buf (
         .clk       (clk),
         .reset     (reset | (|branch_mispredict_flush) ),
@@ -341,8 +345,9 @@ module VX_schedule import VX_gpu_pkg::*; #(
     wire no_pending_instr;
     VX_pending_instr #( 
         .CTR_WIDTH  (12),
-        .DECR_COUNT (`ISSUE_WIDTH),
-        .ALM_EMPTY  (1)
+        .DECR_COUNT (ISSUE_CNT),
+        .ALM_EMPTY  (1),
+        .WARP_CNT(WARP_CNT)
     ) pending_instr(
         .clk       (clk),
         .reset     (pending_instr_reset | (|commit_sched_if.halt)),

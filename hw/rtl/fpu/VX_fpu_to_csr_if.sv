@@ -13,13 +13,13 @@
 
 `include "VX_fpu_define.vh"
 
-interface VX_fpu_to_csr_if import VX_fpu_pkg::*; ();
+interface VX_fpu_to_csr_if import VX_fpu_pkg::*; #(parameter WARP_CNT = `NUM_WARPS, parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT))();
 
     wire                    write_enable;
-    wire [`NW_WIDTH-1:0]    write_wid;
+    wire [WARP_CNT_WIDTH-1:0]    write_wid;
     fflags_t                write_fflags;
 
-    wire [`NW_WIDTH-1:0]    read_wid;
+    wire [WARP_CNT_WIDTH-1:0]    read_wid;
     wire [`INST_FRM_BITS-1:0] read_frm;
 
     modport master (

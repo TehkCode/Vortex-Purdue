@@ -13,7 +13,16 @@
 
 `include "VX_define.vh"
 
-interface VX_operands_if import VX_gpu_pkg::*; #(parameter THREAD_CNT = `NUM_THREADS)();
+interface VX_operands_scalar_if import VX_gpu_pkg::*;
+#(
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT = `NUM_WARPS
+ )
+();
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_WIS_W = `LOG2UP(WARP_CNT / ISSUE_CNT);
+`IGNORE_WARNINGS_END
 
     typedef struct packed {
         logic [`UUID_WIDTH-1:0]         uuid;

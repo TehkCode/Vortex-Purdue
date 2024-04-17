@@ -13,9 +13,12 @@
 
 `include "VX_define.vh"
 
-module VX_fetch import VX_gpu_pkg::*; #(
+module VX_fetch_scalar import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) (
     `SCOPE_IO_DECL
 
@@ -29,14 +32,17 @@ module VX_fetch import VX_gpu_pkg::*; #(
     VX_schedule_if.slave    schedule_if,
 
     // flush mechanism
-	input [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
+	input [ISSUE_CNT-1:0] branch_mispredict_flush,
 
     // outputs
     VX_fetch_if.master      fetch_if
 );
     `UNUSED_PARAM (CORE_ID)
     `UNUSED_VAR (reset)
-    localparam ISW_WIDTH  = `LOG2UP(`ISSUE_WIDTH);
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_IDX_W = `LOG2UP(ISSUE_CNT); 
+    localparam ISW_WIDTH  = `LOG2UP(ISSUE_CNT);
+`IGNORE_WARNINGS_END
 
     wire icache_req_valid;
     wire [ICACHE_ADDR_WIDTH-1:0] icache_req_addr;
@@ -48,9 +54,9 @@ module VX_fetch import VX_gpu_pkg::*; #(
 
     wire icache_req_fire = icache_req_valid && icache_req_ready;
 
-    wire [ISW_WIDTH-1:0] schedule_isw = wid_to_isw(schedule_if.data.wid);
+    wire [ISW_WIDTH-1:0] schedule_isw = `WID_TO_ISW(schedule_if.data.wid, ISW_WIDTH, ISSUE_IDX_W);
     
-    assign req_tag = schedule_if.data.wid;
+    assign req_tag = `NW_WIDTH'(schedule_if.data.wid);
     
     assign {rsp_uuid, rsp_tag} = icache_bus_if.rsp_data.tag;
 
@@ -58,7 +64,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
     wire [THREAD_CNT-1:0] rsp_tmask;
 
     // buffer to store the PC and thread mask until the response is received from the icache
-    localparam IBUF_SIZE_WIDTH = `CLOG2(`IBUF_SIZE+1);
+    localparam IBUF_SIZE_WIDTH = `LOG2UP((2 * (WARP_CNT / ISSUE_CNT))+1);
     wire icache_response_squashed_successfully;	
     reg squashing_in_progress;
     reg [IBUF_SIZE_WIDTH:0] sent_icache_requests;
@@ -66,7 +72,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
 
     VX_fifo_queue #(
         .DATAW  (`XLEN + THREAD_CNT),
-        .DEPTH  (`IBUF_SIZE),
+        .DEPTH  ((2 * (WARP_CNT / ISSUE_CNT))),
         .LUTRAM (1)
     ) tag_store (
         .clk   (clk),  
@@ -125,8 +131,8 @@ module VX_fetch import VX_gpu_pkg::*; #(
     // Ensure that the ibuffer doesn't fill up.
     // This resolves potential deadlock if ibuffer fills and the LSU stalls the execute stage due to pending dcache request.
     // This issue is particularly prevalent when the icache and dcache is disabled and both requests share the same bus.
-    wire [`ISSUE_WIDTH-1:0] pending_ibuf_full;
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    wire [ISSUE_CNT-1:0] pending_ibuf_full;
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         VX_pending_size #( 
             .SIZE (`IBUF_SIZE)
         ) pending_reads (
@@ -178,7 +184,7 @@ module VX_fetch import VX_gpu_pkg::*; #(
 
     assign fetch_if.valid = icache_bus_if.rsp_valid & !squashing_in_progress;
     assign fetch_if.data.tmask = rsp_tmask;
-    assign fetch_if.data.wid   = rsp_tag;
+    assign fetch_if.data.wid   = rsp_tag[WARP_CNT_WIDTH-1:0];
     assign fetch_if.data.PC    = rsp_PC;
     assign fetch_if.data.instr = icache_bus_if.rsp_data.data;
     assign fetch_if.data.uuid  = rsp_uuid;

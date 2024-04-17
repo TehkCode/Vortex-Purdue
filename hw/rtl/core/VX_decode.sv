@@ -30,7 +30,9 @@
 
 module VX_decode  #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) (
     input wire              clk,
     input wire              reset,
@@ -43,7 +45,7 @@ module VX_decode  #(
     VX_decode_sched_if.master decode_sched_if
 );
 
-    localparam DATAW = `UUID_WIDTH + `NW_WIDTH + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + (`NR_BITS * 4) + `XLEN + 1 + 1;
+    localparam DATAW = `UUID_WIDTH + WARP_CNT_WIDTH + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + (`NR_BITS * 4) + `XLEN + 1 + 1;
 
     `UNUSED_PARAM (CORE_ID)
     `UNUSED_VAR (clk)

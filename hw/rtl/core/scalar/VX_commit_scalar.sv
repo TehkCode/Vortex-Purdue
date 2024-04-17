@@ -13,47 +13,53 @@
 
 `include "VX_define.vh"
 
-module VX_commit import VX_gpu_pkg::*; #(
+module VX_commit_scalar import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4)
 ) (
     input wire              clk,
     input wire              reset,
 
     // inputs
-    VX_commit_if.slave      alu_commit_if [`ISSUE_WIDTH],
-    VX_commit_if.slave      lsu_commit_if [`ISSUE_WIDTH],
+    VX_commit_scalar_if.slave      alu_commit_if [ISSUE_CNT],
+    VX_commit_scalar_if.slave      lsu_commit_if [ISSUE_CNT],
 `ifdef EXT_F_ENABLE
-    VX_commit_if.slave      fpu_commit_if [`ISSUE_WIDTH],
+    VX_commit_scalar_if.slave      fpu_commit_if [ISSUE_CNT],
 `endif
-    VX_commit_if.slave      sfu_commit_if [`ISSUE_WIDTH],
+    VX_commit_scalar_if.slave      sfu_commit_if [ISSUE_CNT],
 
     // outputs
-    VX_writeback_if.master  writeback_if  [`ISSUE_WIDTH],
+    VX_writeback_if.master  writeback_if  [ISSUE_CNT],
     VX_commit_csr_if.master commit_csr_if,
-    VX_commit_sched_if.master commit_sched_if,
-    output [`ISSUE_WIDTH-1:0] commit_if_valid, // to let issue stage know that a instruction is out of execute stage
-    output [`ISSUE_WIDTH-1:0] commit_if_ready,
+    VX_commit_sched_scalar_if.master commit_sched_if,
+    output commit_if_valid, // to let issue stage know that a instruction is out of execute stage
+	output commit_if_ready,
 
     // simulation helper signals
     output wire [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam DATAW = `UUID_WIDTH + `NW_WIDTH + THREAD_CNT + `XLEN + 1 + `NR_BITS + THREAD_CNT * `XLEN + 1 + 1 + 1 + 1;
-    localparam COMMIT_SIZEW = `CLOG2(THREAD_CNT + 1);
-    localparam COMMIT_ALL_SIZEW = COMMIT_SIZEW + `ISSUE_WIDTH - 1;
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_WIS_W = `LOG2UP(WARP_CNT / ISSUE_CNT);
+`IGNORE_WARNINGS_END
+    localparam DATAW = `UUID_WIDTH + WARP_CNT_WIDTH + THREAD_CNT + `XLEN + 1 + `NR_BITS + THREAD_CNT * `XLEN + 1 + 1 + 1 + 1;
+    localparam COMMIT_SIZEW = `LOG2UP(THREAD_CNT + 1);
+    localparam COMMIT_ALL_SIZEW = COMMIT_SIZEW + ISSUE_CNT - 1;
 
     // commit arbitration
 
-    VX_commit_if#(.THREAD_CNT (THREAD_CNT)) commit_if[`ISSUE_WIDTH]();
+    VX_commit_scalar_if#(.WARP_CNT(WARP_CNT), .THREAD_CNT (THREAD_CNT)) commit_if[ISSUE_CNT]();
 
-    wire [`ISSUE_WIDTH-1:0] commit_fire;    
-    wire [`ISSUE_WIDTH-1:0][`NW_WIDTH-1:0] commit_wid;
-    wire [`ISSUE_WIDTH-1:0][THREAD_CNT-1:0] commit_tmask;
-    wire [`ISSUE_WIDTH-1:0] commit_eop;
-    wire [`ISSUE_WIDTH-1:0] commit_halt;
+    wire [ISSUE_CNT-1:0] commit_fire;    
+    wire [ISSUE_CNT-1:0][WARP_CNT_WIDTH-1:0] commit_wid;
+    wire [ISSUE_CNT-1:0][THREAD_CNT-1:0] commit_tmask;
+    wire [ISSUE_CNT-1:0] commit_eop;
+    wire [ISSUE_CNT-1:0] commit_halt;
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
 
         `RESET_RELAY (arb_reset, reset);
 
@@ -104,20 +110,20 @@ module VX_commit import VX_gpu_pkg::*; #(
 
     // CSRs update
     
-    wire [`ISSUE_WIDTH-1:0][COMMIT_SIZEW-1:0] commit_size, commit_size_r;
+    wire [ISSUE_CNT-1:0][COMMIT_SIZEW-1:0] commit_size, commit_size_r;
     wire [COMMIT_ALL_SIZEW-1:0] commit_size_all, commit_size_all_r;
     wire commit_fire_any, commit_fire_any_r, commit_fire_any_rr;
 
     assign commit_fire_any = (| commit_fire);
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         wire [COMMIT_SIZEW-1:0] pop_count;
         `POP_COUNT(pop_count, commit_tmask[i]);
         assign commit_size[i] = pop_count;
     end
 
     VX_pipe_register #(
-        .DATAW  (1 + `ISSUE_WIDTH * COMMIT_SIZEW),
+        .DATAW  (1 + ISSUE_CNT * COMMIT_SIZEW),
         .RESETW (1)
     ) commit_size_reg1 (
         .clk      (clk),
@@ -130,7 +136,7 @@ module VX_commit import VX_gpu_pkg::*; #(
     VX_reduce #(
         .DATAW_IN (COMMIT_SIZEW),
         .DATAW_OUT (COMMIT_ALL_SIZEW),
-        .N  (`ISSUE_WIDTH),
+        .N  (ISSUE_CNT),
         .OP ("+")
     ) commit_size_reduce (
         .data_in  (commit_size_r),
@@ -165,8 +171,8 @@ module VX_commit import VX_gpu_pkg::*; #(
     // Committed instructions
 
     VX_pipe_register #(
-        .DATAW  (`ISSUE_WIDTH * (1 + 1 + `NW_WIDTH)),
-        .RESETW (`ISSUE_WIDTH)
+        .DATAW  (ISSUE_CNT * (1 + 1 + WARP_CNT_WIDTH)),
+        .RESETW (ISSUE_CNT)
     ) committed_pipe_reg (
         .clk      (clk),
         .reset    (reset),
@@ -177,10 +183,10 @@ module VX_commit import VX_gpu_pkg::*; #(
 
     // Writeback
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         assign writeback_if[i].valid = commit_if[i].valid && commit_if[i].data.wb;
         assign writeback_if[i].data.uuid = commit_if[i].data.uuid; 
-        assign writeback_if[i].data.wis = wid_to_wis(commit_if[i].data.wid);
+        assign writeback_if[i].data.wis = `WID_TO_WIS(commit_if[i].data.wid, ISSUE_WIS_W, ISSUE_CNT);
         assign writeback_if[i].data.PC = commit_if[i].data.PC; 
         assign writeback_if[i].data.tmask = commit_if[i].data.tmask; 
         assign writeback_if[i].data.rd = commit_if[i].data.rd; 
@@ -206,7 +212,7 @@ module VX_commit import VX_gpu_pkg::*; #(
     assign sim_wb_value = sim_wb_value_r;
     
 `ifdef DBG_TRACE_CORE_PIPELINE
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         always @(posedge clk) begin
             if (alu_commit_if[i].valid && alu_commit_if[i].ready) begin
                 `TRACE(1, ("%d: core%0d-commit: wid=%0d, PC=0x%0h, ex=ALU, tmask=%b, wb=%0d, rd=%0d, sop=%b, eop=%b, data=", $time, CORE_ID, alu_commit_if[i].data.wid, alu_commit_if[i].data.PC, alu_commit_if[i].data.tmask, alu_commit_if[i].data.wb, alu_commit_if[i].data.rd, alu_commit_if[i].data.sop, alu_commit_if[i].data.eop));

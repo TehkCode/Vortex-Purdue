@@ -13,11 +13,16 @@
 
 `include "VX_define.vh"
 
-interface VX_commit_sched_if ();
+interface VX_commit_sched_scalar_if
+#(
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
+ ) ();
 
-    wire [`ISSUE_WIDTH-1:0] committed;
-    wire [`ISSUE_WIDTH-1:0][`NW_WIDTH-1:0] committed_wid;
-    wire [`ISSUE_WIDTH-1:0] halt;
+    wire [ISSUE_CNT-1:0] committed;
+    wire [ISSUE_CNT-1:0][WARP_CNT_WIDTH-1:0] committed_wid;
+    wire [ISSUE_CNT-1:0] halt;
 
     modport master (
         output committed,

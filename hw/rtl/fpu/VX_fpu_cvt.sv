@@ -64,14 +64,14 @@ module VX_fpu_cvt import VX_fpu_pkg::*; #(
     localparam INT_MAN_WIDTH = `MAX(MAN_BITS + 1, MAX_INT_WIDTH);
 
     // The lower 2p+3 bits of the internal FMA result will be needed for leading-zero detection
-    localparam LZC_RESULT_WIDTH = `CLOG2(INT_MAN_WIDTH);
+    localparam LZC_RESULT_WIDTH = `LOG2UP(INT_MAN_WIDTH);
 
     // The internal exponent must be able to represent the smallest denormal input value as signed
     // or the number of bits in an integer
-    localparam INT_EXP_WIDTH = `MAX(`CLOG2(MAX_INT_WIDTH), `MAX(EXP_BITS, `CLOG2(EXP_BIAS + MAN_BITS))) + 1;
+    localparam INT_EXP_WIDTH = `MAX(`LOG2UP(MAX_INT_WIDTH), `MAX(EXP_BITS, `LOG2UP(EXP_BIAS + MAN_BITS))) + 1;
 
     // shift amount for denormalization
-    localparam SHAMT_BITS = `CLOG2(INT_MAN_WIDTH+1);
+    localparam SHAMT_BITS = `LOG2UP(INT_MAN_WIDTH+1);
 
     localparam FMT_SHIFT_COMPENSATION = INT_MAN_WIDTH - 1 - MAN_BITS;
     localparam NUM_FP_STICKY  = 2 * INT_MAN_WIDTH - MAN_BITS - 1;   // removed mantissa, 1. and R

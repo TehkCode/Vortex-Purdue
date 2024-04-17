@@ -18,7 +18,9 @@
 module VX_raster_agent #(
     parameter CORE_ID = 0,
     parameter NUM_LANES = 1,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `CLOG2(WARP_CNT)
 ) (
     input wire clk,
     input wire reset,
@@ -74,7 +76,7 @@ module VX_raster_agent #(
     end
 
     VX_elastic_buffer #(
-        .DATAW (`UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + (NUM_LANES * 32) + PID_WIDTH + 1 + 1),
+        .DATAW (`UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + (NUM_LANES * 32) + PID_WIDTH + 1 + 1),
         .SIZE  (2)
     ) rsp_buf (
         .clk       (clk),

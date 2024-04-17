@@ -13,10 +13,12 @@
 
 `include "VX_define.vh"
 
-module VX_wctl_unit import VX_gpu_pkg::*; #(
+module VX_wctl_unit_scalar import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter NUM_LANES = 1,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) (
     input wire              clk,
     input wire              reset,
@@ -26,15 +28,15 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
     
     // Outputs
     VX_warp_ctl_if.master   warp_ctl_if,
-    VX_commit_if.master     commit_if
+    VX_commit_scalar_if.master     commit_if
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam LANE_BITS  = `CLOG2(NUM_LANES);
+    localparam LANE_BITS  = `LOG2UP(NUM_LANES);
     localparam LANE_WIDTH = `UP(LANE_BITS);
-    localparam PID_BITS   = `CLOG2(THREAD_CNT / NUM_LANES);
+    localparam PID_BITS   = `LOG2UP(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH  = `UP(PID_BITS);
     localparam WCTL_WIDTH = $bits(tmc_t) + $bits(wspawn_t) + $bits(split_t) + $bits(join_t) + $bits(barrier_t);
-    localparam DATAW = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + WCTL_WIDTH + PID_WIDTH + 1 + 1;
+    localparam DATAW = `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + WCTL_WIDTH + PID_WIDTH + 1 + 1;
 
     `UNUSED_VAR (execute_if.data.rs3_data)
     
@@ -119,12 +121,12 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
 
     // wspawn
 
-    wire [`NUM_WARPS-1:0] wspawn_wmask;
-    for (genvar i = 0; i < `NUM_WARPS; ++i) begin
+    wire [WARP_CNT-1:0] wspawn_wmask;
+    for (genvar i = 0; i < WARP_CNT; ++i) begin
         assign wspawn_wmask[i] = (i < rs1_data[`NW_BITS:0]) && (i != execute_if.data.wid);
     end
     assign wspawn.valid = is_wspawn;
-    assign wspawn.wmask = wspawn_wmask;
+    assign wspawn.wmask[WARP_CNT-1:0] = wspawn_wmask;
     assign wspawn.pc    = rs2_data;
 
     // response

@@ -13,10 +13,10 @@
 
 `include "VX_define.vh"
 
-interface VX_warp_ctl_if import VX_gpu_pkg::*; ();
+interface VX_warp_ctl_if import VX_gpu_pkg::*; #(parameter WARP_CNT = `NUM_WARPS, parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)) ();
 
     wire        valid;
-    wire [`NW_WIDTH-1:0] wid;
+    wire [WARP_CNT_WIDTH-1:0] wid;
     tmc_t       tmc;
     wspawn_t    wspawn;
     split_t     split;

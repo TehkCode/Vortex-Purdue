@@ -16,16 +16,22 @@
 module VX_operands import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter CACHE_ENABLE = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT = `NUM_WARPS
 ) (
     input wire              clk,
     input wire              reset,
 
-    VX_writeback_if.slave   writeback_if [`ISSUE_WIDTH],
-    VX_ibuffer_if.slave     scoreboard_if [`ISSUE_WIDTH],
-    VX_operands_if.master   operands_if [`ISSUE_WIDTH]
+    VX_writeback_if.slave   writeback_if [ISSUE_CNT],
+    VX_ibuffer_if.slave     scoreboard_if [ISSUE_CNT],
+    VX_operands_if.master   operands_if [ISSUE_CNT]
 );
     `UNUSED_PARAM (CORE_ID)
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_WIS_W = `LOG2UP(WARP_CNT / ISSUE_CNT);
+    localparam ISSUE_RATIO = WARP_CNT / ISSUE_CNT;
+`IGNORE_WARNINGS_END
     localparam DATAW = `UUID_WIDTH + ISSUE_WIS_W + THREAD_CNT + `XLEN + 1 + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + 1 + `XLEN + `NR_BITS;
 
     localparam STATE_IDLE   = 2'd0;
@@ -34,7 +40,7 @@ module VX_operands import VX_gpu_pkg::*; #(
     localparam STATE_FETCH3 = 2'd3;
     localparam STATE_BITS   = 2;
 
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         wire [THREAD_CNT-1:0][`XLEN-1:0] gpr_rd_data;
         reg [`NR_BITS-1:0] gpr_rd_rid, gpr_rd_rid_n;
         reg [ISSUE_WIS_W-1:0] gpr_rd_wis, gpr_rd_wis_n;

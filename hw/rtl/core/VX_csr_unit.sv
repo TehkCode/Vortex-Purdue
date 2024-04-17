@@ -16,7 +16,11 @@
 module VX_csr_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter NUM_LANES = 1,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
+    parameter NUM_FPU_BLOCKS = `UP(ISSUE_CNT / 1)
 ) (
     input wire                  clk,
     input wire                  reset,
@@ -52,7 +56,7 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
 `endif
     
 `ifdef EXT_F_ENABLE
-    VX_fpu_to_csr_if.slave      fpu_to_csr_if [`NUM_FPU_BLOCKS],
+    VX_fpu_to_csr_if.slave      fpu_to_csr_if [NUM_FPU_BLOCKS],
 `endif
 
     VX_commit_csr_if.slave      commit_csr_if,
@@ -61,9 +65,9 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
     VX_commit_if.master         commit_if
 );
     `UNUSED_PARAM (CORE_ID)
-    localparam PID_BITS   = `CLOG2(THREAD_CNT / NUM_LANES);
+    localparam PID_BITS   = `LOG2UP(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH  = `UP(PID_BITS);
-    localparam DATAW      = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * 32 + PID_WIDTH + 1 + 1;
+    localparam DATAW      = `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * 32 + PID_WIDTH + 1 + 1;
 
     `UNUSED_VAR (execute_if.data.rs3_data)
     
@@ -157,7 +161,8 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
 
     VX_csr_data #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) csr_data (
         .clk            (clk),
         .reset          (reset),

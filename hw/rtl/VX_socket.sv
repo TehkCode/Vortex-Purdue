@@ -260,10 +260,11 @@ module VX_socket import VX_gpu_pkg::*; #(
     for (genvar i = 0; i < `SOCKET_SIZE; ++i) begin
 
         `RESET_RELAY (core_reset, reset);
-        if(((SOCKET_ID * `SOCKET_SIZE) + i)>=NUM_VEC_CORES) begin
-                VX_core #(
+        if(((SOCKET_ID * `SOCKET_SIZE) + i)>=NUM_VEC_CORES) begin : scalar_core_gen
+            VX_core_scalar #(
                 .CORE_ID ((SOCKET_ID * `SOCKET_SIZE) + i),
-                .THREAD_CNT(1)
+                .THREAD_CNT(1),
+                .WARP_CNT(`NUM_WARPS)
             ) core (
                 `SCOPE_IO_BIND  (i)
 
@@ -312,7 +313,7 @@ module VX_socket import VX_gpu_pkg::*; #(
                 .sim_wb_value   (per_core_sim_wb_value[i]),
                 .busy           (per_core_busy[i])
             );
-        end else begin
+        end else begin : simt_core_gen
         VX_core #(
             .CORE_ID ((SOCKET_ID * `SOCKET_SIZE) + i),
             .THREAD_CNT(`NUM_THREADS)

@@ -16,12 +16,14 @@
 interface VX_sfu_csr_if  #(
     parameter NUM_LANES = `NUM_SFU_LANES,
     parameter THREAD_CNT = `NUM_THREADS,
-    parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES)
+    parameter PID_WIDTH = `LOG2UP(THREAD_CNT / NUM_LANES),
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) ();
 
     wire                        read_enable;
     wire [`UUID_WIDTH-1:0]      read_uuid;
-    wire [`NW_WIDTH-1:0]        read_wid;
+    wire [WARP_CNT_WIDTH-1:0]        read_wid;
     wire [NUM_LANES-1:0]        read_tmask;
     wire [PID_WIDTH-1:0]        read_pid;
     wire [`VX_CSR_ADDR_BITS-1:0] read_addr;
@@ -29,7 +31,7 @@ interface VX_sfu_csr_if  #(
 
     wire                        write_enable; 
     wire [`UUID_WIDTH-1:0]      write_uuid;
-    wire [`NW_WIDTH-1:0]        write_wid;
+    wire [WARP_CNT_WIDTH-1:0]        write_wid;
     wire [NUM_LANES-1:0]        write_tmask;
     wire [PID_WIDTH-1:0]        write_pid;
     wire [`VX_CSR_ADDR_BITS-1:0] write_addr;

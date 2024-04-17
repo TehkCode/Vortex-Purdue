@@ -13,9 +13,12 @@
 
 `include "VX_define.vh"
 
-module VX_execute import VX_gpu_pkg::*; #(
+module VX_execute_scalar import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter NUM_ALU_BLOCKS = `UP(ISSUE_CNT/1)
 ) (
     `SCOPE_IO_DECL
 
@@ -39,8 +42,8 @@ module VX_execute import VX_gpu_pkg::*; #(
 `endif
 
 `ifdef EXT_F_ENABLE
-    VX_dispatch_if.slave    fpu_dispatch_if [`ISSUE_WIDTH],
-    VX_commit_if.master     fpu_commit_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    fpu_dispatch_if [ISSUE_CNT],
+    VX_commit_scalar_if.master     fpu_commit_if [ISSUE_CNT],
 `endif
 
 `ifdef EXT_TEX_ENABLE
@@ -67,15 +70,15 @@ module VX_execute import VX_gpu_pkg::*; #(
 `endif
 `endif    
   
-    VX_dispatch_if.slave    alu_dispatch_if [`ISSUE_WIDTH],
-    VX_commit_if.master     alu_commit_if [`ISSUE_WIDTH],
-    VX_branch_ctl_if.master branch_ctl_if [`NUM_ALU_BLOCKS],
+    VX_dispatch_if.slave    alu_dispatch_if [ISSUE_CNT],
+    VX_commit_scalar_if.master     alu_commit_if [ISSUE_CNT],
+    VX_branch_ctl_if.master branch_ctl_if [NUM_ALU_BLOCKS],
     
-    VX_dispatch_if.slave    lsu_dispatch_if [`ISSUE_WIDTH],  
-    VX_commit_if.master     lsu_commit_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    lsu_dispatch_if [ISSUE_CNT],  
+    VX_commit_scalar_if.master     lsu_commit_if [ISSUE_CNT],
     
-    VX_dispatch_if.slave    sfu_dispatch_if [`ISSUE_WIDTH], 
-    VX_commit_if.master     sfu_commit_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    sfu_dispatch_if [ISSUE_CNT], 
+    VX_commit_scalar_if.master     sfu_commit_if [ISSUE_CNT],
     VX_warp_ctl_if.master   warp_ctl_if,
 
     // flush mispredicts
@@ -84,18 +87,21 @@ module VX_execute import VX_gpu_pkg::*; #(
     // simulation helper signals
     output wire             sim_ebreak
 );
+    localparam NUM_FPU_BLOCKS = `UP(ISSUE_CNT / 1);
 
 `ifdef EXT_F_ENABLE
-    VX_fpu_to_csr_if fpu_to_csr_if[`NUM_FPU_BLOCKS]();
+    VX_fpu_to_csr_if #(.WARP_CNT(WARP_CNT)) fpu_to_csr_if[NUM_FPU_BLOCKS]();
 `endif
 
     `RESET_RELAY (alu_reset, reset);
     `RESET_RELAY (lsu_reset, reset);
     `RESET_RELAY (sfu_reset, reset);
     
-    VX_alu_unit #(
+    VX_alu_unit_scalar #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) alu_unit (
         .clk            (clk),
         .reset          (alu_reset),
@@ -106,9 +112,11 @@ module VX_execute import VX_gpu_pkg::*; #(
 
     `SCOPE_IO_SWITCH (1)
 
-    VX_lsu_unit #(
+    VX_lsu_unit_scalar #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) lsu_unit (
         `SCOPE_IO_BIND  (0)
         .clk            (clk),
@@ -121,9 +129,11 @@ module VX_execute import VX_gpu_pkg::*; #(
 `ifdef EXT_F_ENABLE
     `RESET_RELAY (fpu_reset, reset);
 
-    VX_fpu_unit #(
+    VX_fpu_unit_scalar #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) fpu_unit (
         .clk            (clk),
         .reset          (fpu_reset),    
@@ -133,9 +143,11 @@ module VX_execute import VX_gpu_pkg::*; #(
     );
 `endif
 
-    VX_sfu_unit #(
+    VX_sfu_unit_scalar #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT),
+        .ISSUE_CNT(ISSUE_CNT)
     ) sfu_unit (
         .clk            (clk),
         .reset          (sfu_reset),

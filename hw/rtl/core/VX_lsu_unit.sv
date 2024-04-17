@@ -15,7 +15,10 @@
 
 module VX_lsu_unit import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) (    
     `SCOPE_IO_DECL
 
@@ -26,25 +29,26 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     VX_mem_bus_if.master    cache_bus_if [DCACHE_NUM_REQS],
 
     // inputs
-    VX_dispatch_if.slave    dispatch_if [`ISSUE_WIDTH],
+    VX_dispatch_if.slave    dispatch_if [ISSUE_CNT],
 
     // outputs    
-    VX_commit_if.master     commit_if [`ISSUE_WIDTH]
+    VX_commit_if.master     commit_if [ISSUE_CNT]
 );
     localparam BLOCK_SIZE   = 1;
     localparam NUM_LANES    = `MIN(`NUM_LSU_LANES,THREAD_CNT);//; //
-    localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
+    localparam PID_BITS     = `LOG2UP(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
-    localparam RSP_ARB_DATAW= `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
+    localparam RSP_ARB_DATAW= `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
     localparam LSUQ_SIZEW   = `LOG2UP(`LSUQ_SIZE);
-    localparam MEM_ASHIFT   = `CLOG2(`MEM_BLOCK_SIZE);    
+    localparam MEM_ASHIFT   = `LOG2UP(`MEM_BLOCK_SIZE);    
     localparam MEM_ADDRW    = `XLEN - MEM_ASHIFT;
-    localparam REQ_ASHIFT   = `CLOG2(DCACHE_WORD_SIZE);
+    localparam REQ_ASHIFT   = `LOG2UP(DCACHE_WORD_SIZE);
     localparam CACHE_TAG_WIDTH = `UUID_WIDTH + (NUM_LANES * `CACHE_ADDR_TYPE_BITS) + LSUQ_TAG_BITS;
 
     VX_execute_if #(
         .NUM_LANES (NUM_LANES),
-        .THREAD_CNT (THREAD_CNT)
+        .THREAD_CNT (THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) execute_if[BLOCK_SIZE]();
 
     `RESET_RELAY (dispatch_reset, reset);
@@ -53,7 +57,8 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
         .OUT_REG    (1),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) dispatch_unit (
         .clk        (clk),
         .reset      (dispatch_reset),
@@ -63,12 +68,14 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
 
     VX_commit_if #(
         .NUM_LANES (NUM_LANES),
-        .THREAD_CNT (THREAD_CNT)
+        .THREAD_CNT (THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) commit_st_if();
     
     VX_commit_if #(
         .NUM_LANES (NUM_LANES),
-        .THREAD_CNT (THREAD_CNT)
+        .THREAD_CNT (THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) commit_ld_if();
     
     `UNUSED_VAR (execute_if[0].data.op_mod)     
@@ -85,7 +92,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
 `endif
 
     // tag = uuid + addr_type + wid + PC + tmask + rd + op_type + align + is_dup + pid + pkt_addr 
-    localparam TAG_WIDTH = `UUID_WIDTH + (NUM_LANES * `CACHE_ADDR_TYPE_BITS) + `NW_WIDTH + `XLEN + NUM_LANES + `NR_BITS + `INST_LSU_BITS + (NUM_LANES * (REQ_ASHIFT)) + `LSU_DUP_ENABLED + PID_WIDTH + LSUQ_SIZEW;
+    localparam TAG_WIDTH = `UUID_WIDTH + (NUM_LANES * `CACHE_ADDR_TYPE_BITS) + WARP_CNT_WIDTH + `XLEN + NUM_LANES + `NR_BITS + `INST_LSU_BITS + (NUM_LANES * (REQ_ASHIFT)) + `LSU_DUP_ENABLED + PID_WIDTH + LSUQ_SIZEW;
 
     `STATIC_ASSERT(0 == (`IO_BASE_ADDR % `MEM_BLOCK_SIZE), ("invalid parameter"))
 
@@ -417,7 +424,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     for (genvar i = 0; i < DCACHE_NUM_REQS; ++i) begin
         wire [`UUID_WIDTH-1:0]                          cache_req_uuid, cache_rsp_uuid;
         wire [NUM_LANES-1:0][`CACHE_ADDR_TYPE_BITS-1:0] cache_req_type, cache_rsp_type;        
-        wire [`CLOG2(`LSUQ_SIZE)-1:0]                   cache_req_tag_x, cache_rsp_tag_x;
+        wire [`LOG2UP(`LSUQ_SIZE)-1:0]                   cache_req_tag_x, cache_rsp_tag_x;
         if (DCACHE_NUM_BATCHES > 1) begin
 
             wire [DCACHE_NUM_BATCHES-1:0][`CACHE_ADDR_TYPE_BITS-1:0] cache_req_type_b, cache_rsp_type_b;            
@@ -462,7 +469,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     
     wire [`UUID_WIDTH-1:0] rsp_uuid;
     wire [NUM_LANES-1:0][`CACHE_ADDR_TYPE_BITS-1:0] rsp_addr_type;
-    wire [`NW_WIDTH-1:0] rsp_wid;
+    wire [WARP_CNT_WIDTH-1:0] rsp_wid;
     wire [NUM_LANES-1:0] rsp_tmask_uq;
     wire [`XLEN-1:0] rsp_pc;
     wire [`NR_BITS-1:0] rsp_rd;
@@ -532,7 +539,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     // load commit
 
     VX_elastic_buffer #(
-        .DATAW (`UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + `NR_BITS + (NUM_LANES * `XLEN) + PID_WIDTH + 1 + 1),
+        .DATAW (`UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + (NUM_LANES * `XLEN) + PID_WIDTH + 1 + 1),
         .SIZE  (2)
     ) ld_rsp_buf (
         .clk       (clk),
@@ -550,7 +557,7 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
     // store commit
 
     VX_elastic_buffer #(
-        .DATAW (`UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + PID_WIDTH + 1 + 1),
+        .DATAW (`UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + PID_WIDTH + 1 + 1),
         .SIZE  (2)
     ) st_rsp_buf (
         .clk       (clk),
@@ -572,7 +579,8 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
 
     VX_commit_if #(
         .NUM_LANES (NUM_LANES),
-        .THREAD_CNT (THREAD_CNT)
+        .THREAD_CNT (THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) commit_arb_if[1]();
 
     VX_stream_arb #(
@@ -595,7 +603,8 @@ module VX_lsu_unit import VX_gpu_pkg::*; #(
         .BLOCK_SIZE (BLOCK_SIZE),
         .NUM_LANES  (NUM_LANES),
         .OUT_REG    (3),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .WARP_CNT(WARP_CNT)
     ) gather_unit (
         .clk           (clk),
         .reset         (commit_reset),

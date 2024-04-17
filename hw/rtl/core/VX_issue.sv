@@ -16,7 +16,10 @@
 
 module VX_issue #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter ISSUE_CNT = `ISSUE_WIDTH,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) (
     `SCOPE_IO_DECL
 
@@ -28,18 +31,18 @@ module VX_issue #(
 `endif
 
     VX_decode_if.slave      decode_if,
-    VX_writeback_if.slave   writeback_if [`ISSUE_WIDTH],
+    VX_writeback_if.slave   writeback_if [ISSUE_CNT],
 
-    VX_dispatch_if.master   alu_dispatch_if [`ISSUE_WIDTH],
-    VX_dispatch_if.master   lsu_dispatch_if [`ISSUE_WIDTH],
+    VX_dispatch_if.master   alu_dispatch_if [ISSUE_CNT],
+    VX_dispatch_if.master   lsu_dispatch_if [ISSUE_CNT],
 `ifdef EXT_F_ENABLE
-    VX_dispatch_if.master   fpu_dispatch_if [`ISSUE_WIDTH],
+    VX_dispatch_if.master   fpu_dispatch_if [ISSUE_CNT],
 `endif
-    VX_dispatch_if.master   sfu_dispatch_if [`ISSUE_WIDTH]
+    VX_dispatch_if.master   sfu_dispatch_if [ISSUE_CNT]
 );
-    VX_ibuffer_if#(.THREAD_CNT (THREAD_CNT))  ibuffer_if [`ISSUE_WIDTH]();
-    VX_ibuffer_if#(.THREAD_CNT (THREAD_CNT))  scoreboard_if [`ISSUE_WIDTH]();
-    VX_operands_if#(.THREAD_CNT (THREAD_CNT)) operands_if [`ISSUE_WIDTH]();
+    VX_ibuffer_if#(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT (THREAD_CNT))  ibuffer_if [ISSUE_CNT]();
+    VX_ibuffer_if#(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT (THREAD_CNT))  scoreboard_if [ISSUE_CNT]();
+    VX_operands_if#(.WARP_CNT(WARP_CNT), .ISSUE_CNT(ISSUE_CNT), .THREAD_CNT (THREAD_CNT)) operands_if [ISSUE_CNT]();
 
     `RESET_RELAY (ibuf_reset, reset);
     `RESET_RELAY (scoreboard_reset, reset);
@@ -48,7 +51,9 @@ module VX_issue #(
 
     VX_ibuffer #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .ISSUE_CNT(ISSUE_CNT),
+        .WARP_CNT(WARP_CNT)
     ) ibuffer (
         .clk            (clk),
         .reset          (ibuf_reset), 
@@ -58,7 +63,9 @@ module VX_issue #(
 
     VX_scoreboard #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .ISSUE_CNT(ISSUE_CNT),
+        .WARP_CNT(WARP_CNT)
     ) scoreboard (
         .clk            (clk),
         .reset          (scoreboard_reset),
@@ -69,7 +76,9 @@ module VX_issue #(
 
     VX_operands #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .ISSUE_CNT(ISSUE_CNT),
+        .WARP_CNT(WARP_CNT)
     ) operands (
         .clk            (clk), 
         .reset          (operands_reset), 
@@ -80,7 +89,9 @@ module VX_issue #(
 
     VX_dispatch #(
         .CORE_ID (CORE_ID),
-        .THREAD_CNT(THREAD_CNT)
+        .THREAD_CNT(THREAD_CNT),
+        .ISSUE_CNT(ISSUE_CNT),
+        .WARP_CNT(WARP_CNT)
     ) dispatch (
         .clk            (clk), 
         .reset          (dispatch_reset),
@@ -159,9 +170,9 @@ module VX_issue #(
     reg [`PERF_CTR_BITS-1:0] perf_ibf_stalls;
     reg [`PERF_CTR_BITS-1:0] perf_scb_stalls;
 
-    wire [`CLOG2(`ISSUE_WIDTH+1)-1:0] scoreboard_stalls_per_cycle;
-    reg [`ISSUE_WIDTH-1:0] scoreboard_stalls;
-    for (genvar i=0; i < `ISSUE_WIDTH; ++i) begin
+    wire [`LOG2UP(ISSUE_CNT+1)-1:0] scoreboard_stalls_per_cycle;
+    reg [ISSUE_CNT-1:0] scoreboard_stalls;
+    for (genvar i=0; i < ISSUE_CNT; ++i) begin
         assign scoreboard_stalls[i] = ibuffer_if[i].valid && ~ibuffer_if[i].ready;
     end
     `POP_COUNT(scoreboard_stalls_per_cycle, scoreboard_stalls);

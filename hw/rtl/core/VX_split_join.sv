@@ -15,25 +15,27 @@
 
 module VX_split_join import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
 ) (
     input  wire                     clk,
     input  wire                     reset,
     input  wire                     valid,
-    input  wire [`NW_WIDTH-1:0]     wid,
+    input  wire [WARP_CNT_WIDTH-1:0]     wid,
     input  split_t                  split,
     input  join_t                   sjoin,
     output wire                     join_valid,
     output wire                     join_is_dvg,
     output wire                     join_is_else,
-    output wire [`NW_WIDTH-1:0]     join_wid,
+    output wire [WARP_CNT_WIDTH-1:0]     join_wid,
     output wire [THREAD_CNT-1:0]  join_tmask,
     output wire [`XLEN-1:0]         join_pc
 );
     `UNUSED_PARAM (CORE_ID)
     
-    wire [(`XLEN+THREAD_CNT)-1:0] ipdom_data [`NUM_WARPS-1:0];
-    wire ipdom_set [`NUM_WARPS-1:0];
+    wire [(`XLEN+THREAD_CNT)-1:0] ipdom_data [WARP_CNT-1:0];
+    wire ipdom_set [WARP_CNT-1:0];
 
     wire [(`XLEN+THREAD_CNT)-1:0] ipdom_q0 = {split.then_tmask[THREAD_CNT-1:0] | split.else_tmask[THREAD_CNT-1:0], `XLEN'(0)};
     wire [(`XLEN+THREAD_CNT)-1:0] ipdom_q1 = {split.else_tmask[THREAD_CNT-1:0], split.next_pc};
@@ -41,7 +43,7 @@ module VX_split_join import VX_gpu_pkg::*; #(
     wire ipdom_push = valid && split.valid && split.is_dvg;
     wire ipdom_pop = valid && sjoin.valid && sjoin.is_dvg;
 
-    for (genvar i = 0; i < `NUM_WARPS; ++i) begin
+    for (genvar i = 0; i < WARP_CNT; ++i) begin
 
         `RESET_RELAY (ipdom_reset, reset);
 
@@ -63,7 +65,7 @@ module VX_split_join import VX_gpu_pkg::*; #(
     end
 
     VX_pipe_register #(
-        .DATAW  (1 + 1 + `NW_WIDTH + 1 + `XLEN + THREAD_CNT),
+        .DATAW  (1 + 1 + WARP_CNT_WIDTH + 1 + `XLEN + THREAD_CNT),
         .DEPTH  (1),
         .RESETW (1)
     ) pipe_reg (

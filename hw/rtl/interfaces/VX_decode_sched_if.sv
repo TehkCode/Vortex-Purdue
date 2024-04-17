@@ -13,11 +13,11 @@
 
 `include "VX_define.vh"
 
-interface VX_decode_sched_if ();
+interface VX_decode_sched_if #(parameter WARP_CNT = `NUM_WARPS, parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT))();
 
     wire                    valid;
     wire                    is_wstall;
-    wire [`NW_WIDTH-1:0]    wid;
+    wire [WARP_CNT_WIDTH-1:0]    wid;
 
     modport master (
         output valid,

@@ -28,23 +28,26 @@
         use_``x = 1
 `endif
 
-module VX_decode  #(
+module VX_decode_scalar  #(
     parameter CORE_ID = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4)
 ) (
     input wire              clk,
     input wire              reset,
-    input wire [`ISSUE_WIDTH-1:0] branch_mispredict_flush,
+    input wire [ISSUE_CNT-1:0] branch_mispredict_flush,
 
     // inputs
     VX_fetch_if.slave       fetch_if,
 
     // outputs      
-    VX_decode_if.master     decode_if,
+    VX_decode_scalar_if.master     decode_if,
     VX_decode_sched_if.master decode_sched_if
 );
 
-    localparam DATAW = `UUID_WIDTH + `NW_WIDTH + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + (`NR_BITS * 4) + `XLEN + 1 + 1 + 1;
+    localparam DATAW = `UUID_WIDTH + WARP_CNT_WIDTH + THREAD_CNT + `XLEN + `EX_BITS + `INST_OP_BITS + `INST_MOD_BITS + 1 + (`NR_BITS * 4) + `XLEN + 1 + 1;
 
     `UNUSED_PARAM (CORE_ID)
     `UNUSED_VAR (clk)

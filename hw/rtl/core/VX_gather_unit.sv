@@ -17,23 +17,29 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
     parameter BLOCK_SIZE = 1,
     parameter NUM_LANES  = 1,
     parameter OUT_REG    = 0,
-    parameter THREAD_CNT = `NUM_THREADS
+    parameter THREAD_CNT = `NUM_THREADS,
+    parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+    parameter ISSUE_CNT = `MIN(WARP_CNT, 4)
 ) ( 
     input  wire         clk,
     input  wire         reset,
 
     // inputs
-    VX_commit_if.slave  commit_in_if [BLOCK_SIZE],
+    VX_commit_if.slave commit_in_if [BLOCK_SIZE],
     
     // outputs
-    VX_commit_if.master commit_out_if [`ISSUE_WIDTH]
+    VX_commit_if.master commit_out_if [ISSUE_CNT]
 
 );
+`IGNORE_WARNINGS_BEGIN
+    localparam ISSUE_IDX_W = `LOG2UP(ISSUE_CNT);
+`IGNORE_WARNINGS_END
     localparam BLOCK_SIZE_W = `LOG2UP(BLOCK_SIZE);
-    localparam PID_BITS     = `CLOG2(THREAD_CNT / NUM_LANES);
+    localparam PID_BITS     = `LOG2UP(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
-    localparam DATAW        = `UUID_WIDTH + `NW_WIDTH + NUM_LANES + `XLEN + 1 + `NR_BITS + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
-    localparam DATA_WIS_OFF = DATAW - (`UUID_WIDTH + `NW_WIDTH);
+    localparam DATAW        = `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + 1 + `NR_BITS + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1;
+    localparam DATA_WIS_OFF = DATAW - (`UUID_WIDTH + WARP_CNT_WIDTH);
 
     wire [BLOCK_SIZE-1:0] commit_in_valid;
     wire [BLOCK_SIZE-1:0][DATAW-1:0] commit_in_data;
@@ -44,7 +50,7 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
         assign commit_in_valid[i] = commit_in_if[i].valid;
         assign commit_in_data[i] = commit_in_if[i].data;
         assign commit_in_if[i].ready = commit_in_ready[i];
-        if (BLOCK_SIZE != `ISSUE_WIDTH) begin
+        if (BLOCK_SIZE != ISSUE_CNT) begin
             if (BLOCK_SIZE != 1) begin
                 assign commit_in_wsi[i] = {commit_in_data[i][DATA_WIS_OFF+BLOCK_SIZE_W +: (ISSUE_IDX_W-BLOCK_SIZE_W)], BLOCK_SIZE_W'(i)};
             end else begin
@@ -55,13 +61,13 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
         end
     end
 
-    reg [`ISSUE_WIDTH-1:0] commit_out_valid;
-    reg [`ISSUE_WIDTH-1:0][DATAW-1:0] commit_out_data;
-    wire [`ISSUE_WIDTH-1:0] commit_out_ready;
+    reg [ISSUE_CNT-1:0] commit_out_valid;
+    reg [ISSUE_CNT-1:0][DATAW-1:0] commit_out_data;
+    wire [ISSUE_CNT-1:0] commit_out_ready;
 
     always @(*) begin
         commit_out_valid = '0;
-        for (integer i = 0; i < `ISSUE_WIDTH; ++i) begin
+        for (integer i = 0; i < ISSUE_CNT; ++i) begin
             commit_out_data[i] = 'x;
         end
         for (integer i = 0; i < BLOCK_SIZE; ++i) begin
@@ -73,10 +79,11 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
         assign commit_in_ready[i] = commit_out_ready[commit_in_wsi[i]];
     end
     
-    for (genvar i = 0; i < `ISSUE_WIDTH; ++i) begin
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         VX_commit_if #(
             .THREAD_CNT (THREAD_CNT),
-            .NUM_LANES (NUM_LANES)
+            .NUM_LANES (NUM_LANES),
+            .WARP_CNT (WARP_CNT)
         ) commit_tmp_if();
 
         `RESET_RELAY(commit_out_reset, reset);
@@ -113,6 +120,17 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
         end
 
         assign commit_out_if[i].valid = commit_tmp_if.valid;
+        assign commit_out_if[i].data.uuid = commit_tmp_if.data.uuid;
+        assign commit_out_if[i].data.wid = commit_tmp_if.data.wid;
+        assign commit_out_if[i].data.tmask = commit_tmask_r;
+        assign commit_out_if[i].data.PC = commit_tmp_if.data.PC;
+        assign commit_out_if[i].data.wb = commit_tmp_if.data.wb;
+        assign commit_out_if[i].data.rd = commit_tmp_if.data.rd;
+        assign commit_out_if[i].data.data = commit_tmp_if.data.data;
+        assign commit_out_if[i].data.pid = 1'b0;
+        assign commit_out_if[i].data.sop = commit_tmp_if.data.sop;
+        assign commit_out_if[i].data.eop = commit_tmp_if.data.eop;
+        /****
         assign commit_out_if[i].data = {
             commit_tmp_if.data.uuid,
             commit_tmp_if.data.wid,
@@ -125,6 +143,7 @@ module VX_gather_unit import VX_gpu_pkg::*; #(
             commit_tmp_if.data.sop,
             commit_tmp_if.data.eop
         };
+        /*************/
         assign commit_tmp_if.ready = commit_out_if[i].ready;
     end
 
