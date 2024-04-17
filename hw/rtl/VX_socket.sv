@@ -264,7 +264,7 @@ module VX_socket import VX_gpu_pkg::*; #(
             VX_core_scalar #(
                 .CORE_ID ((SOCKET_ID * `SOCKET_SIZE) + i),
                 .THREAD_CNT(1),
-                .WARP_CNT(`NUM_WARPS)
+                .WARP_CNT(1) //If the VX_core_scalar is being used then ALWAYS set WARP_CNT to 1
             ) core (
                 `SCOPE_IO_BIND  (i)
 

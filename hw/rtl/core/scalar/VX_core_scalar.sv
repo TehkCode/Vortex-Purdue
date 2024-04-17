@@ -86,6 +86,11 @@ module VX_core_scalar import VX_gpu_pkg::*; #(
     // Status
     output wire             busy
 );
+    `STATIC_ASSERT ((WARP_CNT == 1) && (ISSUE_CNT == 1), ("Invalid parameter. \
+    The WARP_CNT and ISSUE_CNT should be 1 for this VX_core_scalar module due \
+    to the limitations posed by the branch predictor. If you want to have \
+    more 1 warps then use VX_core instead of VX_core_scalar."))
+
 `IGNORE_WARNINGS_BEGIN
     localparam NUM_ALU_BLOCKS = `UP(ISSUE_CNT/1);
 `IGNORE_WARNINGS_END
