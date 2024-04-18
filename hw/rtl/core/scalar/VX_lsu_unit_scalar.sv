@@ -18,7 +18,10 @@ module VX_lsu_unit_scalar import VX_gpu_pkg::*; #(
     parameter THREAD_CNT = `NUM_THREADS,
     parameter WARP_CNT = `NUM_WARPS,
     parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
-    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT)
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
+`IGNORE_WARNINGS_BEGIN
+    parameter DCACHE_NUM_REQS_SCALAR = 1
+`IGNORE_WARNINGS_END
 ) (    
     `SCOPE_IO_DECL
 
@@ -35,7 +38,7 @@ module VX_lsu_unit_scalar import VX_gpu_pkg::*; #(
     VX_commit_scalar_if.master     commit_if [ISSUE_CNT]
 );
     localparam BLOCK_SIZE   = 1;
-    localparam NUM_LANES    = `MIN(`NUM_LSU_LANES,THREAD_CNT);//; //
+    localparam NUM_LANES    = `MIN(`NUM_LSU_LANES, THREAD_CNT);
     localparam PID_BITS     = `LOG2UP(THREAD_CNT / NUM_LANES);
     localparam PID_WIDTH    = `UP(PID_BITS);
     localparam RSP_ARB_DATAW= `UUID_WIDTH + WARP_CNT_WIDTH + NUM_LANES + `XLEN + `NR_BITS + 1 + NUM_LANES * `XLEN + PID_WIDTH + 1 + 1 + 1;
@@ -168,17 +171,17 @@ module VX_lsu_unit_scalar import VX_gpu_pkg::*; #(
     // wire                            mem_rsp_ready;
 
     wire                            mem_req_valid;
-    wire [`NUM_LSU_LANES-1:0]            mem_req_mask;
+    wire [NUM_LANES-1:0]            mem_req_mask;
     wire                            mem_req_rw;  
-    wire [`NUM_LSU_LANES-1:0][`MEM_ADDR_WIDTH-REQ_ASHIFT-1:0] mem_req_addr;
-    reg  [`NUM_LSU_LANES-1:0][DCACHE_WORD_SIZE-1:0] mem_req_byteen;
-    reg  [`NUM_LSU_LANES-1:0][`XLEN-1:0] mem_req_data;
+    wire [NUM_LANES-1:0][`MEM_ADDR_WIDTH-REQ_ASHIFT-1:0] mem_req_addr;
+    reg  [NUM_LANES-1:0][DCACHE_WORD_SIZE-1:0] mem_req_byteen;
+    reg  [NUM_LANES-1:0][`XLEN-1:0] mem_req_data;
     wire [TAG_WIDTH-1:0]            mem_req_tag;
     wire                            mem_req_ready;
 
     wire                            mem_rsp_valid;
-    wire [`NUM_LSU_LANES-1:0]            mem_rsp_mask;
-    wire [`NUM_LSU_LANES-1:0][`XLEN-1:0] mem_rsp_data;
+    wire [NUM_LANES-1:0]            mem_rsp_mask;
+    wire [NUM_LANES-1:0][`XLEN-1:0] mem_rsp_data;
     wire [TAG_WIDTH-1:0]            mem_rsp_tag;
     wire                            mem_rsp_sop;
     wire                            mem_rsp_eop;
@@ -338,24 +341,24 @@ module VX_lsu_unit_scalar import VX_gpu_pkg::*; #(
     `endif
     };
 
-    wire [DCACHE_NUM_REQS-1:0]              cache_req_valid;
-    wire [DCACHE_NUM_REQS-1:0]              cache_req_rw;
-    wire [DCACHE_NUM_REQS-1:0][(`XLEN/8)-1:0] cache_req_byteen;
-    wire [DCACHE_NUM_REQS-1:0][DCACHE_ADDR_WIDTH-1:0] cache_req_addr;
-    wire [DCACHE_NUM_REQS-1:0][`XLEN-1:0] cache_req_data;
-    wire [DCACHE_NUM_REQS-1:0][CACHE_TAG_WIDTH-1:0] cache_req_tag;
-    wire [DCACHE_NUM_REQS-1:0]              cache_req_ready;
-    wire [DCACHE_NUM_REQS-1:0]              cache_rsp_valid;
-    wire [DCACHE_NUM_REQS-1:0][`XLEN-1:0] cache_rsp_data;
-    wire [DCACHE_NUM_REQS-1:0][CACHE_TAG_WIDTH-1:0] cache_rsp_tag;
-    wire [DCACHE_NUM_REQS-1:0]              cache_rsp_ready;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0]              cache_req_valid;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0]              cache_req_rw;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0][(`XLEN/8)-1:0] cache_req_byteen;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0][DCACHE_ADDR_WIDTH-1:0] cache_req_addr;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0][`XLEN-1:0] cache_req_data;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0][CACHE_TAG_WIDTH-1:0] cache_req_tag;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0]              cache_req_ready;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0]              cache_rsp_valid;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0][`XLEN-1:0] cache_rsp_data;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0][CACHE_TAG_WIDTH-1:0] cache_rsp_tag;
+    wire [DCACHE_NUM_REQS_SCALAR-1:0]              cache_rsp_ready;
 
     `RESET_RELAY (mem_scheduler_reset, reset);
 
     VX_mem_scheduler #(
         .INSTANCE_ID ($sformatf("core%0d-lsu-memsched", CORE_ID)),
-        .NUM_REQS    (LSU_MEM_REQS), 
-        .NUM_BANKS   (DCACHE_NUM_REQS),
+        .NUM_REQS    (DCACHE_NUM_REQS_SCALAR), 
+        .NUM_BANKS   (DCACHE_NUM_REQS_SCALAR),
         .ADDR_WIDTH  (DCACHE_ADDR_WIDTH),
         .DATA_WIDTH  (`XLEN),
         .QUEUE_SIZE  (`LSUQ_SIZE),
@@ -406,7 +409,7 @@ module VX_lsu_unit_scalar import VX_gpu_pkg::*; #(
         .mem_rsp_ready  (cache_rsp_ready)
     );
 
-    for (genvar i = 0; i < DCACHE_NUM_REQS; ++i) begin
+    for (genvar i = 0; i < DCACHE_NUM_REQS_SCALAR; ++i) begin : assign_dcache_bus_if
         assign cache_bus_if[i].req_valid = cache_req_valid[i];
         assign cache_bus_if[i].req_data.rw = cache_req_rw[i];
         assign cache_bus_if[i].req_data.byteen = cache_req_byteen[i];
@@ -419,9 +422,25 @@ module VX_lsu_unit_scalar import VX_gpu_pkg::*; #(
         assign cache_bus_if[i].rsp_ready = cache_rsp_ready[i];
     end
 
+    for (genvar i = 1; i < DCACHE_NUM_REQS; ++i) begin : tie_additional_dcache_bus_if_to_zero
+        /* 
+            temporary workaround to tie additional dcache buses to 0.
+            this was easier than parameterizing the entire hierarchy.
+            this problem arose because we were trying to convert a
+            SIMT pipeline to a scalar pipeline
+            TODO for future : get rid of extra dcache buses
+        */
+        assign cache_bus_if[i].req_valid = '0;
+        assign cache_bus_if[i].req_data.rw = '0;
+        assign cache_bus_if[i].req_data.byteen = '0;
+        assign cache_bus_if[i].req_data.addr = '0;
+        assign cache_bus_if[i].req_data.data = '0;
+        assign cache_bus_if[i].rsp_ready = '0;
+    end
+
     // cache tag formatting: <uuid, tag, type>
     
-    for (genvar i = 0; i < DCACHE_NUM_REQS; ++i) begin
+    for (genvar i = 0; i < DCACHE_NUM_REQS_SCALAR; ++i) begin
         wire [`UUID_WIDTH-1:0]                          cache_req_uuid, cache_rsp_uuid;
         wire [NUM_LANES-1:0][`CACHE_ADDR_TYPE_BITS-1:0] cache_req_type, cache_rsp_type;        
         wire [`LOG2UP(`LSUQ_SIZE)-1:0]                   cache_req_tag_x, cache_rsp_tag_x;
@@ -440,7 +459,7 @@ module VX_lsu_unit_scalar import VX_gpu_pkg::*; #(
             assign cache_rsp_tag[i] = {cache_rsp_uuid, cache_rsp_type, cache_rsp_bid, cache_rsp_tag_x};
 
             for (genvar j = 0; j < DCACHE_NUM_BATCHES; ++j) begin
-                localparam k = j * DCACHE_NUM_REQS + i;                
+                localparam k = j * DCACHE_NUM_REQS_SCALAR + i;                
                 if (k < NUM_LANES) begin
                     assign cache_req_type_b[j] = cache_req_type[k];
                     assign cache_rsp_type[k] = cache_rsp_type_b[j];
@@ -458,7 +477,7 @@ module VX_lsu_unit_scalar import VX_gpu_pkg::*; #(
             assign {cache_rsp_uuid, cache_rsp_tag_x, cache_rsp_type[i]} = cache_bus_if[i].rsp_data.tag;
             assign cache_rsp_tag[i] = {cache_rsp_uuid, cache_rsp_type, cache_rsp_tag_x};        
 
-            for (genvar j = 0; j < DCACHE_NUM_REQS; ++j) begin
+            for (genvar j = 0; j < DCACHE_NUM_REQS_SCALAR; ++j) begin
                 if (i != j) begin
                     `UNUSED_VAR (cache_req_type[j])
                     assign cache_rsp_type[j] = '0;

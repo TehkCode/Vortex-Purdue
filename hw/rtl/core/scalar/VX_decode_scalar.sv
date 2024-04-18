@@ -464,6 +464,16 @@ module VX_decode_scalar  #(
                             3'h0: begin // TMC
                                 op_type = `INST_OP_BITS'(`INST_SFU_TMC);
                                 `USED_IREG (rs1);
+
+                                // The "is_branch" is used by the execution staller
+                                // in the issue.dispatch unit to clear out the execute
+                                // stage before sending in the branch/jump instr.
+                                // TMC instruction is not a branch/jump. TMC can set 
+                                // the thread mask to 0 which acts as a HALT instruction
+                                // for the pipeline. We want any previous instructions
+                                // to be committed before TMC goes in and halts the
+                                // pipeline/RTL simulation.
+                                is_branch = 1;
                             end
                             3'h1: begin // WSPAWN
                                 op_type = `INST_OP_BITS'(`INST_SFU_WSPAWN);

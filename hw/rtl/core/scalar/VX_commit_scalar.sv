@@ -36,7 +36,7 @@ module VX_commit_scalar import VX_gpu_pkg::*; #(
     VX_commit_csr_if.master commit_csr_if,
     VX_commit_sched_scalar_if.master commit_sched_if,
     output [ISSUE_CNT-1:0] commit_if_valid, // to let issue stage know that a instruction is out of execute stage
-	output [ISSUE_CNT-1:0] commit_if_ready,
+    output [ISSUE_CNT-1:0] commit_if_ready,
 
     // simulation helper signals
     output wire [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value
@@ -195,6 +195,16 @@ module VX_commit_scalar import VX_gpu_pkg::*; #(
         assign writeback_if[i].data.eop = commit_if[i].data.eop;
         assign commit_if[i].ready = 1'b1;
     end
+    /***********************************/
+    reg [2:0] counter;
+    always_ff @( posedge clk ) begin
+        if (reset)
+            counter <= 0;
+        else
+            counter <= (|counter) ? counter+1 : 3'((commit_if[0].valid) && (writeback_if[0].data.PC == 32'h8000020c));
+    end
+    // UNTIME_ASSERT((counter == 0), ("*****************caught you********************"))
+    /***********************************/
 
 	// To issue.dispatch
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin
