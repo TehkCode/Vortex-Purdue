@@ -1,3 +1,11 @@
+hw/rtl/TOP.sv
 thirdparty/*
+waveform/*
 *.log
 *.vcd
+*.depend
+*.a
+*.o
+*.so
+*.dump
+blackbox*cache
