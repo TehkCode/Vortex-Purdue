@@ -8,4 +8,5 @@ waveform/*
 *.o
 *.so
 *.dump
+./trace*.csv
 blackbox*cache
