@@ -80,6 +80,7 @@ module VX_execute_scalar import VX_gpu_pkg::*; #(
     VX_dispatch_if.slave    sfu_dispatch_if [ISSUE_CNT], 
     VX_commit_scalar_if.master     sfu_commit_if [ISSUE_CNT],
     VX_warp_ctl_if.master   warp_ctl_if,
+    VX_sfu_csr_if.master    hw_itr_ctrl_if,
 
     // flush mispredicts
     output [ISSUE_CNT-1:0] branch_mispredict_flush,
@@ -192,7 +193,8 @@ module VX_execute_scalar import VX_gpu_pkg::*; #(
         .commit_csr_if  (commit_csr_if),
         .sched_csr_if   (sched_csr_if),
         .warp_ctl_if    (warp_ctl_if),
-        .commit_if      (sfu_commit_if)
+        .commit_if      (sfu_commit_if),
+        .hw_itr_ctrl_if (hw_itr_ctrl_if) 
     );
 
     // flush operation

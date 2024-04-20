@@ -79,6 +79,8 @@ module VX_core import VX_gpu_pkg::*; #(
     VX_gbar_bus_if.master   gbar_bus_if,
 `endif
 
+    VX_sfu_csr_if.master    hw_itr_ctrl_if,
+
     // simulation helper signals
     output wire             sim_ebreak,
     output wire [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value,
@@ -278,6 +280,7 @@ module VX_core import VX_gpu_pkg::*; #(
 
         .warp_ctl_if    (warp_ctl_if),
         .branch_ctl_if  (branch_ctl_if),
+        .hw_itr_ctrl_if (hw_itr_ctrl_if),
 
         .alu_commit_if  (alu_commit_if),
         .lsu_commit_if  (lsu_commit_if),
@@ -631,6 +634,8 @@ import VX_rop_pkg::*;
     `UNUSED_VAR (scope_bus_out_w)
 `endif
 
+    VX_sfu_csr_if    hw_itr_ctrl_if();
+
     VX_core #(
         .CORE_ID (0),
         .THREAD_CNT(THREAD_CNT)
@@ -676,6 +681,8 @@ import VX_rop_pkg::*;
     `ifdef GBAR_ENABLE
         .gbar_bus_if    (gbar_bus_if),
     `endif
+
+        .hw_itr_ctrl_if (hw_itr_ctrl_if),
 
         .sim_ebreak     (sim_ebreak),
         .sim_wb_value   (sim_wb_value),

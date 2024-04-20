@@ -60,6 +60,8 @@ module VX_socket import VX_gpu_pkg::*; #(
     VX_gbar_bus_if.master   gbar_bus_if,
 `endif
 
+    VX_sfu_csr_if.master    hw_itr_ctrl_if, 
+
     // simulation helper signals
     output wire             sim_ebreak,
     output wire [`NUM_REGS-1:0][`XLEN-1:0] sim_wb_value,
@@ -281,6 +283,8 @@ module VX_socket import VX_gpu_pkg::*; #(
 
                 .icache_bus_if  (per_core_icache_bus_if[i]),
 
+                .hw_itr_ctrl_if (hw_itr_ctrl_if), 
+
             `ifdef EXT_TEX_ENABLE
             `ifdef PERF_ENABLE
                 .perf_tex_if    (perf_tex_if),
@@ -332,6 +336,8 @@ module VX_socket import VX_gpu_pkg::*; #(
             .dcache_bus_if  (per_core_dcache_bus_if[i * DCACHE_NUM_REQS +: DCACHE_NUM_REQS]),
 
             .icache_bus_if  (per_core_icache_bus_if[i]),
+
+            .hw_itr_ctrl_if (hw_itr_ctrl_if), 
 
         `ifdef EXT_TEX_ENABLE
         `ifdef PERF_ENABLE

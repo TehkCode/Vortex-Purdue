@@ -55,6 +55,9 @@ module VX_csr_unit_scalar import VX_gpu_pkg::*; #(
 `endif
 `endif
     
+    // hardware interrupt controller bus, one per core. 
+    VX_sfu_csr_if.master        hw_itr_ctrl_if,
+
 `ifdef EXT_F_ENABLE
     VX_fpu_to_csr_if.slave      fpu_to_csr_if [NUM_FPU_BLOCKS],
 `endif
@@ -166,6 +169,51 @@ module VX_csr_unit_scalar import VX_gpu_pkg::*; #(
     assign rop_csr_if.write_data   = rs1_data;
 `endif
 
+    wire hwitr_addr_enable = (csr_addr >= `VX_HW_ITR_CTRL_BEGIN && csr_addr < `VX_HW_ITR_CTRL_END);
+    generate 
+        if(THREAD_CNT == 1)
+        begin
+            always @(*)
+            begin 
+                hw_itr_ctrl_if.read_enable = csr_req_valid && ~csr_write_enable && hwitr_addr_enable;
+                hw_itr_ctrl_if.read_uuid   = execute_if.data.uuid;
+                hw_itr_ctrl_if.read_pid    = execute_if.data.pid;
+                hw_itr_ctrl_if.read_wid[WARP_CNT - 1 : 0] = execute_if.data.wid;
+                hw_itr_ctrl_if.read_tmask  = {3'b000, execute_if.data.tmask};
+                hw_itr_ctrl_if.read_addr   = csr_addr;
+
+                hw_itr_ctrl_if.write_enable = csr_req_valid && csr_write_enable && hwitr_addr_enable; 
+                hw_itr_ctrl_if.write_uuid   = execute_if.data.uuid;
+                hw_itr_ctrl_if.write_pid    = execute_if.data.pid;
+                hw_itr_ctrl_if.write_wid[WARP_CNT - 1 : 0] = execute_if.data.wid;
+                hw_itr_ctrl_if.write_tmask  = {3'b000, execute_if.data.tmask};
+                hw_itr_ctrl_if.write_addr   = csr_addr;
+                hw_itr_ctrl_if.write_data   = {96'd0, rs1_data};
+            end
+        end
+
+        else  
+        begin
+            always @(*)
+            begin 
+                hw_itr_ctrl_if.read_enable = csr_req_valid && ~csr_write_enable && hwitr_addr_enable;
+                hw_itr_ctrl_if.read_uuid   = execute_if.data.uuid;
+                hw_itr_ctrl_if.read_pid    = execute_if.data.pid;
+                hw_itr_ctrl_if.read_wid    = execute_if.data.wid;
+                hw_itr_ctrl_if.read_tmask  = execute_if.data.tmask;
+                hw_itr_ctrl_if.read_addr   = csr_addr;
+
+                hw_itr_ctrl_if.write_enable = csr_req_valid && csr_write_enable && hwitr_addr_enable; 
+                hw_itr_ctrl_if.write_uuid   = execute_if.data.uuid;
+                hw_itr_ctrl_if.write_pid    = execute_if.data.pid;
+                hw_itr_ctrl_if.write_wid    = execute_if.data.wid;
+                hw_itr_ctrl_if.write_tmask  = execute_if.data.tmask;
+                hw_itr_ctrl_if.write_addr   = csr_addr;
+                hw_itr_ctrl_if.write_data   = rs1_data;
+            end
+        end
+    endgenerate
+
     VX_csr_data #(
         .CORE_ID (CORE_ID),
         .THREAD_CNT(THREAD_CNT),
@@ -230,28 +278,69 @@ module VX_csr_unit_scalar import VX_gpu_pkg::*; #(
         assign gtid[i] = (32'(CORE_ID) << (`NW_BITS + `NT_BITS)) + (32'(execute_if.data.wid) << `NT_BITS) + wtid[i];
     end  
 
-    always @(*) begin
-        csr_rd_enable = 0;
-    `ifdef EXT_RASTER_ENABLE
-        if (raster_addr_enable) begin
-            csr_read_data = raster_csr_if.read_data;
-        end else
-    `endif
-        case (csr_addr)
-        `VX_CSR_THREAD_ID : csr_read_data = wtid;
-        `VX_CSR_MHARTID   : csr_read_data = gtid;
-        default : begin
-            csr_read_data = {NUM_LANES{csr_read_data_ro | csr_read_data_rw}};
-            csr_rd_enable = 1;
+    generate
+        if(THREAD_CNT == 1)
+        begin 
+            always @(*) begin
+                csr_rd_enable = 0;
+            `ifdef EXT_RASTER_ENABLE
+                if (raster_addr_enable) begin
+                    csr_read_data = raster_csr_if.read_data; 
+                end else
+            `endif
+                case (csr_addr)
+                `VX_CSR_THREAD_ID : csr_read_data = wtid;
+                `VX_CSR_MHARTID   : csr_read_data = gtid;
+
+                default : begin
+                    if(hwitr_addr_enable)
+                    begin 
+                        csr_read_data = hw_itr_ctrl_if.read_data[0];
+                    end
+                    else 
+                    begin 
+                        csr_read_data = {NUM_LANES{csr_read_data_ro | csr_read_data_rw}};
+                        csr_rd_enable = 1;
+                    end
+                end
+                endcase
+            end
         end
-        endcase
-    end
+        else
+        begin 
+            always @(*) begin
+                csr_rd_enable = 0;
+            `ifdef EXT_RASTER_ENABLE
+                if (raster_addr_enable) begin
+                    csr_read_data = raster_csr_if.read_data; 
+                end else
+            `endif
+                case (csr_addr)
+                `VX_CSR_THREAD_ID : csr_read_data = wtid;
+                `VX_CSR_MHARTID   : csr_read_data = gtid;
+
+                default : begin
+                    if(hwitr_addr_enable)
+                    begin
+                        csr_read_data = hw_itr_ctrl_if.read_data;
+                    end
+                    else 
+                    begin
+                        csr_read_data = {NUM_LANES{csr_read_data_ro | csr_read_data_rw}};
+                        csr_rd_enable = 1;
+                    end
+                    
+                end
+                endcase
+            end
+        end
+    endgenerate
 
     // CSR write
 
     assign csr_req_data = execute_if.data.use_imm ? 32'(csr_imm) : rs1_data[0];
 
-    assign csr_wr_enable = (csr_write_enable || (| csr_req_data))
+    assign csr_wr_enable = ((csr_write_enable || (| csr_req_data)) && (~hwitr_addr_enable))
                 `ifdef EXT_ROP_ENABLE
                     && !rop_addr_enable
                 `endif    
