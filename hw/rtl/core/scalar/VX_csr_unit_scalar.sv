@@ -170,49 +170,23 @@ module VX_csr_unit_scalar import VX_gpu_pkg::*; #(
 `endif
 
     wire hwitr_addr_enable = (csr_addr >= `VX_HW_ITR_CTRL_BEGIN && csr_addr < `VX_HW_ITR_CTRL_END);
-    generate 
-        if(THREAD_CNT == 1)
-        begin
-            always @(*)
-            begin 
-                hw_itr_ctrl_if.read_enable = csr_req_valid && ~csr_write_enable && hwitr_addr_enable;
-                hw_itr_ctrl_if.read_uuid   = execute_if.data.uuid;
-                hw_itr_ctrl_if.read_pid    = execute_if.data.pid;
-                hw_itr_ctrl_if.read_wid[WARP_CNT - 1 : 0] = execute_if.data.wid;
-                hw_itr_ctrl_if.read_tmask  = {3'b000, execute_if.data.tmask};
-                hw_itr_ctrl_if.read_addr   = csr_addr;
+    always @(*)
+    begin 
+        hw_itr_ctrl_if.read_enable = csr_req_valid && ~csr_write_enable && hwitr_addr_enable;
+        hw_itr_ctrl_if.read_uuid   = execute_if.data.uuid;
+        hw_itr_ctrl_if.read_pid    = execute_if.data.pid;
+        hw_itr_ctrl_if.read_wid    = `NW_WIDTH'(execute_if.data.wid);
+        hw_itr_ctrl_if.read_tmask  = {3'b000, execute_if.data.tmask};
+        hw_itr_ctrl_if.read_addr   = csr_addr;
 
-                hw_itr_ctrl_if.write_enable = csr_req_valid && csr_write_enable && hwitr_addr_enable; 
-                hw_itr_ctrl_if.write_uuid   = execute_if.data.uuid;
-                hw_itr_ctrl_if.write_pid    = execute_if.data.pid;
-                hw_itr_ctrl_if.write_wid[WARP_CNT - 1 : 0] = execute_if.data.wid;
-                hw_itr_ctrl_if.write_tmask  = {3'b000, execute_if.data.tmask};
-                hw_itr_ctrl_if.write_addr   = csr_addr;
-                hw_itr_ctrl_if.write_data   = {96'd0, rs1_data};
-            end
-        end
-
-        else  
-        begin
-            always @(*)
-            begin 
-                hw_itr_ctrl_if.read_enable = csr_req_valid && ~csr_write_enable && hwitr_addr_enable;
-                hw_itr_ctrl_if.read_uuid   = execute_if.data.uuid;
-                hw_itr_ctrl_if.read_pid    = execute_if.data.pid;
-                hw_itr_ctrl_if.read_wid    = execute_if.data.wid;
-                hw_itr_ctrl_if.read_tmask  = execute_if.data.tmask;
-                hw_itr_ctrl_if.read_addr   = csr_addr;
-
-                hw_itr_ctrl_if.write_enable = csr_req_valid && csr_write_enable && hwitr_addr_enable; 
-                hw_itr_ctrl_if.write_uuid   = execute_if.data.uuid;
-                hw_itr_ctrl_if.write_pid    = execute_if.data.pid;
-                hw_itr_ctrl_if.write_wid    = execute_if.data.wid;
-                hw_itr_ctrl_if.write_tmask  = execute_if.data.tmask;
-                hw_itr_ctrl_if.write_addr   = csr_addr;
-                hw_itr_ctrl_if.write_data   = rs1_data;
-            end
-        end
-    endgenerate
+        hw_itr_ctrl_if.write_enable = csr_req_valid && csr_write_enable && hwitr_addr_enable; 
+        hw_itr_ctrl_if.write_uuid   = execute_if.data.uuid;
+        hw_itr_ctrl_if.write_pid    = execute_if.data.pid;
+        hw_itr_ctrl_if.write_wid    = `NW_WIDTH'(execute_if.data.wid);
+        hw_itr_ctrl_if.write_tmask  = {3'b000, execute_if.data.tmask};
+        hw_itr_ctrl_if.write_addr   = csr_addr;
+        hw_itr_ctrl_if.write_data   = {96'd0, rs1_data};
+    end
 
     VX_csr_data #(
         .CORE_ID (CORE_ID),
@@ -278,63 +252,30 @@ module VX_csr_unit_scalar import VX_gpu_pkg::*; #(
         assign gtid[i] = (32'(CORE_ID) << (`NW_BITS + `NT_BITS)) + (32'(execute_if.data.wid) << `NT_BITS) + wtid[i];
     end  
 
-    generate
-        if(THREAD_CNT == 1)
-        begin 
-            always @(*) begin
-                csr_rd_enable = 0;
-            `ifdef EXT_RASTER_ENABLE
-                if (raster_addr_enable) begin
-                    csr_read_data = raster_csr_if.read_data; 
-                end else
-            `endif
-                case (csr_addr)
-                `VX_CSR_THREAD_ID : csr_read_data = wtid;
-                `VX_CSR_MHARTID   : csr_read_data = gtid;
+    always @(*) begin
+        csr_rd_enable = 0;
+    `ifdef EXT_RASTER_ENABLE
+        if (raster_addr_enable) begin
+            csr_read_data = raster_csr_if.read_data; 
+        end else
+    `endif
+        case (csr_addr)
+        `VX_CSR_THREAD_ID : csr_read_data = wtid;
+        `VX_CSR_MHARTID   : csr_read_data = gtid;
 
-                default : begin
-                    if(hwitr_addr_enable)
-                    begin 
-                        csr_read_data = hw_itr_ctrl_if.read_data[0];
-                    end
-                    else 
-                    begin 
-                        csr_read_data = {NUM_LANES{csr_read_data_ro | csr_read_data_rw}};
-                        csr_rd_enable = 1;
-                    end
-                end
-                endcase
+        default : begin
+            if(hwitr_addr_enable)
+            begin 
+                csr_read_data = hw_itr_ctrl_if.read_data[0];
+            end
+            else 
+            begin 
+                csr_read_data = {NUM_LANES{csr_read_data_ro | csr_read_data_rw}};
+                csr_rd_enable = 1;
             end
         end
-        else
-        begin 
-            always @(*) begin
-                csr_rd_enable = 0;
-            `ifdef EXT_RASTER_ENABLE
-                if (raster_addr_enable) begin
-                    csr_read_data = raster_csr_if.read_data; 
-                end else
-            `endif
-                case (csr_addr)
-                `VX_CSR_THREAD_ID : csr_read_data = wtid;
-                `VX_CSR_MHARTID   : csr_read_data = gtid;
-
-                default : begin
-                    if(hwitr_addr_enable)
-                    begin
-                        csr_read_data = hw_itr_ctrl_if.read_data;
-                    end
-                    else 
-                    begin
-                        csr_read_data = {NUM_LANES{csr_read_data_ro | csr_read_data_rw}};
-                        csr_rd_enable = 1;
-                    end
-                    
-                end
-                endcase
-            end
-        end
-    endgenerate
+        endcase
+    end
 
     // CSR write
 

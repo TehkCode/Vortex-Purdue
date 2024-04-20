@@ -196,16 +196,16 @@ module VX_commit_scalar import VX_gpu_pkg::*; #(
         assign commit_if[i].ready = 1'b1;
     end
 
-    /*****************************/
-    reg [3:0] c;
-    always_ff @( posedge clk ) begin
-        if (reset)
-            c <= 0;
-        else
-            c <= (|c) ? c+1 : 4'(commit_if[0].valid && (commit_if[0].data.PC == 32'h8000020c));
-    end
-    `RUNTIME_ASSERT((c!=4), ("**************caught you mf************************"))
-    /******************************/
+    // /*****************************/
+    // reg [3:0] c;
+    // always_ff @( posedge clk ) begin
+    //     if (reset)
+    //         c <= 0;
+    //     else
+    //         c <= (|c) ? c+1 : 4'(commit_if[0].valid && (commit_if[0].data.PC == 32'h8000020c));
+    // end
+    // `RUNTIME_ASSERT((c!=4), ("**************caught you mf************************"))
+    // /******************************/
 
 	// To issue.dispatch
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin

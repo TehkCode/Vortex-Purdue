@@ -201,7 +201,7 @@ module VX_execute_scalar import VX_gpu_pkg::*; #(
     // flush only when branch taken or thread mask is set to 0
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin    
         assign branch_mispredict_flush[i] = (branch_ctl_if[i].valid & branch_ctl_if[i].taken) 
-            | (warp_ctl_if.valid & warp_ctl_if.tmc.valid & !(|warp_ctl_if.tmc.tmask));
+            | (warp_ctl_if.valid & warp_ctl_if.tmc.valid & !(|warp_ctl_if.tmc.tmask[THREAD_CNT-1:0]));
     end
 
 
