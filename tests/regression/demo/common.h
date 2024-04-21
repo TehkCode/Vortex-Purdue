@@ -8,11 +8,15 @@
 #endif
 
 typedef struct {
-  uint32_t num_tasks;
+  uint32_t num_tasks_nonpriority;
   uint32_t task_size;
   uint64_t src0_addr;
   uint64_t src1_addr;
-  uint64_t dst_addr;  
+  uint64_t dst_addr;
+<<<<<<< Updated upstream
+
+  uint32_t num_tasks_priority;
+  //uint32_t priority_task_offset; // Thread number of where the priority tasks start
 } kernel_arg_t;
 
 #define VXX_CSR_RASTER_BEGIN             0x7c0
@@ -88,4 +92,10 @@ typedef struct {
 #define VXX_HW_ITR_CTRL_END   (VXX_HW_ITR_CTRL_BEGIN+38)
 #define VXX_HW_ITR_COUNT     (VXX_HW_ITR_CTRL_BEGIN-VXX_HW_ITR_CTRL_END)
 
+=======
+
+  uint32_t num_tasks_priority;
+  //uint32_t priority_task_offset; // Thread number of where the priority tasks start
+} kernel_arg_t;
+>>>>>>> Stashed changes
 #endif

@@ -41,7 +41,11 @@ void kernel_body(int task_id, kernel_arg_t* __UNIFORM__ arg) {
 }
 
 int main() {
-	kernel_arg_t* arg = (kernel_arg_t*)KERNEL_ARG_DEV_MEM_ADDR;
-	vx_spawn_tasks(arg->num_tasks, (vx_spawn_tasks_cb)kernel_body, arg);
-	return 0;
+    kernel_arg_t* arg = (kernel_arg_t*)KERNEL_ARG_DEV_MEM_ADDR;
+    // kernel_arg_t* arg = (kernel_arg_t*)KERNEL_ARG_DEV_MEM_ADDR2;
+    // vx_printf("Calling VXSpawn\n");
+    vx_spawn_tasks(arg->num_tasks_nonpriority, (vx_spawn_tasks_cb)kernel_body, arg);
+    // vx_printf("Calling VXPSpawn\n");
+    vx_spawn_priority_tasks(arg->num_tasks_priority,arg->num_tasks_nonpriority, (vx_spawn_tasks_cb)kernel_body, arg);
+    return 0;
 }
