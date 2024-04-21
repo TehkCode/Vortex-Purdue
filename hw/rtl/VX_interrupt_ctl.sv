@@ -115,7 +115,7 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
             `VX_HW_ITR_R1: 
             begin 
                 simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.R[0]}} : '0;
-                nextRegisters.R[0] = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.R[whichSimtThrd];
+                nextRegisters.R[0] = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.R[0];
             end
             `VX_HW_ITR_R2: 
             begin 
@@ -312,7 +312,7 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
             `VX_HW_ITR_R1: 
             begin 
                 scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.R[0]}} : '0;
-                nextRegisters.R[0] = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.R[whichScalarThrd];
+                nextRegisters.R[0] = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.R[0];
             end
             `VX_HW_ITR_R2: 
             begin 

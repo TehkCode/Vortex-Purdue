@@ -81,12 +81,12 @@ int run_test(const kernel_arg_t& kernel_arg,
     int errors = 0;
     auto buf_ptr = (int32_t*)staging_buf.data();
     for (uint32_t i = 0; i < num_points; ++i) {
-      int ref = i + i; 
+      int ref = 2*i + 14; 
       int cur = buf_ptr[i];
       if (cur != ref) {
-        // std::cout << "error at result #" << std::dec << i
-        //           << std::hex << ": actual 0x" << cur << ", expected 0x" << ref << std::endl;
-        // std::cout << "error at result #" << std::dec << i << "\t";
+        std::cout << "error at result #" << std::dec << i
+                  << std::hex << ": actual 0x" << cur << ", expected 0x" << ref << std::endl;
+        std::cout << "error at result #" << std::dec << i << "\t";
         ++errors;
       }
     }
@@ -164,7 +164,8 @@ int main(int argc, char *argv[]) {
     std::cout << "upload source buffer0" << std::endl;
     auto buf_ptr = (int32_t*)staging_buf.data();
     for (uint32_t i = 0; i < num_points; ++i) {
-      buf_ptr[i] = i-1;
+      buf_ptr[i] = i + 10;
+      // buf_ptr[i] = 2;
     }
     RT_CHECK(vx_copy_to_dev(device, kernel_arg.src0_addr, staging_buf.data(), buf_size));
   }
@@ -174,7 +175,8 @@ int main(int argc, char *argv[]) {
     std::cout << "upload source buffer1" << std::endl;
     auto buf_ptr = (int32_t*)staging_buf.data();
     for (uint32_t i = 0; i < num_points; ++i) {
-      buf_ptr[i] = i+1;
+      buf_ptr[i] = i + 4;
+      // buf_ptr[i] = 2;
     }   
     RT_CHECK(vx_copy_to_dev(device, kernel_arg.src1_addr, staging_buf.data(), buf_size));
   }
