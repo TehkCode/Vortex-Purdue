@@ -108,6 +108,7 @@ int main(int argc, char *argv[]) {
   if (count == 0) {
     count = 1;
   }
+  count = 64; 
 
   // open device connection
   std::cout << "open device connection" << std::endl;  

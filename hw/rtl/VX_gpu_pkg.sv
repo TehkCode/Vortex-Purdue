@@ -19,6 +19,17 @@
 package VX_gpu_pkg;
 
     typedef struct packed {
+        logic [31:0] S2V; 
+        logic [31:0] V2S;
+        logic [31:0] TID;
+        logic [31:0] IPC;
+        logic [31:0] IRQ;
+        logic [31:0] ACC;
+        logic [31:0] ERR;
+        logic [30:0] [31:0] R; // 31 registers for moving thread context
+    } hwint_data_t;
+
+    typedef struct packed {
         logic                    valid;
         logic [`NUM_THREADS-1:0] tmask;
     } tmc_t;

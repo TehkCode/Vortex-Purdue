@@ -18,16 +18,8 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     VX_sfu_csr_if.slave           simt_bus_if, 
     VX_sfu_csr_if.slave           scalar_bus_if       
 );   
-
-    typedef enum logic [2:0] {
-        IDLE, 
-        WAIT, 
-        PC_SWAP, 
-        WAIT_IRQ, 
-        REVERT_WARP
-    } hw_int_state_t;
     
-    data_t nextRegisters, registers; 
+    hwint_data_t nextRegisters, registers; 
     hw_int_state_t nextState, currState; 
 
     logic [11:0] simtAddr;        // 12 bit csr address
@@ -40,7 +32,7 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         if(reset)
         begin 
             registers                   <= '0;
-            currState                   <= IDLE;
+            currState                   <= IRQC_IDLE;
         end
         else 
         begin 
@@ -471,12 +463,12 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         endcase
 
         casez(currState)
-        IDLE: 
+        IRQC_IDLE: 
         begin 
             if(registers.S2V == 32'd1) 
                 nextRegisters.ERR = 0; // clear error 
         end
-        WAIT: 
+        IRQC_WAIT: 
         begin 
             interrupt_ctl_if.controls.maskActWarp = 1; 
             interrupt_ctl_if.controls.hwInt       = 1; // let vecCore know hw interrupt is happening
@@ -486,19 +478,19 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
                 nextRegisters.S2V   = 0; // ack failed interrupt req from scalar
             end
         end
-        PC_SWAP: 
+        IRQC_PC_SWAP: 
         begin 
             nextRegisters.IPC                     = interrupt_ctl_if.PC; // save thread's interrupted PC
             interrupt_ctl_if.controls.hwInt       = 1; 
             interrupt_ctl_if.controls.maskThreads = 1;
             interrupt_ctl_if.controls.swapPC      = 1; // force simt core's PC to take IRQ
         end
-        WAIT_IRQ: 
+        IRQC_WAIT_ISR: 
         begin 
             interrupt_ctl_if.controls.hwInt       = 1; 
             interrupt_ctl_if.controls.maskThreads = 1;
         end
-        REVERT_WARP: 
+        IRQC_REVERT_WARP: 
         begin
             // Let RTI instruction do its thing..?
             // mask off warp again 
@@ -523,30 +515,30 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     begin 
         nextState = currState; 
         casez(currState)
-        IDLE: 
+        IRQC_IDLE: 
         begin 
             if(registers.S2V == 32'd1)  // hard-code to 0 for now since only 1 SIMT/SCALAR pair
-                nextState = WAIT; 
+                nextState = IRQC_WAIT; 
         end
-        WAIT: 
+        IRQC_WAIT: 
         begin 
             if(interrupt_ctl_if.err)
-                nextState = IDLE; 
+                nextState = IRQC_IDLE; 
             else if(interrupt_ctl_if.pipe_clean)
-                nextState = WAIT;
+                nextState = IRQC_WAIT;
         end
-        PC_SWAP: 
+        IRQC_PC_SWAP: 
         begin 
-            nextState = WAIT_IRQ;
+            nextState = IRQC_WAIT_ISR;
         end
-        WAIT_IRQ: 
+        IRQC_WAIT_ISR: 
         begin 
             if(registers.S2V == 32'd0)
-                nextState = REVERT_WARP;
+                nextState = IRQC_REVERT_WARP;
         end
-        REVERT_WARP: 
+        IRQC_REVERT_WARP: 
         begin
-            nextState = IDLE; 
+            nextState = IRQC_IDLE; 
         end
         default: 
         begin 
