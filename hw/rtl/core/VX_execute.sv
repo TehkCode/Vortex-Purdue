@@ -17,6 +17,7 @@ module VX_execute import VX_gpu_pkg::*; #(
     parameter CORE_ID = 0,
     parameter THREAD_CNT = `NUM_THREADS,
     parameter WARP_CNT = `NUM_WARPS,
+    parameter WARP_CNT_WIDTH = `LOG2UP(WARP_CNT),
     parameter ISSUE_CNT = `MIN(WARP_CNT, 4),
     parameter NUM_ALU_BLOCKS = `UP(ISSUE_CNT/1)
 ) (
@@ -81,6 +82,7 @@ module VX_execute import VX_gpu_pkg::*; #(
     VX_commit_if.master     sfu_commit_if [ISSUE_CNT],
     VX_warp_ctl_if.master   warp_ctl_if,
     VX_sfu_csr_if.master    hw_itr_ctrl_if,
+    VX_execute_hw_itr_if.slave execute_hw_itr_if,
 
     // simulation helper signals
     output wire             sim_ebreak
@@ -90,6 +92,8 @@ module VX_execute import VX_gpu_pkg::*; #(
 `ifdef EXT_F_ENABLE
     VX_fpu_to_csr_if #(.WARP_CNT(WARP_CNT)) fpu_to_csr_if[NUM_FPU_BLOCKS]();
 `endif
+
+    VX_commit_if #(.WARP_CNT(WARP_CNT)) alu_commit_tmp_if[ISSUE_CNT]();
 
     `RESET_RELAY (alu_reset, reset);
     `RESET_RELAY (lsu_reset, reset);
@@ -105,7 +109,7 @@ module VX_execute import VX_gpu_pkg::*; #(
         .reset          (alu_reset),
         .dispatch_if    (alu_dispatch_if),
         .branch_ctl_if  (branch_ctl_if),
-        .commit_if      (alu_commit_if)
+        .commit_if      (alu_commit_tmp_if)
     );
 
     `SCOPE_IO_SWITCH (1)
@@ -193,6 +197,56 @@ module VX_execute import VX_gpu_pkg::*; #(
         .commit_if      (sfu_commit_if),
         .hw_itr_ctrl_if (hw_itr_ctrl_if) 
     );
+
+    // overload JAL for thread transfer purposes
+
+    logic [WARP_CNT - 1 : 0] warp_hits;
+    logic [WARP_CNT - 1 : 0] warp_hits_n;
+    logic [`NW_WIDTH - 1 : 0] warpNum;
+    logic [WARP_CNT - 1 : 0] last_jal_before_kernel;
+    logic [(`XLEN*THREAD_CNT) - 1 : 0] tmp_data;
+
+    assign warpNum = wmask_to_wid(warp_hits_n);
+
+    always @(posedge clk) begin
+        if (reset)
+            warp_hits <= 0;
+        else
+            warp_hits <= warp_hits | warp_hits_n;
+    end
+
+    for(genvar i = 0; i < NUM_ALU_BLOCKS; i = i + 1) begin 
+        assign warp_hits_n[i] = (execute_hw_itr_if.overload_JAL & branch_ctl_if[i].valid);
+    end
+
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin
+        assign last_jal_before_kernel[i]      = execute_hw_itr_if.overload_JAL & branch_ctl_if[i].valid & (branch_ctl_if[i].wid == WARP_CNT_WIDTH'(i)) & !warp_hits[i] & alu_commit_tmp_if[i].valid;
+        for(genvar j = 0; j < THREAD_CNT; ++j) begin 
+            assign alu_commit_if[i].data.data[j] = last_jal_before_kernel[i] ? execute_hw_itr_if.retHandlerAddress : alu_commit_tmp_if[i].data.data[j];
+        end
+        assign alu_commit_if[i].data.uuid     = alu_commit_tmp_if[i].data.uuid;
+        assign alu_commit_if[i].data.wid      = alu_commit_tmp_if[i].data.wid;
+        assign alu_commit_if[i].data.tmask    = alu_commit_tmp_if[i].data.tmask;
+        assign alu_commit_if[i].data.PC       = alu_commit_tmp_if[i].data.PC;
+        assign alu_commit_if[i].data.wb       = alu_commit_tmp_if[i].data.wb;
+        assign alu_commit_if[i].data.rd       = alu_commit_tmp_if[i].data.rd;
+        assign alu_commit_if[i].data.pid      = alu_commit_tmp_if[i].data.pid;
+        assign alu_commit_if[i].data.sop      = alu_commit_tmp_if[i].data.sop;
+        assign alu_commit_if[i].data.eop      = alu_commit_tmp_if[i].data.eop;
+        assign alu_commit_if[i].valid         = alu_commit_tmp_if[i].valid;
+        assign alu_commit_tmp_if[i].ready     = alu_commit_if[i].ready;
+
+    end
+
+    assign execute_hw_itr_if.commitSIMTSchedulerRetPC = last_jal_before_kernel[warpNum];
+    assign execute_hw_itr_if.SIMTSchedulerRetPC       = tmp_data[warpNum*`XLEN +: `XLEN];
+    assign execute_hw_itr_if.allHit                   = &warp_hits;
+    
+    `RUNTIME_ASSERT((!(&warp_hits)), ("***caught you mf************"))
+
+    for (genvar i = 0; i <WARP_CNT; ++i) begin
+        assign tmp_data[i*`XLEN +: `XLEN] = alu_commit_tmp_if[i].data.data[0];
+    end
 
     // simulation helper signal to get RISC-V tests Pass/Fail status
     assign sim_ebreak = alu_dispatch_if[0].valid && alu_dispatch_if[0].ready 

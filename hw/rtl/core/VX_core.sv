@@ -81,6 +81,7 @@ module VX_core import VX_gpu_pkg::*; #(
 
     VX_sfu_csr_if.master    hw_itr_ctrl_if,
     VX_interrupt_ctl_ttu_if.slave interrupt_ctl_ttu_if,
+    VX_execute_hw_itr_if.slave    execute_hw_itr_if,
 
     // simulation helper signals
     output wire             sim_ebreak,
@@ -280,9 +281,10 @@ module VX_core import VX_gpu_pkg::*; #(
         .lsu_dispatch_if(lsu_dispatch_if),
         .sfu_dispatch_if(sfu_dispatch_if),
 
-        .warp_ctl_if    (warp_ctl_if),
-        .branch_ctl_if  (branch_ctl_if),
-        .hw_itr_ctrl_if (hw_itr_ctrl_if),
+        .warp_ctl_if       (warp_ctl_if),
+        .branch_ctl_if     (branch_ctl_if),
+        .hw_itr_ctrl_if    (hw_itr_ctrl_if),
+        .execute_hw_itr_if (execute_hw_itr_if),
 
         .alu_commit_if  (alu_commit_if),
         .lsu_commit_if  (lsu_commit_if),
@@ -638,6 +640,7 @@ import VX_rop_pkg::*;
 
     VX_sfu_csr_if    hw_itr_ctrl_if();
     VX_interrupt_ctl_ttu_if interrupt_ctl_ttu_if();
+    VX_execute_hw_itr_if execute_hw_itr_if();
 
     VX_core #(
         .CORE_ID (0),
@@ -687,6 +690,7 @@ import VX_rop_pkg::*;
 
         .hw_itr_ctrl_if (hw_itr_ctrl_if),
         .interrupt_ctl_ttu_if (interrupt_ctl_ttu_if),
+        .execute_hw_itr_if (execute_hw_itr_if),
 
         .sim_ebreak     (sim_ebreak),
         .sim_wb_value   (sim_wb_value),

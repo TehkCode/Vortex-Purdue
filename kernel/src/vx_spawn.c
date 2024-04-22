@@ -79,8 +79,9 @@ static void __attribute__ ((noinline)) spawn_tasks_all_stub() {
   int warp_gid = (p_wspawn_args->fWindex * NW) + wid; 
   int thread_gid = warp_gid * NT + tid + p_wspawn_args->offset; 
   // vx_printf("VXSpawn: cid=%d, wid=%d, tid=%d, wK=%d, tK=%d, offset=%d, taskids=%d-%d, fWindex=%d, warp_gid=%d, thread_gid=%d\n",cid, wid, tid, wK, tK, offset, (offset), (offset+tK-1),p_wspawn_args->fWindex,warp_gid,thread_gid);
-  vx_printf("VXSpawn: cid=%d, wid=%d, tid=%d, fWindex=%d, offset= %d, warp_gid=%d, thread_gid=%d\n",cid, wid, tid, p_wspawn_args->fWindex,p_wspawn_args->offset,warp_gid,thread_gid);
+  vx_printf("VXSpawn: cid=%d, wid=%d, tid=%d, fWiWndex=%d, offset= %d, warp_gid=%d, thread_gid=%d\n",cid, wid, tid, p_wspawn_args->fWindex,p_wspawn_args->offset,warp_gid,thread_gid);
   callback(thread_gid, arg);
+  vx_printf("I am the one who knocks! I am the danger! \n");
 
   // for (int task_id = offset, N = task_id + tK; task_id < N; ++task_id) {
   //   callback(task_id, arg);

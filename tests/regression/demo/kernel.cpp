@@ -18,6 +18,10 @@ void kernel_body(int task_id, kernel_arg_t* __UNIFORM__ arg) {
 	csr_write(VXX_HW_ITR_S2V, y);
 	int x = csr_read(VXX_HW_ITR_S2V);
 	// vx_printf("The value I am reading from VX_HW_ITR_S2V is: 0x%x\n", x);
+	// vx_printf("The value I am reading from VX_HW_ITR_V2S is: 0x%x\n", x);
+	// vx_printf("The value I am reading from VX_HW_ITR_V2S is: 0x%x\n", x);
+	// vx_printf("The value I am reading from VX_HW_ITR_V2S is: 0x%x\n", x);
+
 
 	y = 0xf00d2222;
 	csr_write(VXX_HW_ITR_V2S, y);

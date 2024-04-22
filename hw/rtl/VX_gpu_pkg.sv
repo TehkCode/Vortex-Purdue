@@ -18,16 +18,6 @@
 
 package VX_gpu_pkg;
 
-    typedef struct packed {
-        logic [31:0] S2V; 
-        logic [31:0] V2S;
-        logic [31:0] TID;
-        logic [31:0] IPC;
-        logic [31:0] IRQ;
-        logic [31:0] ACC;
-        logic [31:0] ERR;
-        logic [30:0] [31:0] R; // 31 registers for moving thread context
-    } hwint_data_t;
 
     typedef struct packed {
         logic                    valid;
@@ -85,8 +75,14 @@ package VX_gpu_pkg;
         logic [31:0] IRQ;
         logic [31:0] ACC;
         logic [31:0] ERR;
-        logic [31:0] TMASK;
-        logic [31:0] WMASK;
+        logic [31:0] JALOL;    // Signal to tell us to look out for the next JAL instruction in SIMT. It needs to be overloaded by setting the link reg to RHA instead
+        logic [31:0] RHA;      // return handler address for returning to either SIMT or scalar kernel scheduler
+        logic [31:0] ACCEND;   // SIMT core is done, tell Scalar core to stop fishing for threads
+        logic [31:0] RAV;      // Return address for jumping back to SIMT Kernel Scheduler after kernel is done
+        logic [31:0] RAS;      // Return address for jumping back to Scalar Kernel Scheduler after kernel is done
+        logic [31:0] SSP;      // Stack pointer of Scalar Core kernel scheduler. Save this before pulling a thread from SIMT.
+        logic [31:0] TMASK;    // not CSR reg, just normal reg held by FSM
+        logic [31:0] WMASK;    // not CSR reg, just normal reg held my FSM
         logic [30:0] [31:0] R; // 31 registers for moving thread context
     } hw_int_data_t;
 
@@ -348,6 +344,19 @@ package VX_gpu_pkg;
         input logic [ISSUE_WIS_W-1:0] wis        
     );
         wis_to_addr = ISSUE_ADDRW'({rid, wis} >> (ISSUE_WIS_W-`CLOG2(ISSUE_RATIO)));
+    endfunction
+
+     function logic [`NW_WIDTH-1:0] wmask_to_wid(
+        input logic [`NUM_WARPS-1:0] wmask    
+    );
+        logic flag;
+        flag = 0;
+        for (int i = 0;i<`NUM_WARPS;i++) begin
+            if (wmask[i] & ~flag) begin
+                flag = 1;
+                wmask_to_wid = `NW_WIDTH'(i);
+            end
+        end
     endfunction
 
 endpackage

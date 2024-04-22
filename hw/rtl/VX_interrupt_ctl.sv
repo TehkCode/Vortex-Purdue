@@ -11,8 +11,9 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     input wire              reset,
     
     // I/O
-
-    // controls
+    // Overloading JAL instr in SIMT execute
+    VX_execute_hw_itr_if.master execute_hw_itr_if,
+    // thread transfer unit controls
     VX_interrupt_ctl_ttu_if.master    interrupt_ctl_ttu_if,
     // read/write bus
     VX_sfu_csr_if.slave           simt_bus_if, 
@@ -102,6 +103,36 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
             begin 
                 simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.ERR}} : '0;
                 nextRegisters.ERR = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.ERR;
+            end
+            `VX_HW_ITR_JALOL: 
+            begin 
+                simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.JALOL}} : '0;
+                nextRegisters.JALOL = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.JALOL;
+            end
+            `VX_HW_ITR_RHA: 
+            begin 
+                simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.RHA}} : '0;
+                nextRegisters.RHA = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.RHA;
+            end
+            `VX_HW_ITR_ACCEND: 
+            begin 
+                simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.ACCEND}} : '0;
+                nextRegisters.ACCEND = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.ACCEND;
+            end
+            `VX_HW_ITR_RAV: 
+            begin 
+                simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.RAV}} : '0;
+                nextRegisters.RAV = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.RAV;
+            end
+            `VX_HW_ITR_RAS: 
+            begin 
+                simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.RAS}} : '0;
+                nextRegisters.RAS = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.RAS;
+            end
+            `VX_HW_ITR_SSP: 
+            begin 
+                simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.SSP}} : '0;
+                nextRegisters.SSP = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.SSP;
             end
             `VX_HW_ITR_R1: 
             begin 
@@ -299,6 +330,36 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
             begin 
                 scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.ERR}} : '0;
                 nextRegisters.ERR = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.ERR;
+            end
+            `VX_HW_ITR_JALOL: 
+            begin 
+                scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.JALOL}} : '0;
+                nextRegisters.JALOL = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.JALOL;
+            end
+            `VX_HW_ITR_RHA: 
+            begin 
+                scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.RHA}} : '0;
+                nextRegisters.RHA = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.RHA;
+            end
+            `VX_HW_ITR_ACCEND: 
+            begin 
+                scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.ACCEND}} : '0;
+                nextRegisters.ACCEND = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.ACCEND;
+            end
+            `VX_HW_ITR_RAV: 
+            begin 
+                scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.RAV}} : '0;
+                nextRegisters.RAV = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.RAV;
+            end
+            `VX_HW_ITR_RAS: 
+            begin 
+                scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.RAS}} : '0;
+                nextRegisters.RAS = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.RAS;
+            end
+            `VX_HW_ITR_SSP: 
+            begin 
+                scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.SSP}} : '0;
+                nextRegisters.SSP = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.SSP;
             end
             `VX_HW_ITR_R1: 
             begin 
@@ -506,6 +567,17 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
 
         end
         endcase
+
+        // Responses from execute unit 
+        if(execute_hw_itr_if.commitSIMTSchedulerRetPC)
+        begin 
+            nextRegisters.RAV = execute_hw_itr_if.SIMTSchedulerRetPC;
+        end
+        if(execute_hw_itr_if.allHit) // All warps have seen their JALRs before calling kernel
+        begin 
+            nextRegisters.JALOL = 0;
+        end
+
     end
 
     //**************************************************************************
@@ -559,4 +631,9 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     assign interrupt_ctl_ttu_if.load_tmask = registers.TMASK[`NUM_THREADS-1:0];
     assign interrupt_ctl_ttu_if.load_PC = (currState == IRQC_PC_SWAP) ? registers.IRQ : registers.IPC;
     assign interrupt_ctl_ttu_if.load_wmask = registers.WMASK[`NUM_WARPS-1:0];
+
+    // To execute stage for overloading jump and link instruction
+    // assign execute_hw_itr_if.overload_JAL = registers.JALOL[0]; // please overload the next jump and link
+    assign execute_hw_itr_if.overload_JAL = 0;
+    assign execute_hw_itr_if.retHandlerAddress = registers.RHA;        // overload it by setting link reg to this
 endmodule
