@@ -80,6 +80,7 @@ module VX_core_scalar import VX_gpu_pkg::*; #(
 `endif
 
     VX_sfu_csr_if.master    hw_itr_ctrl_if,
+    VX_execute_hw_itr_if.slave    execute_hw_itr_if,
 
     // simulation helper signals
     output wire             sim_ebreak,
@@ -297,6 +298,7 @@ module VX_core_scalar import VX_gpu_pkg::*; #(
         .warp_ctl_if    (warp_ctl_if),
         .branch_ctl_if  (branch_ctl_if),
         .hw_itr_ctrl_if (hw_itr_ctrl_if),
+        .execute_hw_itr_if (execute_hw_itr_if),
 
         .alu_commit_if  (alu_commit_if),
         .lsu_commit_if  (lsu_commit_if),
@@ -704,6 +706,7 @@ import VX_rop_pkg::*;
     `endif
 
         .hw_itr_ctrl_if (hw_itr_ctrl_if),
+        .execute_hw_itr_if (execute_hw_itr_if),
 
         .sim_ebreak     (sim_ebreak),
         .sim_wb_value   (sim_wb_value),

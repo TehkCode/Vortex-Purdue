@@ -286,6 +286,7 @@ module VX_socket import VX_gpu_pkg::*; #(
                 .icache_bus_if  (per_core_icache_bus_if[i]),
 
                 .hw_itr_ctrl_if (hw_itr_ctrl_if), 
+                .execute_hw_itr_if    (execute_hw_itr_if),
 
             `ifdef EXT_TEX_ENABLE
             `ifdef PERF_ENABLE
