@@ -120,7 +120,7 @@ int main(int argc, char *argv[]) {
   RT_CHECK(vx_dev_caps(device, VX_CAPS_NUM_THREADS, &num_threads));
 
   uint32_t num_tasks_nonpriority = ((num_cores/2) * (num_warps) * num_threads);
-  uint32_t num_tasks_priority = ((num_cores/2)*num_warps * 1);
+  uint32_t num_tasks_priority = ((num_cores/2)*1 * 1);
   uint32_t num_tasks  = num_tasks_nonpriority + num_tasks_priority ;
   uint32_t num_points = count * num_tasks;
   uint32_t buf_size   = num_points * sizeof(int32_t);

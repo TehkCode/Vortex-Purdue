@@ -139,6 +139,16 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
                 simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.RAVW0}} : '0;
                 nextRegisters.RAVW0 = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.RAVW0;
             end
+            `VX_HW_ITR_LTID: 
+            begin 
+                simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.LTID}} : '0;
+                nextRegisters.LTID = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.LTID;
+            end
+            `VX_HW_ITR_LWID: 
+            begin 
+                simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.LWID}} : '0;
+                nextRegisters.LWID = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.LWID;
+            end
             `VX_HW_ITR_R1: 
             begin 
                 simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.R[0]}} : '0;
@@ -371,6 +381,16 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
                 scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.RAVW0}} : '0;
                 nextRegisters.RAVW0 = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.RAVW0;
             end
+            `VX_HW_ITR_LTID: 
+            begin 
+                scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.LTID}} : '0;
+                nextRegisters.LTID = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.LTID;
+            end
+            `VX_HW_ITR_LWID: 
+            begin 
+                scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.LWID}} : '0;
+                nextRegisters.LWID = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.LWID;
+            end
             `VX_HW_ITR_R1: 
             begin 
                 scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.R[0]}} : '0;
@@ -591,6 +611,13 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         begin 
             nextRegisters.JALOL = 0;
         end
+        // nextRegisters.ACC = 1; // let accel be high
+        // nextRegisters.S2V = 1; // start transaction
+        // nextRegisters.TID = 5;
+        // if((registers.V2S == 32'd1 && registers.ERR == 32'd1))
+        //     nextRegisters.S2V = 0;
+        // if(registers.S2V == 32'd0)
+        //     nextRegisters.S2V = 1;
 
     end
 
@@ -606,7 +633,7 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         casez(currState)
         IRQC_IDLE: 
         begin 
-            if(registers.S2V == 32'd1)  // hard-code to 0 for now since only 1 SIMT/SCALAR pair
+            if((registers.S2V == 32'd1) && (registers.ERR == 32'd0) && (registers.V2S == 32'd0))
                 nextState = IRQC_WAIT; 
         end
         IRQC_WAIT: 
@@ -640,8 +667,8 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
 
     // To thread transfer unit
     assign interrupt_ctl_ttu_if.state = currState;
-    assign interrupt_ctl_ttu_if.wid = registers.TID[`NT_WIDTH+`NW_WIDTH-1 : `NT_WIDTH] ;
-    assign interrupt_ctl_ttu_if.tid = registers.TID[`NT_WIDTH-1 : 0] ;
+    assign interrupt_ctl_ttu_if.wid = registers.TID[`NT_WIDTH+`NW_WIDTH-1 : `NT_WIDTH];
+    assign interrupt_ctl_ttu_if.tid = registers.TID[`NT_WIDTH-1 : 0];
     assign interrupt_ctl_ttu_if.load_tmask = registers.TMASK[`NUM_THREADS-1:0];
     assign interrupt_ctl_ttu_if.load_PC = (currState == IRQC_PC_SWAP) ? registers.IRQ : registers.IPC;
     assign interrupt_ctl_ttu_if.load_wmask = registers.WMASK[`NUM_WARPS-1:0];

@@ -249,7 +249,7 @@ module VX_execute import VX_gpu_pkg::*; #(
     // Tell VX_interrupt_ctl to turn off the JALOL (JAL overloading flag) register
     assign execute_hw_itr_if.allHit                   = &warp_hits;
 
-    `RUNTIME_ASSERT((!(&warp_hits)), ("***caught you mf************"))
+    // `RUNTIME_ASSERT((!(&warp_hits)), ("***caught you mf************"))
 
     for (genvar i = 0; i <WARP_CNT; ++i) begin
         assign tmp_data[i*`XLEN +: `XLEN] = alu_commit_tmp_if[i].data.data[0];

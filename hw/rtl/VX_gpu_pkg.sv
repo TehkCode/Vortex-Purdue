@@ -82,6 +82,8 @@ package VX_gpu_pkg;
         logic [31:0] RAVW0;     // Return address for warp 0 is special
         logic [31:0] RAS;      // Return address for jumping back to Scalar Kernel Scheduler after kernel is done
         logic [31:0] SSP;      // Stack pointer of Scalar Core kernel scheduler. Save this before pulling a thread from SIMT.
+        logic [31:0] LTID;     // local thread ID according to what it was in the SIMT core
+        logic [31:0] LWID;     // local warp ID according to what it was in the SIMT core
         logic [31:0] TMASK;    // not CSR reg, just normal reg held by FSM
         logic [31:0] WMASK;    // not CSR reg, just normal reg held my FSM
         logic [30:0] [31:0] R; // 31 registers for moving thread context
