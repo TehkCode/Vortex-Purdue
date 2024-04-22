@@ -409,6 +409,8 @@ module VX_cluster import VX_gpu_pkg::*; #(
             .icache_bus_if  (per_socket_icache_bus_if[i]),
 
             .hw_itr_ctrl_if (per_socket_csr_bus_if[i]),
+            
+            .interrupt_ctl_ttu_if (interrupt_ctl_ttu_if),
 
         `ifdef EXT_TEX_ENABLE
         `ifdef PERF_ENABLE
@@ -450,18 +452,15 @@ module VX_cluster import VX_gpu_pkg::*; #(
     // Hardware Interrupt Controller Module *
     //***************************************
     `RESET_RELAY (interrupt_ctl_reset, reset);
-    VX_interrupt_ctl_if interrupt_ctl_if ();
+    VX_interrupt_ctl_ttu_if interrupt_ctl_ttu_if ();
+
     VX_interrupt_ctl interrupt_controller
     (
         .clk              (clk), 
         .reset            (interrupt_ctl_reset),
-        .interrupt_ctl_if (interrupt_ctl_if),
+        .interrupt_ctl_ttu_if (interrupt_ctl_ttu_if),
         .simt_bus_if      (per_socket_csr_bus_if[0]),
         .scalar_bus_if    (per_socket_csr_bus_if[1])
     );
-
-    assign interrupt_ctl_if.err         = 0; 
-    assign interrupt_ctl_if.pipe_clean  = 0; 
-    assign interrupt_ctl_if.PC          = 32'h00000008;
 
 endmodule

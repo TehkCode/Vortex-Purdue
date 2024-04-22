@@ -58,6 +58,27 @@ package VX_gpu_pkg;
         logic [7:0]         mpm_class;
     } base_dcrs_t;
 
+    typedef enum logic [2:0] {
+        IRQC_IDLE, 
+        IRQC_WAIT, 
+        IRQC_PC_SWAP, 
+        IRQC_WAIT_ISR, 
+        IRQC_REVERT_WARP
+    } hw_int_state_t;
+
+    typedef struct packed {
+        logic [31:0] S2V; 
+        logic [31:0] V2S;
+        logic [31:0] TID;
+        logic [31:0] IPC;
+        logic [31:0] IRQ;
+        logic [31:0] ACC;
+        logic [31:0] ERR;
+        logic [31:0] TMASK;
+        logic [31:0] WMASK;
+        logic [30:0] [31:0] R; // 31 registers for moving thread context
+    } hw_int_data_t;
+
     /* verilator lint_off UNUSED */
 
     ////////////////////////// Icache Parameters //////////////////////////////

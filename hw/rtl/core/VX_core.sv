@@ -80,6 +80,7 @@ module VX_core import VX_gpu_pkg::*; #(
 `endif
 
     VX_sfu_csr_if.master    hw_itr_ctrl_if,
+    VX_interrupt_ctl_ttu_if.slave interrupt_ctl_ttu_if,
 
     // simulation helper signals
     output wire             sim_ebreak,
@@ -165,7 +166,8 @@ module VX_core import VX_gpu_pkg::*; #(
     `ifdef GBAR_ENABLE
         .gbar_bus_if    (gbar_bus_if),
     `endif
-        .sched_csr_if   (sched_csr_if),        
+        .sched_csr_if   (sched_csr_if),
+        .interrupt_ctl_ttu_if (interrupt_ctl_ttu_if),        
 
         .busy           (busy)
     );
@@ -635,6 +637,7 @@ import VX_rop_pkg::*;
 `endif
 
     VX_sfu_csr_if    hw_itr_ctrl_if();
+    VX_interrupt_ctl_ttu_if interrupt_ctl_ttu_if();
 
     VX_core #(
         .CORE_ID (0),
@@ -683,6 +686,7 @@ import VX_rop_pkg::*;
     `endif
 
         .hw_itr_ctrl_if (hw_itr_ctrl_if),
+        .interrupt_ctl_ttu_if (interrupt_ctl_ttu_if),
 
         .sim_ebreak     (sim_ebreak),
         .sim_wb_value   (sim_wb_value),

@@ -32,6 +32,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
     VX_branch_ctl_if.slave  branch_ctl_if [NUM_ALU_BLOCKS],
     VX_decode_sched_if.slave decode_sched_if,
     VX_commit_sched_if.slave commit_sched_if,
+    VX_interrupt_ctl_ttu_if.slave interrupt_ctl_ttu_if,
 
     // outputs
     VX_schedule_if.master   schedule_if,
@@ -99,6 +100,15 @@ module VX_schedule import VX_gpu_pkg::*; #(
     assign curr_barrier_mask = barrier_masks[warp_ctl_if.barrier.id];
     `POP_COUNT(active_barrier_count, curr_barrier_mask);
     `UNUSED_VAR (active_barrier_count)
+
+    //thread transfer
+	wire [`NUM_WARPS-1:0] ipdom_stack_empty;
+	wire [`XLEN-1:0] load_PC;
+	wire [THREAD_CNT-1:0] load_tmask;
+	wire [`NUM_WARPS-1:0] load_wmask;
+	wire [`NW_WIDTH-1:0] load_wid;
+	wire swap_schedule_data;
+	wire [`NUM_WARPS-1:0] paused_warps;
 
     always @(*) begin
         active_warps_n  = active_warps;
@@ -198,6 +208,13 @@ module VX_schedule import VX_gpu_pkg::*; #(
         if (schedule_if_fire) begin
             warp_pcs_n[schedule_if.data.wid] = schedule_if.data.PC + 4;
         end
+
+        // load/unload ISR for thread transfer
+        if (swap_schedule_data) begin
+            warp_pcs_n[load_wid]     = load_PC;
+            active_warps_n 			 = load_wmask;
+            thread_masks_n[load_wid] = load_tmask;
+        end
     end
 
     `UNUSED_VAR (base_dcrs)
@@ -281,12 +298,21 @@ module VX_schedule import VX_gpu_pkg::*; #(
         .join_is_else (join_is_else),
         .join_wid   (join_wid), 
         .join_tmask (join_tmask),
-        .join_pc    (join_pc)
+        .join_pc    (join_pc),
+        .ipdom_empty(ipdom_stack_empty)
     );
 
     // schedule the next ready warp
-
-    wire [WARP_CNT-1:0] ready_warps = active_warps & ~(stalled_warps | barrier_stalls);
+    //
+    // active warps - warps that were spawned by wspwan instr
+    // stalled warps - we stall every warp until it reaches decode/execute
+    // 				   stage just to ensure the current instruction didn't
+    // 				   kill it.
+    // barrier waprs - warps waiting for n other warps to finish. n is
+    // 				   determined by the barrier instr.
+    // paused warps  - warps paused by the thread transfer unit until the
+    // 				   thread transfer process completes.
+    wire [`NUM_WARPS-1:0] ready_warps = active_warps & ~(stalled_warps | barrier_stalls | paused_warps);
 
     VX_lzc #(
         .N       (WARP_CNT),
@@ -358,6 +384,14 @@ module VX_schedule import VX_gpu_pkg::*; #(
     );
 
     `BUFFER_BUSY (busy, (active_warps != 0 || ~no_pending_instr), 1);
+
+    // thread transfer to scalar core
+    VX_thread_transfer_unit #(
+		.THREAD_CNT (THREAD_CNT),
+        .WARP_CNT (WARP_CNT)
+    ) thread_transfer_unit (
+		.*
+	);
 
     // export CSRs
     assign sched_csr_if.cycles = cycles;
