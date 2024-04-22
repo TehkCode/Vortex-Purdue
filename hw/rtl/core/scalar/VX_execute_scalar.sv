@@ -81,6 +81,7 @@ module VX_execute_scalar import VX_gpu_pkg::*; #(
     VX_commit_scalar_if.master     sfu_commit_if [ISSUE_CNT],
     VX_warp_ctl_if.master   warp_ctl_if,
     VX_sfu_csr_if.master    hw_itr_ctrl_if,
+    VX_execute_hw_itr_if.slave execute_hw_itr_if,
 
     // flush mispredicts
     output [ISSUE_CNT-1:0] branch_mispredict_flush,
@@ -196,6 +197,36 @@ module VX_execute_scalar import VX_gpu_pkg::*; #(
         .commit_if      (sfu_commit_if),
         .hw_itr_ctrl_if (hw_itr_ctrl_if) 
     );
+
+    // Overload WSPAWN
+    // 1. check for WSPAWN and PC to be 0.
+    // 2. start the counter
+    // 3. wait for counter to be 2
+    // 4. Check for rd to be 0 from sfu
+    // 5. send the PC+4
+    logic [1:0] time_elapsed_since_wspawn, time_elapsed_since_wspawn_n;
+
+    always @(posedge clk) begin
+        if (reset)
+            time_elapsed_since_wspawn <= 0;
+        else
+            time_elapsed_since_wspawn <= time_elapsed_since_wspawn_n;
+    end
+
+    always @(*) begin
+        if (warp_ctl_if.valid && warp_ctl_if.wspawn.valid && (warp_ctl_if.wspawn.pc == '0) && !(|warp_ctl_if.wspawn.wmask))
+            time_elapsed_since_wspawn_n = 1;
+        else if ((time_elapsed_since_wspawn == 2'd2) && sfu_commit_if[0].valid && sfu_commit_if[0].ready)
+            time_elapsed_since_wspawn_n = 0;
+        else  if (time_elapsed_since_wspawn == 2'd2)
+            time_elapsed_since_wspawn_n = time_elapsed_since_wspawn;
+        else
+            time_elapsed_since_wspawn_n = time_elapsed_since_wspawn + 1;
+    end
+
+    assign execute_hw_itr_if.WspawnPCplus4 = sfu_commit_if[0].data.PC + 4;
+    assign execute_hw_itr_if.writeWspawnPCplus4 = ((time_elapsed_since_wspawn == 2'd2) && sfu_commit_if[0].valid && sfu_commit_if[0].ready);
+
 
     // flush operation
     // flush only when branch taken or thread mask is set to 0

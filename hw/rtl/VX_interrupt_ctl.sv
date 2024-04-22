@@ -6,13 +6,17 @@
 `include "VX_types.vh"
 
 module VX_interrupt_ctl import VX_gpu_pkg::*;
+#(
+    parameter SIMT_CORE_ID   = 0,
+    parameter SCALAR_CORE_ID = 1
+)
 (
     input wire              clk,
     input wire              reset,
     
     // I/O
     // Overloading JAL instr in SIMT execute
-    VX_execute_hw_itr_if.master execute_hw_itr_if,
+    VX_execute_hw_itr_if.master execute_hw_itr_if[2],
     // thread transfer unit controls
     VX_interrupt_ctl_ttu_if.master    interrupt_ctl_ttu_if,
     // read/write bus
@@ -579,15 +583,15 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         endcase
 
         // Responses from execute unit 
-        if(execute_hw_itr_if.commitSIMTSchedulerRetPCw0) // Save warp0's true return address for return to SIMT kernel scheduler later
+        if(execute_hw_itr_if[SIMT_CORE_ID].commitSIMTSchedulerRetPCw0) // Save warp0's true return address for return to SIMT kernel scheduler later
         begin 
-            nextRegisters.RAVW0 = execute_hw_itr_if.SIMTSchedulerRetPCw0;
+            nextRegisters.RAVW0 = execute_hw_itr_if[SIMT_CORE_ID].SIMTSchedulerRetPCw0;
         end
-        if(execute_hw_itr_if.commitSIMTSchedulerRetPC) // Save other warps true return addresses for return to SIMT kernel scheduler later
+        if(execute_hw_itr_if[SIMT_CORE_ID].commitSIMTSchedulerRetPC) // Save other warps true return addresses for return to SIMT kernel scheduler later
         begin 
-            nextRegisters.RAV   = execute_hw_itr_if.SIMTSchedulerRetPC;
+            nextRegisters.RAV   = execute_hw_itr_if[SIMT_CORE_ID].SIMTSchedulerRetPC;
         end
-        if(execute_hw_itr_if.allHit) // All warps have seen their JALs and are in the kernel. Stop overloading JAL instr.
+        if(execute_hw_itr_if[SIMT_CORE_ID].allHit) // All warps have seen their JALs and are in the kernel. Stop overloading JAL instr.
         begin 
             nextRegisters.JALOL = 0;
         end
@@ -647,6 +651,6 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     assign interrupt_ctl_ttu_if.load_wmask = registers.WMASK[`NUM_WARPS-1:0];
 
     // To execute stage for overloading jump and link instruction
-    assign execute_hw_itr_if.overload_JAL = registers.JALOL[0]; // option to overload JAL instruction to change link register commit.
-    assign execute_hw_itr_if.retHandlerAddress = registers.RHA;        // overload it by setting link reg to this
+    assign execute_hw_itr_if[SIMT_CORE_ID].overload_JAL = registers.JALOL[0]; // option to overload JAL instruction to change link register commit.
+    assign execute_hw_itr_if[SIMT_CORE_ID].retHandlerAddress = registers.RHA;        // overload it by setting link reg to this
 endmodule

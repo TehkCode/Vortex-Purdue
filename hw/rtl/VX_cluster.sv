@@ -411,7 +411,7 @@ module VX_cluster import VX_gpu_pkg::*; #(
             .hw_itr_ctrl_if (per_socket_csr_bus_if[i]),
             
             .interrupt_ctl_ttu_if (interrupt_ctl_ttu_if),
-            .execute_hw_itr_if    (execute_hw_itr_if),
+            .execute_hw_itr_if    (per_socket_execute_hw_itr_if[i]),
 
         `ifdef EXT_TEX_ENABLE
         `ifdef PERF_ENABLE
@@ -454,7 +454,7 @@ module VX_cluster import VX_gpu_pkg::*; #(
     //***************************************
     `RESET_RELAY (interrupt_ctl_reset, reset);
     VX_interrupt_ctl_ttu_if interrupt_ctl_ttu_if ();
-    VX_execute_hw_itr_if    execute_hw_itr_if    ();
+    VX_execute_hw_itr_if    per_socket_execute_hw_itr_if[2]();
 
     VX_interrupt_ctl interrupt_controller
     (
@@ -463,7 +463,7 @@ module VX_cluster import VX_gpu_pkg::*; #(
         .interrupt_ctl_ttu_if (interrupt_ctl_ttu_if),
         .simt_bus_if          (per_socket_csr_bus_if[0]),
         .scalar_bus_if        (per_socket_csr_bus_if[1]),
-        .execute_hw_itr_if    (execute_hw_itr_if)
+        .execute_hw_itr_if    (per_socket_execute_hw_itr_if)
     );
 
 
