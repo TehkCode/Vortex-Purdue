@@ -134,6 +134,11 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
                 simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.SSP}} : '0;
                 nextRegisters.SSP = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.SSP;
             end
+            `VX_HW_ITR_RAVW0: 
+            begin 
+                simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.RAVW0}} : '0;
+                nextRegisters.RAVW0 = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.RAVW0;
+            end
             `VX_HW_ITR_R1: 
             begin 
                 simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.R[0]}} : '0;
@@ -361,6 +366,11 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
                 scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.SSP}} : '0;
                 nextRegisters.SSP = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.SSP;
             end
+            `VX_HW_ITR_RAVW0: 
+            begin 
+                scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.RAVW0}} : '0;
+                nextRegisters.RAVW0 = (scalar_bus_if.write_enable) ? scalar_bus_if.write_data[whichScalarThrd] : registers.RAVW0;
+            end
             `VX_HW_ITR_R1: 
             begin 
                 scalar_bus_if.read_data = (scalar_bus_if.read_enable) ? {4{registers.R[0]}} : '0;
@@ -569,11 +579,15 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         endcase
 
         // Responses from execute unit 
-        if(execute_hw_itr_if.commitSIMTSchedulerRetPC)
+        if(execute_hw_itr_if.commitSIMTSchedulerRetPCw0) // Save warp0's true return address for return to SIMT kernel scheduler later
         begin 
-            nextRegisters.RAV = execute_hw_itr_if.SIMTSchedulerRetPC;
+            nextRegisters.RAVW0 = execute_hw_itr_if.SIMTSchedulerRetPCw0;
         end
-        if(execute_hw_itr_if.allHit) // All warps have seen their JALRs before calling kernel
+        if(execute_hw_itr_if.commitSIMTSchedulerRetPC) // Save other warps true return addresses for return to SIMT kernel scheduler later
+        begin 
+            nextRegisters.RAV   = execute_hw_itr_if.SIMTSchedulerRetPC;
+        end
+        if(execute_hw_itr_if.allHit) // All warps have seen their JALs and are in the kernel. Stop overloading JAL instr.
         begin 
             nextRegisters.JALOL = 0;
         end
@@ -633,7 +647,6 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     assign interrupt_ctl_ttu_if.load_wmask = registers.WMASK[`NUM_WARPS-1:0];
 
     // To execute stage for overloading jump and link instruction
-    // assign execute_hw_itr_if.overload_JAL = registers.JALOL[0]; // please overload the next jump and link
-    assign execute_hw_itr_if.overload_JAL = 0;
+    assign execute_hw_itr_if.overload_JAL = registers.JALOL[0]; // option to overload JAL instruction to change link register commit.
     assign execute_hw_itr_if.retHandlerAddress = registers.RHA;        // overload it by setting link reg to this
 endmodule

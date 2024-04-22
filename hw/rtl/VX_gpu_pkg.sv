@@ -79,6 +79,7 @@ package VX_gpu_pkg;
         logic [31:0] RHA;      // return handler address for returning to either SIMT or scalar kernel scheduler
         logic [31:0] ACCEND;   // SIMT core is done, tell Scalar core to stop fishing for threads
         logic [31:0] RAV;      // Return address for jumping back to SIMT Kernel Scheduler after kernel is done
+        logic [31:0] RAVW0;     // Return address for warp 0 is special
         logic [31:0] RAS;      // Return address for jumping back to Scalar Kernel Scheduler after kernel is done
         logic [31:0] SSP;      // Stack pointer of Scalar Core kernel scheduler. Save this before pulling a thread from SIMT.
         logic [31:0] TMASK;    // not CSR reg, just normal reg held by FSM
@@ -351,7 +352,7 @@ package VX_gpu_pkg;
     );
         logic flag;
         flag = 0;
-        for (int i = 0;i<`NUM_WARPS;i++) begin
+        for (int i = 1;i<`NUM_WARPS;i++) begin // dont bother with warp0
             if (wmask[i] & ~flag) begin
                 flag = 1;
                 wmask_to_wid = `NW_WIDTH'(i);
