@@ -13,13 +13,13 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     // I/O
 
     // controls
-    VX_interrupt_ctl_if.hw_int    interrupt_ctl_if,
+    VX_interrupt_ctl_ttu_if.master    interrupt_ctl_ttu_if,
     // read/write bus
     VX_sfu_csr_if.slave           simt_bus_if, 
     VX_sfu_csr_if.slave           scalar_bus_if       
 );   
     
-    hwint_data_t nextRegisters, registers; 
+    hw_int_data_t nextRegisters, registers; 
     hw_int_state_t nextState, currState; 
 
     logic [11:0] simtAddr;        // 12 bit csr address
@@ -45,7 +45,6 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     assign scalarAddr = (scalar_bus_if.write_enable) ? scalar_bus_if.write_addr : scalar_bus_if.read_addr;
     always @(*)
     begin 
-        interrupt_ctl_if.controls   = '0;
         whichSimtThrd               = 2'b00; // default to thread 0
         whichScalarThrd             = 2'b00; // default to thread 0
         nextRegisters = registers;
@@ -465,38 +464,42 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         casez(currState)
         IRQC_IDLE: 
         begin 
-            if(registers.S2V == 32'd1) 
-                nextRegisters.ERR = 0; // clear error 
+            if(registers.S2V == 32'd0) // scalar has acknowledged error
+            begin 
+                nextRegisters.V2S = 0; 
+                nextRegisters.ERR = 0; 
+            end
         end
         IRQC_WAIT: 
         begin 
-            interrupt_ctl_if.controls.maskActWarp = 1; 
-            interrupt_ctl_if.controls.hwInt       = 1; // let vecCore know hw interrupt is happening
-            if(interrupt_ctl_if.err)
+            if(interrupt_ctl_ttu_if.pipeline_drained & ~interrupt_ctl_ttu_if.thread_found) // bad thread req
             begin 
-                nextRegisters.ERR = 1; 
-                nextRegisters.S2V   = 0; // ack failed interrupt req from scalar
+                nextRegisters.ERR = 1;
+                nextRegisters.V2S = 1;
+            end
+            else if (interrupt_ctl_ttu_if.pipeline_drained)
+            begin 
+                nextRegisters.TMASK = 32'(interrupt_ctl_ttu_if.current_thread_mask) ;
+                nextRegisters.WMASK = 32'(interrupt_ctl_ttu_if.current_active_warps); 
+                nextRegisters.IPC   = 32'(interrupt_ctl_ttu_if.current_PC);
             end
         end
         IRQC_PC_SWAP: 
-        begin 
-            nextRegisters.IPC                     = interrupt_ctl_if.PC; // save thread's interrupted PC
-            interrupt_ctl_if.controls.hwInt       = 1; 
-            interrupt_ctl_if.controls.maskThreads = 1;
-            interrupt_ctl_if.controls.swapPC      = 1; // force simt core's PC to take IRQ
+        begin
+            // DO NOTHING
         end
         IRQC_WAIT_ISR: 
         begin 
-            interrupt_ctl_if.controls.hwInt       = 1; 
-            interrupt_ctl_if.controls.maskThreads = 1;
+            // DO NOTHING
         end
         IRQC_REVERT_WARP: 
         begin
-            // Let RTI instruction do its thing..?
-            // mask off warp again 
-            // place IPC into warp's PC 
-            // mask off the thread we just moved (TID)
-            // unmask the other three threads and let them continue
+            nextRegisters.V2S = 1; // Let scalar core load thread.
+            if(registers.S2V == 0) // scalar done loading thread.  
+            begin
+                nextRegisters.V2S = 0; 
+                nextRegisters.ERR = 0; 
+            end
         end
         default: 
         begin 
@@ -522,10 +525,10 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         end
         IRQC_WAIT: 
         begin 
-            if(interrupt_ctl_if.err)
-                nextState = IRQC_IDLE; 
-            else if(interrupt_ctl_if.pipe_clean)
-                nextState = IRQC_WAIT;
+            if(interrupt_ctl_ttu_if.pipeline_drained & interrupt_ctl_ttu_if.thread_found)
+                nextState = IRQC_PC_SWAP; 
+            else if(interrupt_ctl_ttu_if.pipeline_drained)
+                nextState = IRQC_IDLE;
         end
         IRQC_PC_SWAP: 
         begin 
@@ -533,16 +536,27 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         end
         IRQC_WAIT_ISR: 
         begin 
-            if(registers.S2V == 32'd0)
+            if(interrupt_ctl_ttu_if.ISR_done)
                 nextState = IRQC_REVERT_WARP;
         end
         IRQC_REVERT_WARP: 
         begin
-            nextState = IRQC_IDLE; 
+            if(registers.S2V == 0) // scalar done loading thread
+            begin 
+                nextState = IRQC_IDLE; 
+            end
         end
         default: 
         begin 
         end
         endcase
     end
+
+    // To thread transfer unit
+    assign interrupt_ctl_ttu_if.state = currState;
+    assign interrupt_ctl_ttu_if.wid = registers.TID[`NT_WIDTH+`NW_WIDTH-1 : `NT_WIDTH] ;
+    assign interrupt_ctl_ttu_if.tid = registers.TID[`NT_WIDTH-1 : 0] ;
+    assign interrupt_ctl_ttu_if.load_tmask = registers.TMASK[`NUM_THREADS-1:0];
+    assign interrupt_ctl_ttu_if.load_PC = (currState == IRQC_PC_SWAP) ? registers.IRQ : registers.IPC;
+    assign interrupt_ctl_ttu_if.load_wmask = registers.WMASK[`NUM_WARPS-1:0];
 endmodule
