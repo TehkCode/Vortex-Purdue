@@ -26,6 +26,8 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     
     hw_int_data_t nextRegisters, registers; 
     hw_int_state_t nextState, currState; 
+    logic [5:0]    counter, nextCounter; 
+    logic [17:0]   timer,   nextTimer;
 
     logic [11:0] simtAddr;        // 12 bit csr address
     logic [11:0] scalarAddr;      // 12 bit csr address
@@ -38,11 +40,15 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         begin 
             registers                   <= '0;
             currState                   <= IRQC_IDLE;
+            counter                     <= '0;
+            timer                       <= '0;
         end
         else 
         begin 
             registers                  <= nextRegisters;
             currState                  <= nextState;
+            counter                    <= nextCounter;
+            timer                      <= nextTimer;
         end
     end
 
@@ -53,6 +59,9 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         whichSimtThrd               = 2'b00; // default to thread 0
         whichScalarThrd             = 2'b00; // default to thread 0
         nextRegisters = registers;
+        nextCounter   = counter;
+        nextTimer     = timer + 1;
+
 
         if(simt_bus_if.write_tmask[0])
             whichSimtThrd = 0; 
@@ -611,19 +620,31 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         begin 
             nextRegisters.RAV   = execute_hw_itr_if[SIMT_CORE_ID].SIMTSchedulerRetPC;
         end
-        if(execute_hw_itr_if[SIMT_CORE_ID].allHit) // All warps have seen their JALs and are in the kernel. Stop overloading JAL instr.
+        if(execute_hw_itr_if[SIMT_CORE_ID].allHit) // All warps have seen their JALs and are in the kernel. Stop overloading JAL instr. Also start counting to 64 to turn on accel
         begin 
             nextRegisters.JALOL = 0;
+            nextCounter = counter + 1; // initiate the counter
         end
-        // nextRegisters.ACC = 1; // let accel be high
-        // nextRegisters.S2V = 1; // start transaction
-        // nextRegisters.TID = 5;
-        // if((registers.V2S == 32'd1 && registers.ERR == 32'd1))
-        //     nextRegisters.S2V = 0;
-        // if(registers.S2V == 32'd0)
-        //     nextRegisters.S2V = 1;
 
+        if(execute_hw_itr_if[SCALAR_CORE_ID].writeWspawnPCplus4)
+        begin 
+            nextRegisters.RAS = execute_hw_itr_if[SCALAR_CORE_ID].WspawnPCplus4;
+        end
+
+        if(counter != 0)
+        begin 
+            nextCounter = counter + 1;
+        end
+        if(counter == 63) // start accelerating now
+        begin 
+            nextRegisters.ACC = 1;
+            nextCounter = 0; // stop the counter
+        end
     end
+    `RUNTIME_ASSERT((!(counter == 63)), ("***caught you mf************"))
+    `RUNTIME_ASSERT((!(&timer)), ("***caught you mf timer************"))
+
+
 
     //**************************************************************************
     // Interrupt Controller Next State Logic
