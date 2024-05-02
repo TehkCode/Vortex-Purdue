@@ -69,6 +69,11 @@
 #define VERILATOR_RESET_VALUE 2
 #endif
 
+#define ENABLE_SIMULATION_TIMEOUT 0
+#define TIMEOUT_K_CYCLES 300           // timeout cycles in thousands
+
+#define TIMEOUT_VALUE (2*TIMEOUT_K_CYCLES*1000)
+
 #if (XLEN == 32)
 typedef uint32_t Word;
 #elif (XLEN == 64)
@@ -205,6 +210,13 @@ public:
         break;  
       }
       this->tick();
+
+      #if (ENABLE_SIMULATION_TIMEOUT)
+        if (timestamp >= TIMEOUT_VALUE) {
+          exitcode = 10;
+          break;
+        }
+      #endif
     }
     
     // reset device
