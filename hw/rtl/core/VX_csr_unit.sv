@@ -178,7 +178,7 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
         hw_itr_ctrl_if.write_wid    = execute_if.data.wid;
         hw_itr_ctrl_if.write_tmask  = execute_if.data.tmask;
         hw_itr_ctrl_if.write_addr   = csr_addr;
-        hw_itr_ctrl_if.write_data   = rs1_data;
+        hw_itr_ctrl_if.write_data   = {NUM_LANES{csr_req_data}};
     end
 
     VX_csr_data #(
