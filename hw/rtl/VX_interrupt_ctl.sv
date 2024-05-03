@@ -700,7 +700,7 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     assign interrupt_ctl_ttu_if.wid = registers.TID[`NT_WIDTH+`NW_WIDTH-1 : `NT_WIDTH];
     assign interrupt_ctl_ttu_if.tid = registers.TID[`NT_WIDTH-1 : 0];
     assign interrupt_ctl_ttu_if.load_tmask = registers.TMASK[`NUM_THREADS-1:0];
-    assign interrupt_ctl_ttu_if.load_PC = (currState == IRQC_PC_SWAP) ? registers.IRQ : registers.IPC;
+    assign interrupt_ctl_ttu_if.load_PC = (currState == IRQC_REVERT_WARP) ? registers.IPC : registers.IRQ;
     assign interrupt_ctl_ttu_if.load_wmask = registers.WMASK[`NUM_WARPS-1:0];
 
     // To execute stage for overloading jump and link instruction

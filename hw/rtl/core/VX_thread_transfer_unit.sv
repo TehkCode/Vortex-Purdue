@@ -75,7 +75,7 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 		jump_valid = '0;
 		jump_PC    = 'x;
 
-	    for (integer i = 0; i < WARP_CNT_WIDTH; ++i) begin
+	    for (integer i = 0; i < WARP_CNT; ++i) begin
             if (branch_valid[i] && branch_taken[i]) begin
 				if ((branch_wid[i] == interrupt_ctl_ttu_if.wid) && (branch_dest[i] == interrupt_ctl_ttu_if.load_PC)) begin
             	    jump_PC = branch_dest[i];
@@ -191,7 +191,7 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 			end	
 
 			IRQC_REVERT_WARP: begin
-				pause_scheduling = '0;
+				pause_scheduling = '1; // pause scheduling as we are swapping warp PC
 				load_PC    = interrupt_ctl_ttu_if.load_PC;
 
 				// load back old thread mask except the thread that was
