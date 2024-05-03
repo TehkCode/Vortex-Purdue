@@ -74,8 +74,14 @@ static void __attribute__((noinline)) spawn_tasks_all_stub()
     // vx_printf("VXSpawn: cid=%d, wid=%d, tid=%d, wK=%d, tK=%d, offset=%d, taskids=%d-%d, fWindex=%d, warp_gid=%d, thread_gid=%d\n",cid, wid, tid, wK, tK, offset, (offset), (offset+tK-1),p_wspawn_args->fWindex,warp_gid,thread_gid);
     vx_printf("VXSpawn: cid=%d, wid=%d, tid=%d, fWiWndex=%d, offset= %d, warp_gid=%d, thread_gid=%d\n", cid, wid, tid, p_wspawn_args->fWindex, p_wspawn_args->offset, warp_gid, thread_gid);
     
+    // Set the nth bit to 1 in JALOL reg. The n is the wid of the warp.
     csr_write(VXX_HW_ITR_JALOL, 1);
     callback(thread_gid, arg);
+
+    // WORKAROUND
+    // this nop is in place to avoid compiler optimization where it directly jumps 2 functions to return back
+    // the hardware overloading of JAL fails that time.
+    asm volatile("addi x0, x0, 0"); 
 }
 
 static void __attribute__((noinline)) spawn_tasks_rem_stub()
@@ -118,11 +124,11 @@ void return_handler()
     { // simt core, get wid.
         if (vx_warp_id() == 0)
         {
-            asm volatile("csrr x1, %0" : : "i"(VXX_HW_ITR_RAVW0) :);
+            asm volatile("csrr x1, %0" : : "i"(VXX_HW_ITR_RAVW0) :); //return back to SIMT kernel scheduler
         }
         else
         {
-            asm volatile("csrr x1, %0" : : "i"(VXX_HW_ITR_RAV) :);
+            vx_tmc_zero(); // kill self. kill the current warp
         }
     }
     else if (core_id == 1)
@@ -136,7 +142,8 @@ void return_handler()
 
 void interrupt_simt_handler() 
 {
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R1), "r"(1));
+    asm volatile("isr_start:\n\t"
+                "csrw %0, %1" :: "i"(VXX_HW_ITR_R1), "r"(1));
     asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R2), "r"(2));
     asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R3), "r"(3));
     asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R4), "r"(4));
@@ -167,6 +174,7 @@ void interrupt_simt_handler()
     asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R29), "r"(29));
     asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R30), "r"(30));
     asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R31), "r"(31));
+    asm volatile("j isr_start");
 }
 
 
@@ -300,7 +308,7 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
 
     vx_printf("VXPSpawn: Priority thread scheduler on scalar core has begun");
 
-    int priority_threads[16] = {0, 3, 6, 8, 9, 10, 12, 1, 2, 4, 5, 7, 11, 13, 15, 14};
+    int priority_threads[15] = {3, 6, 8, 9, 10, 12, 1, 2, 4, 5, 7, 11, 13, 15, 14};
 
     volatile int accel = csr_read(VXX_HW_ITR_ACC);
     volatile int accel_end = csr_read(VXX_HW_ITR_ACCEND);
@@ -389,7 +397,7 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
 
         // vx spawn itself is as follows.
         asm volatile(".insn r %0, 1, 0, x0, %1, %2" ::"i"(RISCV_CUSTOM0), "r"("x0"), "r"("x0")); // this should result in a wspawn call to 1 warp, and pc 0.
-        vx_wspawn_wait();                                                                        // we really have to pray that this does not touch the stack!
+        //vx_wspawn_wait();                                                                        // we really have to pray that this does not touch the stack!
 
         asm volatile("csrr x2, %0" : : "i"(VXX_HW_ITR_SSP) :); // restore the stack ptr.
         accel_end = csr_read(VXX_HW_ITR_ACCEND);
