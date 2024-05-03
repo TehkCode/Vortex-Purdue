@@ -636,10 +636,14 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         begin 
             nextCounter = counter + 1;
         end
-        if(&execute_hw_itr_if[SIMT_CORE_ID].warp_hits[`ISSUE_WIDTH-1:0]) // start accelerating now
-        begin 
+        if(&execute_hw_itr_if[SIMT_CORE_ID].warp_hits[`ISSUE_WIDTH-1:0] & (|registers.JALOL))
+        begin // set ACC to 1 only aftr warps jump into kernel.
             nextRegisters.ACC = 1;
             nextCounter = counter + 1; // initiate the counter
+        end
+
+        if (execute_hw_itr_if[SIMT_CORE_ID].writeRAS) begin
+            nextRegisters.RAS = execute_hw_itr_if[SIMT_CORE_ID].RAS;
         end
     end
     // RUNTIME_ASSERT((!(counter == 63)), ("***caught you mf************"))
@@ -702,4 +706,6 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     // To execute stage for overloading jump and link instruction
     assign execute_hw_itr_if[SIMT_CORE_ID].overload_JAL = registers.JALOL; // option to overload JAL instruction to change link register commit.
     assign execute_hw_itr_if[SIMT_CORE_ID].retHandlerAddress = registers.RHA;        // overload it by setting link reg to this
+
+    assign execute_hw_itr_if[SCALAR_CORE_ID].IPC = registers.IPC;
 endmodule

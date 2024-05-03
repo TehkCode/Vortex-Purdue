@@ -331,7 +331,7 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
     int idx = 0;
 
     accel_end = csr_read(VXX_HW_ITR_ACCEND);
-    while (!accel_end && idx < 16)
+    while (!accel_end && idx < 15)
     {
         //================================= Request a Thread from the Scalar Core ======================================
         csr_write(VXX_HW_ITR_TID, priority_threads[idx]);
@@ -391,14 +391,20 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
         // Then we have to load in the new stack pointer.
         // Don't need to throw this on the clobber list.
         // we might need to store this into a safe space first on our own.
-        asm volatile("csrw %0, %1" ::"i"(VXX_HW_ITR_SSP), "r"(2));
+        asm volatile("csrw %0, x2" : : "i"(VXX_HW_ITR_SSP));
         asm volatile("csrr x2, %0" : : "i"(VXX_HW_ITR_R2) :); // dont mark this reg as a clobber.
         asm volatile("csrw %0, %1" ::"i"(VXX_HW_ITR_S2V), "i"(0));
 
-        // vx spawn itself is as follows.
-        asm volatile(".insn r %0, 1, 0, x0, %1, %2" ::"i"(RISCV_CUSTOM0), "r"("x0"), "r"("x0")); // this should result in a wspawn call to 1 warp, and pc 0.
-        //vx_wspawn_wait();                                                                        // we really have to pray that this does not touch the stack!
+        // csr_write(VXX_HW_ITR_RAS, scheduler_resume_point);
+        // csr_write(VXX_HW_ITR_J_TO_KERNEL, 1);
 
+        // jump to interrupted PC of the kernel pulled from SIMT
+        // jr 0 is overloaded special instruction that does not behave normally
+        asm volatile("jr x0");
+        // asm volatile(".insn r %0, 1, 0, x0, %1, %2" ::"i"(RISCV_CUSTOM0), "r"("x0"), "r"("x0"));
+                                                                          
+scheduler_resume_point: // this PC is stored in VXX_HW_ITR_RAS
+        // csr_write(VXX_HW_ITR_J_TO_KERNEL, 0);
         asm volatile("csrr x2, %0" : : "i"(VXX_HW_ITR_SSP) :); // restore the stack ptr.
         accel_end = csr_read(VXX_HW_ITR_ACCEND);
     }

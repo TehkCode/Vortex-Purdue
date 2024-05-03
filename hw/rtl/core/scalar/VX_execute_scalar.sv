@@ -98,6 +98,8 @@ module VX_execute_scalar import VX_gpu_pkg::*; #(
     `RESET_RELAY (alu_reset, reset);
     `RESET_RELAY (lsu_reset, reset);
     `RESET_RELAY (sfu_reset, reset);
+
+    VX_branch_ctl_if #(.WARP_CNT(WARP_CNT)) branch_ctl_tmp_if[NUM_ALU_BLOCKS]();
     
     VX_alu_unit_scalar #(
         .CORE_ID (CORE_ID),
@@ -108,7 +110,7 @@ module VX_execute_scalar import VX_gpu_pkg::*; #(
         .clk            (clk),
         .reset          (alu_reset),
         .dispatch_if    (alu_dispatch_if),
-        .branch_ctl_if  (branch_ctl_if),
+        .branch_ctl_if  (branch_ctl_tmp_if),
         .commit_if      (alu_commit_if)
     );
 
@@ -226,6 +228,20 @@ module VX_execute_scalar import VX_gpu_pkg::*; #(
 
     assign execute_hw_itr_if.WspawnPCplus4 = sfu_commit_if[0].data.PC + 4;
     assign execute_hw_itr_if.writeWspawnPCplus4 = ((time_elapsed_since_wspawn == 2'd2) && sfu_commit_if[0].valid && sfu_commit_if[0].ready);
+
+    // Overload Jump to 0
+    logic overload_JUMP[NUM_ALU_BLOCKS-1:0];
+
+    for (genvar i = 0; i < ISSUE_CNT; ++i) begin    
+        assign overload_JUMP[i] = branch_ctl_tmp_if[i].valid & branch_ctl_tmp_if[i].taken & (branch_ctl_tmp_if[i].dest == 0);
+        assign branch_ctl_if[i].valid = branch_ctl_tmp_if[i].valid;
+        assign branch_ctl_if[i].taken = branch_ctl_tmp_if[i].taken;
+        assign branch_ctl_if[i].wid = branch_ctl_tmp_if[i].wid;
+        assign branch_ctl_if[i].dest = overload_JUMP[i] ? execute_hw_itr_if.IPC : branch_ctl_tmp_if[i].dest;
+    end
+
+    assign execute_hw_itr_if.RAS      = alu_commit_if[0].data.PC + 4;
+    assign execute_hw_itr_if.writeRAS = overload_JUMP[0];
 
 
     // flush operation

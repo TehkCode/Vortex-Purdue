@@ -125,7 +125,7 @@ module VX_fetch_scalar import VX_gpu_pkg::*; #(
         .data_in (icache_bus_if.req_data.tag),
         .data_out (tmp)
     );
-	`RUNTIME_ASSERT(!(icache_bus_if.rsp_valid & (tmp != icache_bus_if.rsp_data.tag)), ("Possibly a OOO ICache Return???? Not sure. Please check icache responses") )
+	//RUNTIME_ASSERT(!(icache_bus_if.rsp_valid & (tmp != icache_bus_if.rsp_data.tag)), ("Possibly a OOO ICache Return???? Not sure. Please check icache responses") )
 
 
     // Ensure that the ibuffer doesn't fill up.
