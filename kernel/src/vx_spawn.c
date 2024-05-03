@@ -143,37 +143,37 @@ void return_handler()
 void interrupt_simt_handler() 
 {
     asm volatile("isr_start:\n\t"
-                "csrw %0, %1" :: "i"(VXX_HW_ITR_R1), "r"(1));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R2), "r"(2));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R3), "r"(3));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R4), "r"(4));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R5), "r"(5));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R6), "r"(6));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R7), "r"(7));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R8), "r"(8));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R9), "r"(9));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R10), "r"(10));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R11), "r"(11));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R12), "r"(12));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R13), "r"(13));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R14), "r"(14));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R15), "r"(15));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R16), "r"(16));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R17), "r"(17));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R18), "r"(18));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R19), "r"(19));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R20), "r"(20));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R21), "r"(21));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R22), "r"(22));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R23), "r"(23));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R24), "r"(24));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R25), "r"(25));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R26), "r"(26));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R27), "r"(27));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R28), "r"(28));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R29), "r"(29));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R30), "r"(30));
-    asm volatile("csrw %0, %1" :: "i"(VXX_HW_ITR_R31), "r"(31));
+                 "csrw %0, x1" :: "i"(VXX_HW_ITR_R1));
+    asm volatile("csrw %0, x2" :: "i"(VXX_HW_ITR_R2));
+    asm volatile("csrw %0, x3" :: "i"(VXX_HW_ITR_R3));
+    asm volatile("csrw %0, x4" :: "i"(VXX_HW_ITR_R4));
+    asm volatile("csrw %0, x5" :: "i"(VXX_HW_ITR_R5));
+    asm volatile("csrw %0, x6" :: "i"(VXX_HW_ITR_R6));
+    asm volatile("csrw %0, x7" :: "i"(VXX_HW_ITR_R7));
+    asm volatile("csrw %0, x8" :: "i"(VXX_HW_ITR_R8));
+    asm volatile("csrw %0, x9" :: "i"(VXX_HW_ITR_R9));
+    asm volatile("csrw %0, x10" :: "i"(VXX_HW_ITR_R10));
+    asm volatile("csrw %0, x11" :: "i"(VXX_HW_ITR_R11));
+    asm volatile("csrw %0, x12" :: "i"(VXX_HW_ITR_R12));
+    asm volatile("csrw %0, x13" :: "i"(VXX_HW_ITR_R13));
+    asm volatile("csrw %0, x14" :: "i"(VXX_HW_ITR_R14));
+    asm volatile("csrw %0, x15" :: "i"(VXX_HW_ITR_R15));
+    asm volatile("csrw %0, x16" :: "i"(VXX_HW_ITR_R16));
+    asm volatile("csrw %0, x17" :: "i"(VXX_HW_ITR_R17));
+    asm volatile("csrw %0, x18" :: "i"(VXX_HW_ITR_R18));
+    asm volatile("csrw %0, x19" :: "i"(VXX_HW_ITR_R19));
+    asm volatile("csrw %0, x20" :: "i"(VXX_HW_ITR_R20));
+    asm volatile("csrw %0, x21" :: "i"(VXX_HW_ITR_R21));
+    asm volatile("csrw %0, x22" :: "i"(VXX_HW_ITR_R22));
+    asm volatile("csrw %0, x23" :: "i"(VXX_HW_ITR_R23));
+    asm volatile("csrw %0, x24" :: "i"(VXX_HW_ITR_R24));
+    asm volatile("csrw %0, x25" :: "i"(VXX_HW_ITR_R25));
+    asm volatile("csrw %0, x26" :: "i"(VXX_HW_ITR_R26));
+    asm volatile("csrw %0, x27" :: "i"(VXX_HW_ITR_R27));
+    asm volatile("csrw %0, x28" :: "i"(VXX_HW_ITR_R28));
+    asm volatile("csrw %0, x29" :: "i"(VXX_HW_ITR_R29));
+    asm volatile("csrw %0, x30" :: "i"(VXX_HW_ITR_R30));
+    asm volatile("csrw %0, x31" :: "i"(VXX_HW_ITR_R31));
     asm volatile("j isr_start");
 }
 
@@ -305,6 +305,15 @@ void vx_spawn_tasks(int num_tasks, vx_spawn_tasks_cb callback, void *arg)
 
 void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_tasks_cb callback, void *arg)
 {
+    int NC_total = vx_num_cores();
+    // current core id
+    int core_id = vx_core_id();
+    // assign non-priority tasks only to the first half cores
+    if (core_id < (NC_total / 2)) /// 2
+    {
+        vx_printf("Vx_spawn_tasks core_id too low, so returning core_id:%d, total cores=%d\n", core_id, NC_total);
+        return;
+    }
 
     vx_printf("VXPSpawn: Priority thread scheduler on scalar core has begun");
 

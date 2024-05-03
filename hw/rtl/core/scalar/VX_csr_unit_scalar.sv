@@ -185,7 +185,7 @@ module VX_csr_unit_scalar import VX_gpu_pkg::*; #(
         hw_itr_ctrl_if.write_wid    = `NW_WIDTH'(execute_if.data.wid);
         hw_itr_ctrl_if.write_tmask  = {3'b000, execute_if.data.tmask};
         hw_itr_ctrl_if.write_addr   = csr_addr;
-        hw_itr_ctrl_if.write_data   = {96'd0, rs1_data};
+        hw_itr_ctrl_if.write_data   = {96'd0, csr_req_data};
     end
 
     VX_csr_data #(
