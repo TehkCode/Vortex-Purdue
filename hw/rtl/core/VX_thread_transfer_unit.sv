@@ -62,12 +62,35 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 	output [THREAD_CNT-1:0] load_tmask,
 	output [WARP_CNT-1:0] load_wmask,
 	output [WARP_CNT_WIDTH-1:0] load_wid,
-	output swap_schedule_data
+	output swap_schedule_data,
+	output reg [WARP_CNT-1:0][THREAD_CNT-1:0] ttu_tid_mask 
 );
 
 	reg pause_scheduling;
 	reg jump_valid;
 	reg [`XLEN-1:0] jump_PC;
+	reg [WARP_CNT-1:0][THREAD_CNT-1:0] pulled_thread_mask;
+
+	// store pulled threads mask
+	always_ff @(posedge clk) begin : blockName
+        if(reset) begin
+            ttu_tid_mask <= '1;
+        end
+        else begin
+            ttu_tid_mask <= ~pulled_thread_mask ;
+        end
+    end
+
+	always_comb begin
+		pulled_thread_mask = ~ttu_tid_mask;
+
+		if (interrupt_ctl_ttu_if.state == IRQC_PC_SWAP) begin
+			for (int i=0; i<WARP_CNT; i++) begin
+				if (load_wmask[i])
+					pulled_thread_mask[i] = pulled_thread_mask[i] | load_tmask;
+			end
+		end
+	end
 
 	// detect a jump to the first instruction of the ISR
 	always@(*) begin
@@ -158,7 +181,7 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				pause_scheduling = '0;
 				load_PC = 'x; // set to don't care as it helps in synthesis and PD stages
 				load_tmask = 'x;
-				load_wmask = 'x;
+				load_wmask = '0;
 				load_wid   = 'x;
 				swap_schedule_data   = '0;
 			end
@@ -167,7 +190,7 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				pause_scheduling = ~(|barrier_stalls) & ipdom_stack_empty[interrupt_ctl_ttu_if.wid];
 				load_PC = 'x;
 				load_tmask = 'x;
-				load_wmask = 'x;
+				load_wmask = '0;
 				load_wid   = 'x;
 				swap_schedule_data   = '0;
 			end
@@ -185,7 +208,7 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				pause_scheduling = '0;
 				load_PC    = 'x;
 				load_tmask = 'x; 
-				load_wmask = 'x;
+				load_wmask = '0;
 				load_wid   = 'x;
 				swap_schedule_data   = '0;
 			end	

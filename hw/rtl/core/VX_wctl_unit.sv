@@ -28,7 +28,10 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
     
     // Outputs
     VX_warp_ctl_if.master   warp_ctl_if,
-    VX_commit_if.master     commit_if
+    VX_commit_if.master     commit_if,
+    // the tid and the valid
+    input wire [`NUM_THREADS-1:0] permanent_mask
+
 );
     `UNUSED_PARAM (CORE_ID)
     localparam LANE_BITS  = `LOG2UP(NUM_LANES);
@@ -45,6 +48,8 @@ module VX_wctl_unit import VX_gpu_pkg::*; #(
     split_t     split, split_r;
     join_t      sjoin, sjoin_r;
     barrier_t   barrier, barrier_r;
+
+
 
     wire is_wspawn = (execute_if.data.op_type == `INST_SFU_WSPAWN);
     wire is_tmc    = (execute_if.data.op_type == `INST_SFU_TMC);
