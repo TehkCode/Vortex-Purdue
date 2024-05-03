@@ -51,22 +51,10 @@ module VX_schedule import VX_gpu_pkg::*; #(
     reg [WARP_CNT-1:0] stalled_warps, stalled_warps_n;  // set when branch/gpgpu instructions are issued
     
     reg [WARP_CNT-1:0][THREAD_CNT-1:0] thread_masks, thread_masks_n;
-    reg [WARP_CNT-1:0][THREAD_CNT-1:0] permanent_thread_masks, permanent_thread_masks_n;
-    logic [WARP_CNT-1:0][THREAD_CNT-1:0] ttu_tid_mask    ;
+    logic [WARP_CNT-1:0][THREAD_CNT-1:0] ttu_tid_mask ;
 
-    always_ff @(posedge clk) begin : blockName
-        if(reset) begin
-            permanent_mask <= '1;
-        end
-        else begin
-            permanent_mask <= permanent_thread_masks_n;
-        end
-    end
 
-    always_comb begin
-        permanent_thread_masks_n = permanent_mask & ttu_tid_mask; // some logic.        
-    end
-    
+
     reg [WARP_CNT-1:0][`XLEN-1:0] warp_pcs, warp_pcs_n;
 
     wire [WARP_CNT_WIDTH-1:0]    schedule_wid;
@@ -257,7 +245,7 @@ module VX_schedule import VX_gpu_pkg::*; #(
         end else begin
             active_warps   <= active_warps_n;
             stalled_warps  <= stalled_warps_n;
-            thread_masks   <= thread_masks_n & permanent_mask;
+            thread_masks   <= thread_masks_n & ttu_tid_mask;
             warp_pcs       <= warp_pcs_n;
             barrier_masks  <= barrier_masks_n;
             barrier_stalls <= barrier_stalls_n;

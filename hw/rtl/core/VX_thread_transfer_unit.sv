@@ -44,6 +44,8 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 ) (
 
 	// from scheduler
+	input clk,
+	input reset,
 	input wire no_pending_instr,
 	input wire [WARP_CNT-1:0] ipdom_stack_empty,
 	input wire [WARP_CNT-1:0] barrier_stalls,
