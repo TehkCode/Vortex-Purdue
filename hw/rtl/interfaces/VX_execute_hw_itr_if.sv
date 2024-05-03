@@ -6,10 +6,10 @@ interface VX_execute_hw_itr_if import VX_gpu_pkg::*; ();
     logic [`XLEN-1:0] SIMTSchedulerRetPCw0;
     logic [`XLEN-1:0] retHandlerAddress;
     logic [`XLEN-1:0] WspawnPCplus4;
-    logic overload_JAL;
+    logic [`XLEN-1:0] overload_JAL;
     logic commitSIMTSchedulerRetPC;
     logic commitSIMTSchedulerRetPCw0;
-    logic allHit;
+    logic [`ISSUE_WIDTH-1:0] warp_hits;
     logic writeWspawnPCplus4;
 
     modport master (
@@ -19,7 +19,7 @@ interface VX_execute_hw_itr_if import VX_gpu_pkg::*; ();
             input commitSIMTSchedulerRetPCw0,
             input SIMTSchedulerRetPC,
             input SIMTSchedulerRetPCw0,
-            input allHit,
+            input warp_hits,
             input writeWspawnPCplus4,
             input WspawnPCplus4
     );
@@ -31,7 +31,7 @@ interface VX_execute_hw_itr_if import VX_gpu_pkg::*; ();
             output commitSIMTSchedulerRetPCw0,
             output SIMTSchedulerRetPC,
             output SIMTSchedulerRetPCw0,
-            output allHit,
+            output warp_hits,
             output writeWspawnPCplus4,
             output WspawnPCplus4
     );

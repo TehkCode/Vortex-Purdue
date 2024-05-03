@@ -120,7 +120,9 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
             `VX_HW_ITR_JALOL: 
             begin 
                 simt_bus_if.read_data = (simt_bus_if.read_enable) ? {4{registers.JALOL}} : '0;
-                nextRegisters.JALOL = (simt_bus_if.write_enable) ? simt_bus_if.write_data[whichSimtThrd] : registers.JALOL;
+                nextRegisters.JALOL = (simt_bus_if.write_enable) ? (registers.JALOL | (simt_bus_if.write_data[whichSimtThrd] << simt_bus_if.write_wid))
+                                                                    : registers.JALOL;
+                // set only the Nth bit at a time. N is the wid.
             end
             `VX_HW_ITR_RHA: 
             begin 
@@ -620,10 +622,9 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         begin 
             nextRegisters.RAV   = execute_hw_itr_if[SIMT_CORE_ID].SIMTSchedulerRetPC;
         end
-        if(execute_hw_itr_if[SIMT_CORE_ID].allHit) // All warps have seen their JALs and are in the kernel. Stop overloading JAL instr. Also start counting to 64 to turn on accel
+        if(|execute_hw_itr_if[SIMT_CORE_ID].warp_hits) // All warps have seen their JALs and are in the kernel. Stop overloading JAL instr. Also start counting to 64 to turn on accel
         begin 
-            nextRegisters.JALOL = 0;
-            nextCounter = counter + 1; // initiate the counter
+            nextRegisters.JALOL = (nextRegisters.JALOL & (~(32'(execute_hw_itr_if[SIMT_CORE_ID].warp_hits))) ); // deassert bit for only those warps which were hit
         end
 
         if(execute_hw_itr_if[SCALAR_CORE_ID].writeWspawnPCplus4)
@@ -635,14 +636,14 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
         begin 
             nextCounter = counter + 1;
         end
-        if(counter == 63) // start accelerating now
+        if(&execute_hw_itr_if[SIMT_CORE_ID].warp_hits[`ISSUE_WIDTH-1:0]) // start accelerating now
         begin 
             nextRegisters.ACC = 1;
-            nextCounter = 0; // stop the counter
+            nextCounter = counter + 1; // initiate the counter
         end
     end
-    `RUNTIME_ASSERT((!(counter == 63)), ("***caught you mf************"))
-    `RUNTIME_ASSERT((!(&timer)), ("***caught you mf timer************"))
+    // RUNTIME_ASSERT((!(counter == 63)), ("***caught you mf************"))
+    // RUNTIME_ASSERT((!(&timer)), ("***caught you mf timer************"))
 
 
 
@@ -699,6 +700,6 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     assign interrupt_ctl_ttu_if.load_wmask = registers.WMASK[`NUM_WARPS-1:0];
 
     // To execute stage for overloading jump and link instruction
-    assign execute_hw_itr_if[SIMT_CORE_ID].overload_JAL = registers.JALOL[0]; // option to overload JAL instruction to change link register commit.
+    assign execute_hw_itr_if[SIMT_CORE_ID].overload_JAL = registers.JALOL; // option to overload JAL instruction to change link register commit.
     assign execute_hw_itr_if[SIMT_CORE_ID].retHandlerAddress = registers.RHA;        // overload it by setting link reg to this
 endmodule

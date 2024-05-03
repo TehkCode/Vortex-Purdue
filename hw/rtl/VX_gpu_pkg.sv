@@ -354,6 +354,7 @@ package VX_gpu_pkg;
     );
         logic flag;
         flag = 0;
+        wmask_to_wid = 0;
         for (int i = 1;i<`NUM_WARPS;i++) begin // dont bother with warp0
             if (wmask[i] & ~flag) begin
                 flag = 1;

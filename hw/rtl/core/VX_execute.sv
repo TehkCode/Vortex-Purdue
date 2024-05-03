@@ -218,13 +218,13 @@ module VX_execute import VX_gpu_pkg::*; #(
 
     // If you are overloading JAL and a JAL comes, mark the warp
     for(genvar i = 0; i < NUM_ALU_BLOCKS; i = i + 1) begin 
-        assign warp_hits_n[i] = (execute_hw_itr_if.overload_JAL & branch_ctl_if[i].valid);
+        assign warp_hits_n[i] = execute_hw_itr_if.overload_JAL[i] & branch_ctl_if[i].valid & alu_commit_tmp_if[i].valid;
     end
     // double check this is the first time a warp has overloaded JAL before writing the return handler address (RHA register) into the commit stage
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin
-        assign last_jal_before_kernel[i]      = execute_hw_itr_if.overload_JAL & branch_ctl_if[i].valid & (branch_ctl_if[i].wid == WARP_CNT_WIDTH'(i)) & !warp_hits[i] & alu_commit_tmp_if[i].valid;
+        // assign last_jal_before_kernel[i]      = execute_hw_itr_if.overload_JAL[i] & branch_ctl_if[i].valid & (branch_ctl_if[i].wid == WARP_CNT_WIDTH'(i)) & !warp_hits[i] & alu_commit_tmp_if[i].valid;
         for(genvar j = 0; j < THREAD_CNT; ++j) begin 
-            assign alu_commit_if[i].data.data[j] = last_jal_before_kernel[i] ? execute_hw_itr_if.retHandlerAddress : alu_commit_tmp_if[i].data.data[j]; // overload link register commit with RHA
+            assign alu_commit_if[i].data.data[j] = warp_hits_n[i] ? execute_hw_itr_if.retHandlerAddress : alu_commit_tmp_if[i].data.data[j]; // overload link register commit with RHA
         end
         assign alu_commit_if[i].data.uuid     = alu_commit_tmp_if[i].data.uuid;
         assign alu_commit_if[i].data.wid      = alu_commit_tmp_if[i].data.wid;
@@ -241,15 +241,15 @@ module VX_execute import VX_gpu_pkg::*; #(
     end
 
     // hit signals to tell VX_interrupt_ctl to save the actual return address in a CSR register (RAV and RAVW0)
-    assign execute_hw_itr_if.commitSIMTSchedulerRetPC = (warpNum != 0) ? last_jal_before_kernel[warpNum] : '0; // warpNum cannot be 0.
-    assign execute_hw_itr_if.commitSIMTSchedulerRetPCw0 = last_jal_before_kernel[0]; // warp0 has a special link register to be saved. different from other warps
+    assign execute_hw_itr_if.commitSIMTSchedulerRetPC = |warp_hits_n[NUM_ALU_BLOCKS-1:1]; // check for warps other than warp0
+    assign execute_hw_itr_if.commitSIMTSchedulerRetPCw0 = warp_hits_n[0]; // warp0 has a special return register to be saved. different from other warps
     // The actual return addresses to be saved in a CSR register
     assign execute_hw_itr_if.SIMTSchedulerRetPC       = tmp_data[warpNum*`XLEN +: `XLEN]; // save the actual return address to RAV CSR register in VX_interrupt_ctl
     assign execute_hw_itr_if.SIMTSchedulerRetPCw0     = tmp_data[31:0]; // save the actual return address to RAVW0 CSR register in VX_interrupt_ctl
     // Tell VX_interrupt_ctl to turn off the JALOL (JAL overloading flag) register
-    assign execute_hw_itr_if.allHit                   = &warp_hits;
+    assign execute_hw_itr_if.warp_hits                = warp_hits;
 
-    // `RUNTIME_ASSERT((!(&warp_hits)), ("***caught you mf************"))
+    `RUNTIME_ASSERT((!(warp_ctl_if.valid && warp_ctl_if.wspawn.valid && (warp_ctl_if.wspawn.pc == 0) )), ("***caught you mf************"))
 
     for (genvar i = 0; i <WARP_CNT; ++i) begin
         assign tmp_data[i*`XLEN +: `XLEN] = alu_commit_tmp_if[i].data.data[0];
