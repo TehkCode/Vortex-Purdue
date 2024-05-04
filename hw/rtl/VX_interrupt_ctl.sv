@@ -627,11 +627,6 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
             nextRegisters.JALOL = (nextRegisters.JALOL & (~(32'(execute_hw_itr_if[SIMT_CORE_ID].warp_hits))) ); // deassert bit for only those warps which were hit
         end
 
-        if(execute_hw_itr_if[SCALAR_CORE_ID].writeWspawnPCplus4)
-        begin 
-            nextRegisters.RAS = execute_hw_itr_if[SCALAR_CORE_ID].WspawnPCplus4;
-        end
-
         if(counter != 0)
         begin 
             nextCounter = counter + 1;
