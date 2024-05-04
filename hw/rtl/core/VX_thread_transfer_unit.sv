@@ -72,6 +72,8 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 	reg jump_valid;
 	reg [`XLEN-1:0] jump_PC;
 	reg [WARP_CNT-1:0][THREAD_CNT-1:0] pulled_thread_mask;
+	reg [THREAD_CNT-1:0] pulled_thread_mask_in_this_warp;
+	reg [WARP_CNT-1:0] onehot_warp_mask_of_the_pulled_thread;
 
 	// store pulled threads mask
 	always_ff @(posedge clk) begin : blockName
@@ -86,10 +88,10 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 	always_comb begin
 		pulled_thread_mask = ~ttu_tid_mask;
 
-		if (interrupt_ctl_ttu_if.state == IRQC_PC_SWAP) begin
+		if (interrupt_ctl_ttu_if.state == IRQC_REVERT_WARP) begin
 			for (int i=0; i<WARP_CNT; i++) begin
-				if (load_wmask[i])
-					pulled_thread_mask[i] = pulled_thread_mask[i] | load_tmask;
+				if (onehot_warp_mask_of_the_pulled_thread[i])
+					pulled_thread_mask[i] = pulled_thread_mask[i] | pulled_thread_mask_in_this_warp;
 			end
 		end
 	end
@@ -178,6 +180,8 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 
 	// set scheduler control signals
 	always@(*) begin
+		pulled_thread_mask_in_this_warp = '0;
+		onehot_warp_mask_of_the_pulled_thread = '0;
 		case(interrupt_ctl_ttu_if.state)
 			IRQC_IDLE: begin
 				pause_scheduling = '0;
@@ -218,6 +222,9 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 			IRQC_REVERT_WARP: begin
 				pause_scheduling = '1; // pause scheduling as we are swapping warp PC
 				load_PC    = interrupt_ctl_ttu_if.load_PC;
+
+				pulled_thread_mask_in_this_warp = ( `NUM_THREADS'b1 << interrupt_ctl_ttu_if.tid);
+				onehot_warp_mask_of_the_pulled_thread = ( WARP_CNT'(1) << interrupt_ctl_ttu_if.wid);
 
 				// load back old thread mask except the thread that was
 				// transfered

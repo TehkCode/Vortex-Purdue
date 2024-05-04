@@ -637,8 +637,8 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
             nextCounter = counter + 1; // initiate the counter
         end
 
-        if (execute_hw_itr_if[SIMT_CORE_ID].writeRAS) begin
-            nextRegisters.RAS = execute_hw_itr_if[SIMT_CORE_ID].RAS;
+        if (execute_hw_itr_if[SCALAR_CORE_ID].writeRAS) begin
+            nextRegisters.RAS = execute_hw_itr_if[SCALAR_CORE_ID].RAS;
         end
     end
     // RUNTIME_ASSERT((!(counter == 63)), ("***caught you mf************"))
