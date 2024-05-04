@@ -317,7 +317,7 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
 
     vx_printf("VXPSpawn: Priority thread scheduler on scalar core has begun");
 
-    int priority_threads[15] = {3, 6, 8, 9, 10, 12, 1, 2, 4, 5, 7, 11, 13, 15, 14};
+    int priority_threads[4] = {1, 5, 9, 13};
 
     volatile int accel = csr_read(VXX_HW_ITR_ACC);
     volatile int accel_end = csr_read(VXX_HW_ITR_ACCEND);
@@ -340,7 +340,7 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
     int idx = 0;
 
     accel_end = csr_read(VXX_HW_ITR_ACCEND);
-    while (!accel_end && idx < 15)
+    while (!accel_end && idx < 4)
     {
         //================================= Request a Thread from the Scalar Core ======================================
         csr_write(VXX_HW_ITR_TID, priority_threads[idx]);
@@ -404,19 +404,16 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
         asm volatile("csrr x2, %0" : : "i"(VXX_HW_ITR_R2) :); // dont mark this reg as a clobber.
         asm volatile("csrw %0, %1" ::"i"(VXX_HW_ITR_S2V), "i"(0));
 
-        // csr_write(VXX_HW_ITR_RAS, scheduler_resume_point);
-        // csr_write(VXX_HW_ITR_J_TO_KERNEL, 1);
 
         // jump to interrupted PC of the kernel pulled from SIMT
         // jr 0 is overloaded special instruction that does not behave normally
         asm volatile("jr x0");
-        // asm volatile(".insn r %0, 1, 0, x0, %1, %2" ::"i"(RISCV_CUSTOM0), "r"("x0"), "r"("x0"));
                                                                           
 scheduler_resume_point: // this PC is stored in VXX_HW_ITR_RAS
-        // csr_write(VXX_HW_ITR_J_TO_KERNEL, 0);
         asm volatile("csrr x2, %0" : : "i"(VXX_HW_ITR_SSP) :); // restore the stack ptr.
         accel_end = csr_read(VXX_HW_ITR_ACCEND);
     }
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////

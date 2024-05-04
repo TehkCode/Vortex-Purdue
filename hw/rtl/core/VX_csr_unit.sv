@@ -82,6 +82,8 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
     wire                        csr_wr_enable;
     wire                        csr_req_ready;
 
+    wire [31:0]                 csr_thread_specific_data;
+
     // wait for all pending instructions to complete
     assign sched_csr_if.alm_empty_wid = execute_if.data.wid;
     wire no_pending_instr = sched_csr_if.alm_empty;
@@ -165,6 +167,11 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
     wire hwitr_addr_enable = (csr_addr >= `VX_HW_ITR_CTRL_BEGIN && csr_addr < `VX_HW_ITR_CTRL_END);
     always @(*)
     begin 
+        for (int i=THREAD_CNT-1;i>=0;i--) begin
+            if (execute_if.data.tmask[i])
+                csr_thread_specific_data = execute_if.data.use_imm ? 32'(csr_imm) : rs1_data[i];
+        end
+
         hw_itr_ctrl_if.read_enable = csr_req_valid && ~csr_write_enable && hwitr_addr_enable;
         hw_itr_ctrl_if.read_uuid   = execute_if.data.uuid;
         hw_itr_ctrl_if.read_pid    = execute_if.data.pid;
@@ -178,7 +185,7 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
         hw_itr_ctrl_if.write_wid    = execute_if.data.wid;
         hw_itr_ctrl_if.write_tmask  = execute_if.data.tmask;
         hw_itr_ctrl_if.write_addr   = csr_addr;
-        hw_itr_ctrl_if.write_data   = {NUM_LANES{csr_req_data}};
+        hw_itr_ctrl_if.write_data   = {NUM_LANES{csr_thread_specific_data}};
     end
 
     VX_csr_data #(

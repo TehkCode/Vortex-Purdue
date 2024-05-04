@@ -105,7 +105,7 @@ module VX_lsu_unit_scalar import VX_gpu_pkg::*; #(
 
     wire [NUM_LANES-1:0][`XLEN-1:0] full_addr;    
     for (genvar i = 0; i < NUM_LANES; ++i) begin
-        assign full_addr[i] = ((execute_if[0].data.PC == 32'h80000108) || (execute_if[0].data.PC == 32'h8000010c) || (execute_if[0].data.PC == 32'h80000114)) ? execute_if[0].data.rs1_data[i][`XLEN-1:0] + 32'h100 : execute_if[0].data.rs1_data[i][`XLEN-1:0] + execute_if[0].data.imm;
+        assign full_addr[i] = execute_if[0].data.rs1_data[i][`XLEN-1:0] + execute_if[0].data.imm;
     end
 
     // detect duplicate addresses
