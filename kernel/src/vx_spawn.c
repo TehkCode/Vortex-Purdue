@@ -317,7 +317,8 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
 
     // vx_printf("VXPSpawn: Priority thread scheduler on scalar core has begun");
 
-    int priority_threads[15] = {3, 6, 8, 9, 10, 12, 1, 2, 4, 5, 7, 11, 13, 15, 14}; // not pulling thread 0 warp 0
+    // int priority_threads[15] = {3, 6, 8, 9, 10, 12, 1, 2, 4, 5, 7, 11, 13, 15, 14}; // not pulling thread 0 warp 0
+    int priority_threads[4] = {3, 7, 11, 15};
 
     volatile int accel = csr_read(VXX_HW_ITR_ACC);
     volatile int accel_end = csr_read(VXX_HW_ITR_ACCEND);
@@ -340,7 +341,7 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
     int idx = 0;
 
     accel_end = csr_read(VXX_HW_ITR_ACCEND);
-    while (!accel_end && idx < 15)
+    while (!accel_end && idx < 4)
     {
         //================================= Request a Thread from the Scalar Core ======================================
         csr_write(VXX_HW_ITR_TID, priority_threads[idx]);

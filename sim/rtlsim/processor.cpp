@@ -69,7 +69,7 @@
 #define VERILATOR_RESET_VALUE 2
 #endif
 
-#define ENABLE_SIMULATION_TIMEOUT 0
+#define ENABLE_SIMULATION_TIMEOUT 1
 #define TIMEOUT_K_CYCLES 300           // timeout cycles in thousands
 
 #define TIMEOUT_VALUE (2*TIMEOUT_K_CYCLES*1000)

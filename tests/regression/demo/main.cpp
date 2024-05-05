@@ -18,7 +18,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 const char* kernel_file = "kernel.bin";
-uint32_t count = 0;
+uint32_t count = 4;
 
 vx_device_h device = nullptr;
 std::vector<uint8_t> staging_buf;
@@ -81,7 +81,9 @@ int run_test(const kernel_arg_t& kernel_arg,
     int errors = 0;
     auto buf_ptr = (int32_t*)staging_buf.data();
     for (uint32_t i = 0; i < num_points; ++i) {
-      int ref = 2*i + 14; 
+
+      int ref = 2*i + 14;  // no divergence
+      // int ref = 6; // little divergence
       int cur = buf_ptr[i];
       if (cur != ref) {
         std::cout << "error at result #" << std::dec << i
@@ -107,7 +109,7 @@ int main(int argc, char *argv[]) {
   if (count == 0) {
     count = 1;
   }
-  count = 64; 
+  count = 4; 
 
   // open device connection
   std::cout << "open device connection" << std::endl;  
@@ -174,8 +176,12 @@ int main(int argc, char *argv[]) {
   {
     std::cout << "upload source buffer1" << std::endl;
     auto buf_ptr = (int32_t*)staging_buf.data();
-    for (uint32_t i = 0; i < num_points; ++i) {
-      buf_ptr[i] = i + 4;
+    // for (uint32_t i = 0; i < num_points; ++i) {
+    //   buf_ptr[i] = i + 4;
+    //   // buf_ptr[i] = 2;
+    // }   
+      for (uint32_t i = 0; i < num_points; ++i) {
+        buf_ptr[i] = i >> 1;
       // buf_ptr[i] = 2;
     }   
     RT_CHECK(vx_copy_to_dev(device, kernel_arg.src1_addr, staging_buf.data(), buf_size));

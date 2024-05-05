@@ -65,6 +65,14 @@ module VX_split_join import VX_gpu_pkg::*; #(
         );
     end
 
+
+    `RUNTIME_ASSERT(!(ipdom_empty[0] & ipdom_pop && (0 == wid)), ("**********caught u mf0************"))
+if (WARP_CNT == 4) begin
+    `RUNTIME_ASSERT(!(ipdom_empty[1] & ipdom_pop && (1 == wid)), ("**********caught u mf1************"))
+    `RUNTIME_ASSERT(!(ipdom_empty[2] & ipdom_pop && (2 == wid)), ("**********caught u mf2************"))
+    `RUNTIME_ASSERT(!(ipdom_empty[3] & ipdom_pop && (3 == wid)), ("**********caught u mf3************"))
+end
+
     VX_pipe_register #(
         .DATAW  (1 + 1 + WARP_CNT_WIDTH + 1 + `XLEN + THREAD_CNT),
         .DEPTH  (1),

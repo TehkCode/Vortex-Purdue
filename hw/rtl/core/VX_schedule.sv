@@ -400,6 +400,11 @@ module VX_schedule import VX_gpu_pkg::*; #(
 
     `BUFFER_BUSY (busy, (active_warps != 0 || ~no_pending_instr), 1);
 
+    logic warp_ctl_valid                          = warp_ctl_if.valid;
+    logic warp_ctl_split_valid                    = warp_ctl_if.split.valid;
+    logic warp_ctl_split_is_dvg                   = warp_ctl_if.split.is_dvg;
+    logic [WARP_CNT_WIDTH-1:0] warp_ctl_wid         = warp_ctl_if.wid;
+
     // thread transfer to scalar core
     VX_thread_transfer_unit #(
 		.THREAD_CNT (THREAD_CNT),

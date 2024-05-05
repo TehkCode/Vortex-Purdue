@@ -57,6 +57,10 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 	input wire [NUM_ALU_BLOCKS-1:0][WARP_CNT_WIDTH-1:0]   branch_wid,
 	input wire [NUM_ALU_BLOCKS-1:0]                  branch_taken,
 	input wire [NUM_ALU_BLOCKS-1:0][`XLEN-1:0]       branch_dest,
+	input wire warp_ctl_valid,
+    input wire warp_ctl_split_valid,
+    input wire warp_ctl_split_is_dvg,
+    input wire [WARP_CNT_WIDTH-1:0] warp_ctl_wid,
 	VX_interrupt_ctl_ttu_if.slave interrupt_ctl_ttu_if,
 	
 	// to scheduler
@@ -214,7 +218,7 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 			end
 
 			IRQC_WAIT: begin
-				pause_scheduling = ~(|barrier_stalls) & ipdom_stack_empty[interrupt_ctl_ttu_if.wid];
+				pause_scheduling = ~(|barrier_stalls) & ipdom_stack_empty[interrupt_ctl_ttu_if.wid] & !(warp_ctl_valid & warp_ctl_split_valid & warp_ctl_split_is_dvg & (warp_ctl_wid == interrupt_ctl_ttu_if.wid));
 				load_PC = 'x;
 				load_tmask = 'x;
 				load_wmask = '0;
