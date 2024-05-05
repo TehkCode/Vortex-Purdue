@@ -4,7 +4,7 @@
 #define KERNEL_ARG_DEV_MEM_ADDR 0x7ffff000
 
 #ifndef TYPE
-#define TYPE float
+#define TYPE uint64_t
 #endif
 
 typedef struct {

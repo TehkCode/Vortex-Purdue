@@ -47,6 +47,7 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 	input clk,
 	input reset,
 	input wire no_pending_instr,
+	input wire [WARP_CNT-1:0] warp_fired,
 	input wire [WARP_CNT-1:0] ipdom_stack_empty,
 	input wire [WARP_CNT-1:0] barrier_stalls,
 	input wire [WARP_CNT-1:0] active_warps,
@@ -74,9 +75,29 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 	reg [WARP_CNT-1:0][THREAD_CNT-1:0] pulled_thread_mask;
 	reg [THREAD_CNT-1:0] pulled_thread_mask_in_this_warp;
 	reg [WARP_CNT-1:0] onehot_warp_mask_of_the_pulled_thread;
+	reg [WARP_CNT-1:0] warp_in_return_handler_mask, warp_in_return_handler_mask_n;
+
+	// mark a warp as finished
+	always_ff @(posedge clk) begin
+        if(reset) begin
+            warp_in_return_handler_mask <= '0;
+        end
+        else begin
+            warp_in_return_handler_mask <= warp_in_return_handler_mask_n;
+        end
+    end
+	always_comb begin
+		warp_in_return_handler_mask_n = warp_in_return_handler_mask;
+		for (int i=0;i<WARP_CNT;i++) begin
+			if ((interrupt_ctl_ttu_if.RHA == warp_pcs[i]) && warp_fired[i]) begin
+				warp_in_return_handler_mask_n[i] = 1;
+			end
+		end
+	end
+
 
 	// store pulled threads mask
-	always_ff @(posedge clk) begin : blockName
+	always_ff @(posedge clk) begin
         if(reset) begin
             ttu_tid_mask <= '1;
         end
@@ -130,7 +151,7 @@ module VX_thread_transfer_unit import VX_gpu_pkg::*; #(
 				// is empty and (fetch, decode, issue, execute, commit) stages
 				// are empty
 				interrupt_ctl_ttu_if.pipeline_drained = no_pending_instr & ~(|barrier_stalls) & (ipdom_stack_empty[interrupt_ctl_ttu_if.wid]);
-				interrupt_ctl_ttu_if.thread_found = active_warps[interrupt_ctl_ttu_if.wid] & thread_masks[interrupt_ctl_ttu_if.wid][interrupt_ctl_ttu_if.tid];
+				interrupt_ctl_ttu_if.thread_found = !warp_in_return_handler_mask_n[interrupt_ctl_ttu_if.wid] & active_warps[interrupt_ctl_ttu_if.wid] & thread_masks[interrupt_ctl_ttu_if.wid][interrupt_ctl_ttu_if.tid];
 				interrupt_ctl_ttu_if.current_thread_mask = thread_masks[interrupt_ctl_ttu_if.wid];
 				interrupt_ctl_ttu_if.current_PC = warp_pcs[interrupt_ctl_ttu_if.wid];
 				interrupt_ctl_ttu_if.current_active_warps = active_warps;

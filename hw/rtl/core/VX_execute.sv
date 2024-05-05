@@ -206,6 +206,21 @@ module VX_execute import VX_gpu_pkg::*; #(
     logic [WARP_CNT - 1 : 0] last_jal_before_kernel;
     logic [(`XLEN*THREAD_CNT) - 1 : 0] tmp_data;
 
+    logic [WARP_CNT - 1 : 0] warp_has_been_waiting, warp_has_been_waiting_n;
+
+    always @(posedge clk) begin
+        if (reset)
+            warp_has_been_waiting <= 0;
+        else
+            warp_has_been_waiting <= warp_has_been_waiting_n;
+    end
+
+
+    for(genvar i = 0; i < WARP_CNT; ++i) begin 
+        assign warp_has_been_waiting_n[i] = warp_has_been_waiting[i] ? !(alu_commit_tmp_if[i].valid & alu_commit_tmp_if[i].ready) : (warp_hits_n[i] & !alu_commit_tmp_if[i].ready);
+    end
+
+
     assign warpNum = wmask_to_wid(warp_hits_n); // convert bitmask to decimal number
 
     // check if each warp has done the JAL out of kernel scheduler. Stop overloading JAL when all warps have done this.
@@ -224,7 +239,7 @@ module VX_execute import VX_gpu_pkg::*; #(
     for (genvar i = 0; i < ISSUE_CNT; ++i) begin
         // assign last_jal_before_kernel[i]      = execute_hw_itr_if.overload_JAL[i] & branch_ctl_if[i].valid & (branch_ctl_if[i].wid == WARP_CNT_WIDTH'(i)) & !warp_hits[i] & alu_commit_tmp_if[i].valid;
         for(genvar j = 0; j < THREAD_CNT; ++j) begin 
-            assign alu_commit_if[i].data.data[j] = warp_hits_n[i] ? execute_hw_itr_if.retHandlerAddress : alu_commit_tmp_if[i].data.data[j]; // overload link register commit with RHA
+            assign alu_commit_if[i].data.data[j] = (warp_hits_n[i] | warp_has_been_waiting[i]) ? execute_hw_itr_if.retHandlerAddress : alu_commit_tmp_if[i].data.data[j]; // overload link register commit with RHA
         end
         assign alu_commit_if[i].data.uuid     = alu_commit_tmp_if[i].data.uuid;
         assign alu_commit_if[i].data.wid      = alu_commit_tmp_if[i].data.wid;

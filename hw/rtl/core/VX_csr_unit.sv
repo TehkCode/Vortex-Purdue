@@ -82,7 +82,7 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
     wire                        csr_wr_enable;
     wire                        csr_req_ready;
 
-    wire [31:0]                 csr_thread_specific_data;
+    reg [31:0]                 csr_thread_specific_data;
 
     // wait for all pending instructions to complete
     assign sched_csr_if.alm_empty_wid = execute_if.data.wid;
@@ -167,6 +167,7 @@ module VX_csr_unit import VX_gpu_pkg::*; #(
     wire hwitr_addr_enable = (csr_addr >= `VX_HW_ITR_CTRL_BEGIN && csr_addr < `VX_HW_ITR_CTRL_END);
     always @(*)
     begin 
+        csr_thread_specific_data = csr_req_data;
         for (int i=THREAD_CNT-1;i>=0;i--) begin
             if (execute_if.data.tmask[i])
                 csr_thread_specific_data = execute_if.data.use_imm ? 32'(csr_imm) : rs1_data[i];

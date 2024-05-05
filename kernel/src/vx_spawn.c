@@ -2,7 +2,7 @@
 #include <vx_intrinsics.h>
 #include <inttypes.h>
 #include <vx_csr_defs.h>
-#include <vx_print.h>
+//#include <vx_print.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -72,7 +72,7 @@ static void __attribute__((noinline)) spawn_tasks_all_stub()
     int warp_gid = (p_wspawn_args->fWindex * NW) + wid;
     int thread_gid = warp_gid * NT + tid + p_wspawn_args->offset;
     // vx_printf("VXSpawn: cid=%d, wid=%d, tid=%d, wK=%d, tK=%d, offset=%d, taskids=%d-%d, fWindex=%d, warp_gid=%d, thread_gid=%d\n",cid, wid, tid, wK, tK, offset, (offset), (offset+tK-1),p_wspawn_args->fWindex,warp_gid,thread_gid);
-    vx_printf("VXSpawn: cid=%d, wid=%d, tid=%d, fWiWndex=%d, offset= %d, warp_gid=%d, thread_gid=%d\n", cid, wid, tid, p_wspawn_args->fWindex, p_wspawn_args->offset, warp_gid, thread_gid);
+    // vx_printf("VXSpawn: cid=%d, wid=%d, tid=%d, fWiWndex=%d, offset= %d, warp_gid=%d, thread_gid=%d\n", cid, wid, tid, p_wspawn_args->fWindex, p_wspawn_args->offset, warp_gid, thread_gid);
     
     // Set the nth bit to 1 in JALOL reg. The n is the wid of the warp.
     csr_write(VXX_HW_ITR_JALOL, 1);
@@ -196,11 +196,11 @@ void vx_spawn_tasks(int num_tasks, vx_spawn_tasks_cb callback, void *arg)
     // assign non-priority tasks only to the first half cores
     if (core_id >= (NC_total / 2)) /// 2
     {
-        vx_printf("Vx_spawn_tasks core_id too high, so returning core_id:%d, total cores=%d\n", core_id, NC_total);
+        // vx_printf("Vx_spawn_tasks core_id too high, so returning core_id:%d, total cores=%d\n", core_id, NC_total);
         return;
     }
 
-    vx_printf("VXspawn starting spawn,  core_id=%d\n", core_id);
+    // vx_printf("VXspawn starting spawn,  core_id=%d\n", core_id);
     // calculate necessary active cores
     int WT = NW * NT;
     int nC1 = (num_tasks > WT) ? (num_tasks / WT) : 1;
@@ -208,7 +208,7 @@ void vx_spawn_tasks(int num_tasks, vx_spawn_tasks_cb callback, void *arg)
     int nCoreIDMax = nc - 1;
     if (core_id > nCoreIDMax)
     {
-        vx_printf("VXspawn returning coz core_id=%d >= nc=%d nCoreIDMax=%d\n (nC1=%d, NC_total/2=%d)", core_id, nc, nCoreIDMax, nC1, NC_total / 2);
+        // vx_printf("VXspawn returning coz core_id=%d >= nc=%d nCoreIDMax=%d\n (nC1=%d, NC_total/2=%d)", core_id, nc, nCoreIDMax, nC1, NC_total / 2);
         return; // terminate extra cores
     }
 
@@ -236,7 +236,7 @@ void vx_spawn_tasks(int num_tasks, vx_spawn_tasks_cb callback, void *arg)
     wspawn_tasks_args_t wspawn_args = {callback, arg, core_id * tasks_per_core, fW, rW, 0};
     g_wspawn_args[core_id] = &wspawn_args;
     int nw = MIN(TW, NW);
-    vx_printf("VXSpawn: core_id=%d num_tasks=%d NC=%d NW=%d NT=%d WT=%d nC1=%d nc=%d tasks_per_core_n1=%d TW=%d rT=%d fW=%d rW=%d offset=%d nw=%d\n", core_id, num_tasks, NC, NW, NT, WT, nC1, nc, tasks_per_core_n1, TW, rT, fW, rW, core_id * tasks_per_core, nw);
+    // vx_printf("VXSpawn: core_id=%d num_tasks=%d NC=%d NW=%d NT=%d WT=%d nC1=%d nc=%d tasks_per_core_n1=%d TW=%d rT=%d fW=%d rW=%d offset=%d nw=%d\n", core_id, num_tasks, NC, NW, NT, WT, nC1, nc, tasks_per_core_n1, TW, rT, fW, rW, core_id * tasks_per_core, nw);
     if (TW >= 1)
     {
         for (int i = 0; i < fW; i++)
@@ -282,7 +282,7 @@ void vx_spawn_tasks(int num_tasks, vx_spawn_tasks_cb callback, void *arg)
         }
     }
 
-    vx_printf("VXSpawn: I am done with the for loop\n");
+    // vx_printf("VXSpawn: I am done with the for loop\n");
     if (rT != 0)
     {
         // adjust offset
@@ -311,13 +311,13 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
     // assign non-priority tasks only to the first half cores
     if (core_id < (NC_total / 2)) /// 2
     {
-        vx_printf("Vx_spawn_tasks core_id too low, so returning core_id:%d, total cores=%d\n", core_id, NC_total);
+        // vx_printf("Vx_spawn_tasks core_id too low, so returning core_id:%d, total cores=%d\n", core_id, NC_total);
         return;
     }
 
-    vx_printf("VXPSpawn: Priority thread scheduler on scalar core has begun");
+    // vx_printf("VXPSpawn: Priority thread scheduler on scalar core has begun");
 
-    int priority_threads[4] = {1, 5, 9, 13};
+    int priority_threads[15] = {3, 6, 8, 9, 10, 12, 1, 2, 4, 5, 7, 11, 13, 15, 14}; // not pulling thread 0 warp 0
 
     volatile int accel = csr_read(VXX_HW_ITR_ACC);
     volatile int accel_end = csr_read(VXX_HW_ITR_ACCEND);
@@ -340,7 +340,7 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
     int idx = 0;
 
     accel_end = csr_read(VXX_HW_ITR_ACCEND);
-    while (!accel_end && idx < 4)
+    while (!accel_end && idx < 15)
     {
         //================================= Request a Thread from the Scalar Core ======================================
         csr_write(VXX_HW_ITR_TID, priority_threads[idx]);
@@ -359,6 +359,7 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
         if (temp)
         {
             csr_write(VXX_HW_ITR_S2V, 0);
+            accel_end = csr_read(VXX_HW_ITR_ACCEND);
             continue;
         }
 
@@ -394,6 +395,7 @@ void vx_spawn_priority_tasks(int num_tasks, int priority_tasks_offset, vx_spawn_
         asm volatile("csrr x29, %0" : : "i"(VXX_HW_ITR_R29) : "x29");
         asm volatile("csrr x30, %0" : : "i"(VXX_HW_ITR_R30) : "x30");
         asm volatile("csrr x31, %0" : : "i"(VXX_HW_ITR_R31) : "x31");
+
 
         // Stack pointer has to be safe.
         // I have to first save the stack pointer to the HW_ITR_CTRL.

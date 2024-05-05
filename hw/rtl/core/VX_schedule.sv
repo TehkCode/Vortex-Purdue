@@ -114,6 +114,16 @@ module VX_schedule import VX_gpu_pkg::*; #(
 	wire [`NW_WIDTH-1:0] load_wid;
 	wire swap_schedule_data;
 	wire [`NUM_WARPS-1:0] paused_warps;
+    reg [`NUM_WARPS-1:0] warp_fired;
+
+    always_comb begin
+        warp_fired = '0;
+        for (integer i = 0; i < `NUM_WARPS; ++i) begin
+                if (schedule_fire & (schedule_wid == WARP_CNT_WIDTH'(i))) begin
+                    warp_fired[i] = 1'b1;
+                end
+        end
+    end
 
     always @(*) begin
         active_warps_n  = active_warps;

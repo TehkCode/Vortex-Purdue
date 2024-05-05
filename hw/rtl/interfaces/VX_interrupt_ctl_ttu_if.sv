@@ -15,6 +15,7 @@ interface VX_interrupt_ctl_ttu_if import VX_gpu_pkg::*; ();
 	logic [`NUM_THREADS-1:0]	load_tmask; 
 	logic [`XLEN-1:0]			load_PC;			 
 	logic [`NUM_WARPS-1:0]		load_wmask;
+	logic [`XLEN-1:0] 			RHA;
 
 	modport master (
 			output state,
@@ -28,7 +29,8 @@ interface VX_interrupt_ctl_ttu_if import VX_gpu_pkg::*; ();
 			input  ISR_done,
 			output load_tmask,
 			output load_PC,
-			output load_wmask
+			output load_wmask,
+			output RHA
 	);
 
 	modport slave (
@@ -43,7 +45,8 @@ interface VX_interrupt_ctl_ttu_if import VX_gpu_pkg::*; ();
 			output ISR_done,
 			input  load_tmask,
 			input  load_PC,
-			input  load_wmask
+			input  load_wmask,
+			input  RHA
 	);
 
 endinterface

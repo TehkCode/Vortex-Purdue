@@ -697,6 +697,7 @@ module VX_interrupt_ctl import VX_gpu_pkg::*;
     assign interrupt_ctl_ttu_if.load_tmask = registers.TMASK[`NUM_THREADS-1:0];
     assign interrupt_ctl_ttu_if.load_PC = (currState == IRQC_REVERT_WARP) ? registers.IPC : registers.IRQ;
     assign interrupt_ctl_ttu_if.load_wmask = registers.WMASK[`NUM_WARPS-1:0];
+    assign interrupt_ctl_ttu_if.RHA        = registers.RHA;
 
     // To execute stage for overloading jump and link instruction
     assign execute_hw_itr_if[SIMT_CORE_ID].overload_JAL = registers.JALOL; // option to overload JAL instruction to change link register commit.
